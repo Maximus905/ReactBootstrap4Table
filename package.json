@@ -3,9 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap": "^4.3.1",
+    "classnames": "^2.2.6",
+    "jquery": "^3.4.1",
+    "lodash.isequal": "^4.5.0",
+    "popper.js": "^1.15.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "reactstrap": "^8.0.0",
+    "reselect": "^4.0.0",
+    "typescript": "^3.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
