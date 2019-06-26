@@ -1,21 +1,26 @@
 import {createSelector, defaultMemoize} from 'reselect'
 import isEqual from 'lodash.isequal'
-import {defaultColumnSettingsProps, defaultTableSettingsProps} from './defaultSettings'
+import {defaultColumnSettings, defaultTableSettings} from './defaultSettings'
 
-const columnsPreSelector = (props) => props.columns
+const getColumnsProps = (state, props) => props.columns
 
-export const columnsSettingsSelector = createSelector(
-    columnsPreSelector,
-    columns => columns.map(column => Object.assign(defaultColumnSettingsProps(), column)).filter(column => column.isVisible)
+export const getColumnsSettings = createSelector(
+    getColumnsProps,
+    columns => columns.map(column => Object.assign(defaultColumnSettings(), column)).filter(column => column.isVisible)
 )
 
-const columnSizesPreSelector = createSelector(
-    columnsSettingsSelector,
+const getColumnsSizes = createSelector(
+    getColumnsSettings,
     columns => columns.filter(column => column.isVisible).map(column => {
         const {minWidth, maxWidth} = column
         return {minWidth, maxWidth}
     })
 )
+
+const getTableWidthProps = (state, props) => props.table.width
+
+//write own equality check
+const calculateColumnsSizes = createSelector
 
 
 export const getTableSettings = (props) => {
