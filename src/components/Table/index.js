@@ -1,17 +1,22 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames'
 import css from './style.module.css'
 import {useEvent} from '../Hooks'
-import {columnsSettingsSelector} from './settingsSelectors'
+import {getColumnSettings, calculateColumnsSizes} from './settingsSelectors'
 
 const Table = props => {
-    const [tableBoxSize, setTableBoxSize] = useState({width: 0, height: 0})
+    const [tableBoxSize, setTableBoxSize] = useState()
     useEvent('resize', onResizeHandler)
     const refTableBox = useRef(null)
+    useEffect(() => {
+        if (!tableBoxSize) setTableBoxSize({width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight})
+        console.log('state', tableBoxSize)
+    }, [tableBoxSize])
 
     console.log('props', props)
-    console.log('columns settings', columnsSettingsSelector(props))
+    console.log('columns', getColumnSettings(tableBoxSize, props))
+    console.log('table box', calculateColumnsSizes(tableBoxSize, props))
 
     return (
         <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox}>

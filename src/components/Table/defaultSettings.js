@@ -25,3 +25,9 @@ export const defaultColumnSettings = () => ({
     renderCell
 })
 
+export const defaultGlobalFilter = () => ({
+    filterBy: [],
+    operator: '=',
+    operatorsList: ['=']
+})
+
