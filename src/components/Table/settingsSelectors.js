@@ -1,21 +1,17 @@
 import {createSelector, createSelectorCreator, defaultMemoize} from 'reselect'
 import isEqual from 'lodash.isequal'
 import {defaultColumnSettings, defaultTableSettings} from './defaultSettings'
+import {calculateColumnsSizes} from './auxiliaryFunctions'
 
 const getColumnsProps = (state, props) => props.columns
-const getTableProps = (state, props) => props.table
 
-export const getColumnsSettings = createSelector(
+export const getVisibleColumnsSettings = createSelector(
     getColumnsProps,
     columns => columns.map(column => Object.assign(defaultColumnSettings(), column)).filter(column => column.isVisible)
 )
-export const getTableSettings = createSelector(
-    getTableProps,
-    tableProps => Object.assign(defaultTableSettings(), tableProps)
-)
 
-const getColumnsSizes = createSelector(
-    getColumnsSettings,
+const getVisibleColumnsSizesSettings = createSelector(
+    getVisibleColumnsSettings,
     columns => columns.filter(column => column.isVisible).map(column => {
         const {minWidth, maxWidth} = column
         return {minWidth, maxWidth}
@@ -28,12 +24,22 @@ const createDeepEqualSelector = createSelectorCreator(
     isEqual
 )
 
-export const calculateColumnsSizes = createDeepEqualSelector(
-    (stateTableBoxSize, props) => stateTableBoxSize,
-    getColumnsSizes,
-    //function calculated visible columns sizes
-    (tableBoxSizes, columnsSizes) => ({tableBoxSizes, columnsSizes})
+export const calculateVisibleColumnsSizes = createDeepEqualSelector(
+    (stateTableBoxSize, props) => stateTableBoxSize === undefined ? 0 : stateTableBoxSize.width,
+    getVisibleColumnsSizesSettings,
+    (stateTableBoxSize, props, stateScrollsSizes) => stateScrollsSizes,
+    // call function calculated visible columns sizes
+    (tableBoxWidth, columnsSizesSettings, scrollsSizes) => calculateColumnsSizes(tableBoxWidth, columnsSizesSettings, scrollsSizes)
 )
+
+const getTableProps = (state, props) => props.table
+export const getTableSettings = createSelector(
+    getTableProps,
+    tableProps => Object.assign(defaultTableSettings(), tableProps)
+)
+
+
+// TODO create global filter selector
 
 // export const old_getTableSettings = (props) => {
 //     const {columns = []} = props
@@ -61,19 +67,19 @@ export const calculateColumnsSizes = createDeepEqualSelector(
 //     }
 // }
 
-export const getColumnSettings = (props) => {
-    return {
-        title: '',
-        accessor: '',
-        minWidth: 0,
-        maxWidth: 0,
-        isVisible: true,
-        filterable: false,
-        filter: {
-            filterBy: [],
-            operator: '=',
-            operatorsList: ['=']
-        },
-        renderCell: () => {}
-    }
-}
+// export const getColumnSettings = (props) => {
+//     return {
+//         title: '',
+//         accessor: '',
+//         minWidth: 0,
+//         maxWidth: 0,
+//         isVisible: true,
+//         filterable: false,
+//         filter: {
+//             filterBy: [],
+//             operator: '=',
+//             operatorsList: ['=']
+//         },
+//         renderCell: () => {}
+//     }
+// }

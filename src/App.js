@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import {Page, PageHeader, PageMain, PageFooter} from "./components/Page"
 import Table from "./components/Table"
 import {tableConfig} from './appSettings'
@@ -16,8 +16,8 @@ const App = props => {
     );
 };
 
-App.propTypes = {
-
-};
+// App.propTypes = {
+//
+// };
 
 export default App;
