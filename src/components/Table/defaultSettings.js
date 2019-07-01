@@ -1,3 +1,24 @@
+import React from 'react'
+
+const renderHeaderCell = (columnSetting) => {
+    const cellStyle = {
+        width: columnSetting.width
+    }
+    return (
+        <th className="bg-primary" style={cellStyle}>{columnSetting.title}</th>
+    )
+}
+
+const renderHeaderRow = (tableSettings, columnsSettings, scrollsSizes) => {
+    console.log(columnsSettings, scrollsSizes)
+    return (
+        <tr>
+            {
+                columnsSettings.map(column => renderHeaderCell(column))
+            }
+        </tr>
+    )
+}
 const renderRow = () => {}
 
 const renderCell = () => {}
@@ -7,10 +28,11 @@ export const defaultTableSettings = () => ({
     vBorder: 'none', // vertical border
     hBorder: 'none', // horizontal border
     globalFilter: true,
-    renderRow
+    renderRow,
+    renderHeaderRow,
 })
 
-export const defaultColumnSettings = () => ({
+export const defaultColumnSettings = (columnProps) => ({
     title: '',
     accessor: '',
     minWidth: 0, // min column width in px
@@ -18,11 +40,12 @@ export const defaultColumnSettings = () => ({
     isVisible: true,
     filterable: false,
     filter: {
-        filterBy: [],
+        filterBy: columnProps.accessor,
         operator: '=',
         operatorsList: ['=']
     },
-    renderCell
+    renderCell,
+    renderHeaderCell
 })
 
 export const defaultGlobalFilter = () => ({

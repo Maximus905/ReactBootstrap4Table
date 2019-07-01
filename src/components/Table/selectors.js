@@ -3,18 +3,19 @@ import isEqual from 'lodash.isequal'
 import {defaultColumnSettings, defaultTableSettings} from './defaultSettings'
 import {calculateColumnsSizes} from './auxiliaryFunctions'
 
+// pre-selector: get columns settings from props
 const getColumnsProps = (state, props) => props.columns
 
-export const getVisibleColumnsSettings = createSelector(
+const getVisibleColumnsPropsSettings = createSelector(
     getColumnsProps,
-    columns => columns.map(column => Object.assign(defaultColumnSettings(), column)).filter(column => column.isVisible)
+    columns => columns.map(column => Object.assign(defaultColumnSettings(column), column)).filter(column => column.isVisible)
 )
 
 const getVisibleColumnsSizesSettings = createSelector(
-    getVisibleColumnsSettings,
+    getVisibleColumnsPropsSettings,
     columns => columns.filter(column => column.isVisible).map(column => {
-        const {minWidth, maxWidth} = column
-        return {minWidth, maxWidth}
+        const {minWidth, maxWidth, title} = column
+        return {minWidth, maxWidth, title}
     })
 )
 
@@ -32,10 +33,21 @@ export const calculateVisibleColumnsSizes = createDeepEqualSelector(
     (tableBoxWidth, columnsSizesSettings, scrollsSizes) => calculateColumnsSizes(tableBoxWidth, columnsSizesSettings, scrollsSizes)
 )
 
-const getTableProps = (state, props) => props.table
+export const getVisibleColumnsSettings = createSelector(
+    getVisibleColumnsPropsSettings,
+    calculateVisibleColumnsSizes,
+    (columnsProps, columnsSizes) =>  columnsProps.map((column, index) => Object.assign(column, {width: columnsSizes[index].width}))
+)
+
+const getTableProps = (tableBoxSizes, props) => props.table
 export const getTableSettings = createSelector(
     getTableProps,
-    tableProps => Object.assign(defaultTableSettings(), tableProps)
+    calculateVisibleColumnsSizes,
+    (tableProps, columnsSizes) => {
+        const mergedProps = Object.assign(defaultTableSettings(), tableProps)
+        mergedProps.widthPx = columnsSizes.reduce((sumWidth, column) => sumWidth + column.width, 0)
+        return mergedProps
+    }
 )
 
 
