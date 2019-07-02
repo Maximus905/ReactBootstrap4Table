@@ -5,17 +5,20 @@ import {calculateColumnsSizes} from './auxiliaryFunctions'
 
 // pre-selector: get columns settings from props
 const getColumnsProps = (state, props) => props.columns
-
+//merge default settings for each column and filter only visible
 const getVisibleColumnsPropsSettings = createSelector(
     getColumnsProps,
     columns => columns.map(column => Object.assign(defaultColumnSettings(column), column)).filter(column => column.isVisible)
 )
-
+//return only size props of columns
+/**
+ *
+ */
 const getVisibleColumnsSizesSettings = createSelector(
     getVisibleColumnsPropsSettings,
     columns => columns.filter(column => column.isVisible).map(column => {
-        const {minWidth, maxWidth, title} = column
-        return {minWidth, maxWidth, title}
+        const {minWidth, maxWidth} = column
+        return {minWidth, maxWidth}
     })
 )
 
@@ -28,9 +31,9 @@ const createDeepEqualSelector = createSelectorCreator(
 export const calculateVisibleColumnsSizes = createDeepEqualSelector(
     (stateTableBoxSize, props) => stateTableBoxSize === undefined ? 0 : stateTableBoxSize.width,
     getVisibleColumnsSizesSettings,
-    (stateTableBoxSize, props, stateScrollsSizes) => stateScrollsSizes,
+    // (stateTableBoxSize, props, stateScrollsSizes) => stateScrollsSizes,
     // call function calculated visible columns sizes
-    (tableBoxWidth, columnsSizesSettings, scrollsSizes) => calculateColumnsSizes(tableBoxWidth, columnsSizesSettings, scrollsSizes)
+    (tableBoxWidth, columnsSizesSettings) => calculateColumnsSizes(tableBoxWidth, columnsSizesSettings)
 )
 
 export const getVisibleColumnsSettings = createSelector(
@@ -40,6 +43,7 @@ export const getVisibleColumnsSettings = createSelector(
 )
 
 const getTableProps = (tableBoxSizes, props) => props.table
+
 export const getTableSettings = createSelector(
     getTableProps,
     calculateVisibleColumnsSizes,

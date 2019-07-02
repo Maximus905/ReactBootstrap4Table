@@ -2,9 +2,9 @@
  * @param {number} tableBoxWidth
  * @param {Array<{minWidth: number, maxWidth: number}>} columnsSizesSettings
  * @param {number} scrollsSizes
- * @return {Array<Object>}
+ * @return {Array<{minWidth: number, maxWidth: number, width: number}>}
  */
-export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings, scrollsSizes) => {
+export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings) => {
     // calculate columns widths
     /**
      *

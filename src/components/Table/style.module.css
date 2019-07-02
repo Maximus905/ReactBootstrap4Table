@@ -10,17 +10,23 @@
 .tHdBox {
 
 }
+.tHdBox > table {
+    margin-bottom: 0 !important;
+}
 .tHdBoxSz {
-    width: calc(900px + 17px); /* = t-body-content.width + scroll width (t-body-content.width should be calculated with JS) */
+    /*width: calc(900px + 17px); !* = t-body-content.width + scroll width (t-body-content.width should be calculated with JS) *!*/
 }
 .tBdBox {
     min-height: 0;
     overflow: initial;
     overflow-y: scroll;
+    overflow-x: hidden;
+}
+.tBdBox > table {
+    margin-bottom: 0 !important;
 }
 .tBdBoxSz {
-    width: calc(1600px + 17px); /* = t-body-content.width + scroll width (t-body-content.width should be calculated with JS) */
-    overflow-x: hidden;
+    /*width: calc(1600px + 17px); !* = t-body-content.width + scroll width (t-body-content.width should be calculated with JS) *!*/
 }
 .tFooterBox {
 

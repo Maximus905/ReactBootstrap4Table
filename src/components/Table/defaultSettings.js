@@ -5,12 +5,11 @@ const renderHeaderCell = (columnSetting) => {
         width: columnSetting.width
     }
     return (
-        <th className="bg-primary" style={cellStyle}>{columnSetting.title}</th>
+        <th className="bg-primary text-light" style={cellStyle}>{columnSetting.title}</th>
     )
 }
 
-const renderHeaderRow = (tableSettings, columnsSettings, scrollsSizes) => {
-    console.log(columnsSettings, scrollsSizes)
+const renderHeaderRow = (tableSettings, columnsSettings) => {
     return (
         <tr>
             {

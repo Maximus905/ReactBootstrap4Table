@@ -18,41 +18,50 @@ const Table = props => {
     }, [tableBoxSizes])
 
     useEffect(() => {
-        setColumnsSizes(calculateVisibleColumnsSizes(tableBoxSizes, props, scrollsSizes))
-        // console.log('calculate columns', columnsSizes)
-    }, [tableBoxSizes, props, scrollsSizes])
+        setColumnsSizes(calculateVisibleColumnsSizes(tableBoxSizes, props))
+    }, [tableBoxSizes, props, columnsSizes])
 
     const columnsSettings = getVisibleColumnsSettings(tableBoxSizes, props)
     const tableSettings = getTableSettings(tableBoxSizes, props)
-    const tableStyle = {
+
+    const tableSizeCss = {
         width: `${tableSettings.widthPx}px`
     }
-
-    //debug section
-    console.log('columns settings', columnsSettings)
-    const debug = () => {
-        if (columnsSizes.length === 0) return 'empty'
-        return `${columnsSizes[0].width} / ${columnsSizes[1].width}`
+    const tableHdBoxSizeCss = {
+        width: `${tableSettings.widthPx + scrollsSizes.x}px`
     }
-    console.log('table settings', tableSettings)
+    const tableBdBoxSizeCss = {
+        width: `${tableSettings.widthPx + scrollsSizes.x}px`
+    }
+    const getTableFooterWidth = () => {
+        if (tableBoxSizes && tableBoxSizes.width) {
+            return tableBoxSizes.width > (tableSettings.widthPx + scrollsSizes.x) ? tableSettings.widthPx + scrollsSizes.x : tableBoxSizes.width
+        } else {
+            return tableSettings.widthPx + scrollsSizes.x
+        }
+    }
+    const tableFtBoxSizeCss = {
+        width:  `${getTableFooterWidth()}px`
+    }
+
     return (
         <React.Fragment>
             <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox}>
                 <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1", "bg-secondary")}>
-                    <div className={classNames(css.tHdBox, "bg-light")}>
-                        {/*<div className={classNames(css.tHeaderContent, "bg-primary")}>*/}
-                            <table className="table" style={tableStyle}>
-                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings, scrollsSizes)}
-                            </table>
-                        {/*</div>*/}
+                    <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
+                        <table className="table" style={tableSizeCss}>
+                            <thead>
+                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                            </thead>
+                        </table>
                     </div>
-                    <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-info")}>
-                        <div className={classNames(css.tBodyContent, "bg-warning")}>
-                            Table Body Content {debug()}
-                        </div>
+                    <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-info", "flex-grow-1")} style={tableBdBoxSizeCss}>
+                        <table className="table" style={tableSizeCss}>
+                            {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                        </table>
                     </div>
                 </div>
-                <div className={classNames()}>Table Footer</div>
+                <div className={classNames("bg-warning")} style={tableFtBoxSizeCss}>Table Footer</div>
             </div>
             <ScrollbarSize onLoad={(measurements) => setScrollsSize({x: measurements.scrollbarHeight, y: measurements.scrollbarWidth})}/>
         </React.Fragment>
