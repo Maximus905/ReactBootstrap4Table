@@ -4,8 +4,9 @@
  * @param {number} scrollsSizes
  * @return {Array<{minWidth: number, maxWidth: number, width: number}>}
  */
-export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings) => {
+export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings, scrollsSizes) => {
     // calculate columns widths
+    console.log('scrollSizes', scrollsSizes)
     /**
      *
      * @type {Array<{minWidth: number, width: number, maxWidth: number}>} columnSizes

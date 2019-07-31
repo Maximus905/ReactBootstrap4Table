@@ -13,7 +13,13 @@ export const tableConfig = {
             title: 'column 2',
             accessor: 'column_2',
             minWidth: 450,
-            maxWidth: 550,
+            maxWidth: 750,
+        },
+        {
+            title: 'column 3',
+            accessor: 'column_3',
+            minWidth: 450,
+            maxWidth: 750,
         },
     ]
 }

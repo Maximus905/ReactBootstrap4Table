@@ -1,11 +1,11 @@
 import React from 'react'
 
-const renderHeaderCell = (columnSetting) => {
+const renderHeaderCell = (columnSetting, index) => {
     const cellStyle = {
         width: columnSetting.width
     }
     return (
-        <th className="bg-primary text-light" style={cellStyle}>{columnSetting.title}</th>
+        <th className="bg-primary text-light" style={cellStyle} key={index}>{columnSetting.title}</th>
     )
 }
 
@@ -13,7 +13,7 @@ const renderHeaderRow = (tableSettings, columnsSettings) => {
     return (
         <tr>
             {
-                columnsSettings.map(column => renderHeaderCell(column))
+                columnsSettings.map((column, index) => renderHeaderCell(column, index))
             }
         </tr>
     )

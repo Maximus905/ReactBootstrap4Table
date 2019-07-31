@@ -1,3 +1,9 @@
+.hiddenHeader th {
+    height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
 .tBox {
     height: 100%;
     min-width: 500px; /* set a minimum width for table */

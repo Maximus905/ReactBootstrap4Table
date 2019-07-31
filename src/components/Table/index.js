@@ -57,7 +57,9 @@ const Table = props => {
                     </div>
                     <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-info", "flex-grow-1")} style={tableBdBoxSizeCss}>
                         <table className="table" style={tableSizeCss}>
-                            {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                            <thead className={css.hiddenHeader}>
+                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                            </thead>
                         </table>
                     </div>
                 </div>
