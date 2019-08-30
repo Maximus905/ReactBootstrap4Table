@@ -12,17 +12,17 @@ const Table = props => {
     const [columnsSizes, setColumnsSizes] = useState([])
     useEvent('resize', onResizeHandler)
     const refTableBox = useRef(null)
+    const columnsSettings = getVisibleColumnsSettings(tableBoxSizes, scrollsSizes, props)
     useEffect(() => {
         if (!tableBoxSizes) setTableBoxSizes({width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight})
         console.log('state tableBoxSize', tableBoxSizes)
     }, [tableBoxSizes])
 
     useEffect(() => {
-        setColumnsSizes(calculateVisibleColumnsSizes(tableBoxSizes, props))
-    }, [tableBoxSizes, props, columnsSizes])
+        setColumnsSizes(calculateVisibleColumnsSizes(tableBoxSizes, scrollsSizes, props))
+    }, [tableBoxSizes, scrollsSizes, props, columnsSizes])
 
-    const columnsSettings = getVisibleColumnsSettings(tableBoxSizes, props)
-    const tableSettings = getTableSettings(tableBoxSizes, props)
+    const tableSettings = getTableSettings(tableBoxSizes, scrollsSizes, props)
 
     const tableSizeCss = {
         width: `${tableSettings.widthPx}px`
@@ -49,17 +49,20 @@ const Table = props => {
             <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox}>
                 <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1", "bg-secondary")}>
                     <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
-                        <table className="table" style={tableSizeCss}>
+                        <table className={classNames("table", css.fixTableSizes)} style={tableSizeCss}>
                             <thead>
-                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings, scrollsSizes, props.custom)}
                             </thead>
                         </table>
                     </div>
                     <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-info", "flex-grow-1")} style={tableBdBoxSizeCss}>
-                        <table className="table" style={tableSizeCss}>
+                        <table className={classNames("table", css.fixTableSizes)} style={tableSizeCss}>
                             <thead className={css.hiddenHeader}>
-                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings)}
+                                {tableSettings.renderHeaderRow(tableSettings, columnsSettings, props.custom)}
                             </thead>
+                            <tbody>
+                                {props.rowsData.map((rowData, index) => tableSettings.renderRow(rowData, index, columnsSettings, props.custom))}
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -83,8 +86,8 @@ Table.propTypes = {
         vBorder: PropTypes.string,
         hBorder: PropTypes.string,
         globalFilter: PropTypes.bool,
-        renderRow: PropTypes.func,
-        renderHeaderRow: PropTypes.func,
+        renderRow: PropTypes.func, // function for rendering row in Body of table
+        renderHeaderRow: PropTypes.func, // function for rendering row in a visible Header of table
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         title: PropTypes.string.isRequired,
@@ -105,8 +108,14 @@ Table.propTypes = {
         filterBy: PropTypes.arrayOf(PropTypes.string),
         operator: PropTypes.string,
         operatorsList: PropTypes.arrayOf(PropTypes.object),
-    })
+    }),
+    rowsData: PropTypes.arrayOf(PropTypes.array),
+    custom: PropTypes.objectOf(PropTypes.any)
 };
+
+Table.defaultProps = {
+    rowsData: []
+}
 
 export default Table
 

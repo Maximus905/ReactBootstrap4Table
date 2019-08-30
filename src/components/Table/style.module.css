@@ -1,3 +1,6 @@
+.fixTableSizes {
+    table-layout: fixed !important;
+}
 .hiddenHeader th {
     height: 0 !important;
     font-size: 0 !important;
@@ -42,11 +45,11 @@
 }
 
 /*Emulate content*/
-.tHeaderContent {
-    width: 1600px; /* should be calculated with JS */
-    height: 30px;
-}
-.tBodyContent {
-    width: 1600px; /*  */
-    height: 1200px;
-}
+/*.tHeaderContent {*/
+    /*width: 1600px; !* should be calculated with JS *!*/
+    /*height: 30px;*/
+/*}*/
+/*.tBodyContent {*/
+    /*width: 1600px; !*  *!*/
+    /*height: 1200px;*/
+/*}*/

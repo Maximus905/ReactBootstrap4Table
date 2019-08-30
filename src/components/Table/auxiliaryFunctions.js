@@ -4,9 +4,8 @@
  * @param {number} scrollsSizes
  * @return {Array<{minWidth: number, maxWidth: number, width: number}>}
  */
-export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings, scrollsSizes) => {
+export const calculateColumnsSizes = (tableBoxWidth, scrollsSizes, columnsSizesSettings) => {
     // calculate columns widths
-    console.log('scrollSizes', scrollsSizes)
     /**
      *
      * @type {Array<{minWidth: number, width: number, maxWidth: number}>} columnSizes
@@ -14,7 +13,7 @@ export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings, scrol
     const columnsSizes = columnsSizesSettings.map((column) => Object.assign({}, column, {width: column.minWidth}))
 
     const getFreeSpace = () => {
-        const res = tableBoxWidth - columnsSizes.reduce((sum, column) => sum + column.width, 0)
+        const res = tableBoxWidth - scrollsSizes.x - columnsSizes.reduce((sum, column) => sum + column.width, 0)
         return res > 0 ? res : 0
     }
     const getSpacePerColumn = () => {
@@ -23,12 +22,10 @@ export const calculateColumnsSizes = (tableBoxWidth, columnsSizesSettings, scrol
             if (column.width < column.maxWidth) return count + 1
             return count
         }, 0)
-        // console.log('debug', freeSpace, columnsCount)
         if (columnsCount === 0 || freeSpace === 0) return 0
         return freeSpace / columnsCount
     }
     let spacePerColumn = getSpacePerColumn()
-    console.log('first iteration', spacePerColumn)
     while (spacePerColumn > 0) {
         for (const column of columnsSizes) {
             if (column.width + spacePerColumn <= column.maxWidth) {
