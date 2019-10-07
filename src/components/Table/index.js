@@ -7,6 +7,10 @@ import {useEvent} from '../Hooks'
 import {calculateVisibleColumnsSizes, getVisibleColumnsSettings, getTableSettings} from './selectors'
 
 const Table = props => {
+    /**
+     * tableData is Array[] or Object[]
+     */
+    const [tableData, updateTableData] = useState([])
     const [tableBoxSizes, setTableBoxSizes] = useState()
     const [scrollsSizes, setScrollsSize] = useState({x: 0, y: 0})
     const [columnsSizes, setColumnsSizes] = useState([])
@@ -15,12 +19,19 @@ const Table = props => {
     const columnsSettings = getVisibleColumnsSettings(tableBoxSizes, scrollsSizes, props)
     useEffect(() => {
         if (!tableBoxSizes) setTableBoxSizes({width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight})
-        console.log('state tableBoxSize', tableBoxSizes)
     }, [tableBoxSizes])
-
     useEffect(() => {
         setColumnsSizes(calculateVisibleColumnsSizes(tableBoxSizes, scrollsSizes, props))
     }, [tableBoxSizes, scrollsSizes, props, columnsSizes])
+    const {getTableData} = props
+    useEffect(() => {
+        async function updater() {
+            console.log('updater')
+            const response = await getTableData()
+            updateTableData(response)
+        }
+        updater()
+    }, [getTableData])
 
     const tableSettings = getTableSettings(tableBoxSizes, scrollsSizes, props)
 
@@ -43,11 +54,10 @@ const Table = props => {
     const tableFtBoxSizeCss = {
         width:  `${getTableFooterWidth()}px`
     }
-
     return (
         <React.Fragment>
             <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox}>
-                <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1", "bg-secondary")}>
+                <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1")}>
                     <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
                         <table className={classNames("table", css.fixTableSizes)} style={tableSizeCss}>
                             <thead>
@@ -55,13 +65,13 @@ const Table = props => {
                             </thead>
                         </table>
                     </div>
-                    <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-info", "flex-grow-1")} style={tableBdBoxSizeCss}>
+                    <div className={classNames(css.tBdBox, css.tBdBoxSz, "bg-light", "flex-grow-1")} style={tableBdBoxSizeCss}>
                         <table className={classNames("table", css.fixTableSizes)} style={tableSizeCss}>
                             <thead className={css.hiddenHeader}>
                                 {tableSettings.renderHeaderRow(tableSettings, columnsSettings, props.custom)}
                             </thead>
                             <tbody>
-                                {props.rowsData.map((rowData, index) => tableSettings.renderRow(rowData, index, columnsSettings, props.custom))}
+                                {tableData.map((rowData, index) => tableSettings.renderRow(rowData, index, columnsSettings, props.custom))}
                             </tbody>
                         </table>
                     </div>
@@ -85,7 +95,7 @@ Table.propTypes = {
         width: PropTypes.number, //width of table (% from tBox)
         vBorder: PropTypes.string,
         hBorder: PropTypes.string,
-        globalFilter: PropTypes.bool,
+        useGlobalFilter: PropTypes.bool,
         renderRow: PropTypes.func, // function for rendering row in Body of table
         renderHeaderRow: PropTypes.func, // function for rendering row in a visible Header of table
     }),
@@ -109,7 +119,8 @@ Table.propTypes = {
         operator: PropTypes.string,
         operatorsList: PropTypes.arrayOf(PropTypes.object),
     }),
-    rowsData: PropTypes.arrayOf(PropTypes.array),
+    getTableData: PropTypes.func, // should return array of
+    // getTableData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.array, PropTypes.object])),
     custom: PropTypes.objectOf(PropTypes.any)
 };
 

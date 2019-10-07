@@ -7,14 +7,14 @@ const renderHeaderCellDefault = (columnSetting, index) => {
     return (<th className="bg-primary text-light" style={cellStyle} key={index}>{columnSetting.title}</th>)
 }
 
-const renderScrollCell = (scrollsSizes, cssClass) => {
-    return (<th className={cssClass} style={{width: scrollsSizes.x, padding: 0, borderRight: 0}}/>)
+const renderScrollCell = (scrollsSizes, cssClass, index) => {
+    return (<th key={index} className={cssClass} style={{width: scrollsSizes.x, padding: 0, borderRight: 0}}/>)
 }
 
 const renderHeaderRowDefault = (tableSettings, columnsSettings, scrollsSizes, custom) => {
     const data = []
     data.push(columnsSettings.map((column, index) => column.renderHeaderCell(column, index, custom)))
-    if (scrollsSizes)  data.push(renderScrollCell(scrollsSizes, 'bg-primary'))
+    if (scrollsSizes)  data.push(renderScrollCell(scrollsSizes, 'bg-primary', columnsSettings.length))
     return (<tr>{data}</tr>)
 
 }
