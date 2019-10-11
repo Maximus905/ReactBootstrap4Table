@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import Table from '../Table'
+import Table from '../Table_old'
 import axios from 'axios'
 import {tableConfig} from './config'
 // import './styles/styles.scss'
