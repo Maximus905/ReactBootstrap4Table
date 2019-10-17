@@ -15,23 +15,13 @@
  * }} storage
  */
 
-import {START_LOADING_ALL_DATA, REQUEST_ALL_DATA, RECEIVE_ALL_DATA,
-    START_LOADING_DATA_BY_ID, REQUEST_DATA_BY_ID, RECEIVE_DATA_BY_ID} from '../constants/actions'
-import {getRcList, getLocationsList} from '../async/server'
-import {requestAllData, receiveAllData} from '../actions'
-
-
-const initialRowDataStatus = {
-    didInvalidate: false,
-    isLoading: false,
-    isSelected: false,
-    isEditing: false
-}
+import {START_LOADING_ALL_DATA, REQUEST_DATA, RECEIVE_DATA, INVALIDATE_DATA} from '../constants/actions'
+import {receiveData, loadingData} from '../actions'
 
 export const initialState = {
     data: [],
     isLoading: false,
-    didInvalidate: false,
+    didInvalidate: true,
 }
 
 /**
@@ -40,15 +30,17 @@ export const initialState = {
  * @return {Function}
  */
 export function dispatchMiddleware(dispatch) {
-    async function getData(dispatch, action) {
-        const res = await getLocationsList(action.payload.filter)
-        return dispatch(receiveAllData(res))
+    async function getData(dispatch, fetchFunction, filter) {
+        dispatch(loadingData())
+        const data = await fetchFunction(filter)
+        return dispatch(receiveData({data}))
     }
     return (action) => {
-        const {type} = action
+        const {type, payload} = action
         switch (type) {
-            case REQUEST_ALL_DATA:
-                return getData(dispatch)
+            case REQUEST_DATA:
+                const {fetchFunction, filter} = payload
+                return getData(dispatch, fetchFunction, filter)
             default:
                 return dispatch(action)
         }
@@ -56,16 +48,16 @@ export function dispatchMiddleware(dispatch) {
 }
 
 const rootReducer = (state, action) => {
+    console.log('reducer isLoading', state.isLoading)
+    console.log('reducer didInvalidate', state.didInvalidate)
     const {payload, type} = action
     switch (type) {
         case START_LOADING_ALL_DATA:
-            return Object.assign(state, {isLoading: true, didInvalidate: true})
-        case RECEIVE_ALL_DATA:
-            return Object.assign(state, {data: payload.data, isLoading: false, didInvalidate: false})
-        case REQUEST_DATA_BY_ID:
-            return state
-        case RECEIVE_DATA_BY_ID:
-            return state
+            return {...state, isLoading: true}
+        case RECEIVE_DATA:
+            return {...state, data: payload.data, isLoading: false, didInvalidate: false}
+        case INVALIDATE_DATA:
+            return {...state, didInvalidate: true}
         default:
             return state
     }

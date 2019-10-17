@@ -1,40 +1,28 @@
 import {
-    REQUEST_ALL_DATA,
-    RECEIVE_ALL_DATA,
-    RECEIVE_DATA_BY_ID,
-    REQUEST_DATA_BY_ID,
+    START_LOADING_ALL_DATA,
+    REQUEST_DATA,
+    RECEIVE_DATA,
     CHANGE_FILTER
 } from '../constants/actions'
 
+export const loadingData = () => ({type: START_LOADING_ALL_DATA, payload: {}})
 /**
  *
+ * @param {function} fetchFunction
  * @param {Object} filter
  * @return {{type: string, payload: {filter: Object}}}
  */
-export const requestAllData = (filter) => ({type: REQUEST_ALL_DATA, payload: {filter}})
+export const requestData = ({fetchFunction, filter}) => ({type: REQUEST_DATA, payload: {fetchFunction, filter}})
 /**
  *
  * @param {Array} data
  * @return {{type: string, payload: {data: Array}}}
  */
-export const receiveAllData = (data) => ({type: RECEIVE_ALL_DATA, payload: {data}})
-/**
- *
- * @param {Object} filter
- * @param {Array} idList
- * @return {{type: string, payload: {filter: Object, idList: Array}}}
- */
-export const requestRowsData = (filter, idList) => ({type: REQUEST_DATA_BY_ID, payload: {filter, idList}})
-/**
- *
- * @param {Array} data
- * @return {{type: string, payload: {data: Array}}}
- */
-export const receiveRowsData = (data) => ({type: RECEIVE_DATA_BY_ID, payload: {data}})
+export const receiveData = ({data}) => ({type: RECEIVE_DATA, payload: {data}})
 /**
  *
  * @param {Object} filter
  * @return {{type: string, payload: {filter: Object}}}
  */
-export const changeFilter = (filter) => ({type: CHANGE_FILTER, payload: {filter}})
+export const changeFilter = ({filter}) => ({type: CHANGE_FILTER, payload: {filter}})
 
