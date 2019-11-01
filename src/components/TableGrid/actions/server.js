@@ -10,9 +10,10 @@ export const loadingData = () => ({type: START_LOADING_ALL_DATA, payload: {}})
  *
  * @param {function} fetchFunction
  * @param {Object} filter
+ * @param sorting
  * @return {{type: string, payload: {filter: Object}}}
  */
-export const requestData = ({fetchFunction, filter}) => ({type: REQUEST_DATA, payload: {fetchFunction, filter}})
+export const requestData = ({fetchFunction, filter, sorting}) => ({type: REQUEST_DATA, payload: {fetchFunction, filter, sorting}})
 /**
  *
  * @param {Array} data

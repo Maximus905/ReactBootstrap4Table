@@ -1,19 +1,20 @@
-import {renderRowCustom, renderCellWithSelect, renderCellTest}  from './renderFunctions'
+import {renderCellTest}  from './renderFunctions'
 import {getDataRemote} from './async/server'
 
 export const tableConfig = {
     getTableData: getDataRemote,
     table: {
         tableDark: true,
-        tableSmall: false,
+        tableSmall: true,
+        tableBordered: true,
         // renderRow: renderRowViaAccessors
     },
     columns: [
         {
             title: 'Lotus ID',
             accessor: 'id',
-            minWidth: 100,
-            maxWidth: 100,
+            minWidth: 120,
+            maxWidth: 120,
         },
         {
             title: 'Офис',

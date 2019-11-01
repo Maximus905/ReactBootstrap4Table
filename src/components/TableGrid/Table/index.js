@@ -1,6 +1,7 @@
-import React, {Fragment, useRef, useContext, useEffect, useState} from 'react'
+import React, {Fragment, useRef, useContext, useEffect, useState, createContext} from 'react'
 import {TableGridContext} from '../TableGridProvider'
-import {requestData, invalidateData} from '../actions'
+import TableContextProvider from '../TableContext'
+import {requestData, invalidateData, addSorting, setSorting, ctrlDown, ctrlUp} from '../actions'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import css from './style.module.css'
@@ -8,6 +9,12 @@ import ScrollbarSize from "react-scrollbar-size"
 import {useEvent} from '../../Hooks'
 import {defaultTableSettings, defaultColumnSettings} from './defaultSettings'
 import {calculateColumnsSizes} from './helpers'
+import HeaderRow from '../HeaderRow'
+import HeaderCell from '../HeaderCell'
+import SimpleHeaderCell from '../SimpleHeaderCell'
+import ScrollCell from '../ScrollCell'
+import BodyRow from '../BodyRow'
+import BodyCell from "../BodyCell";
 
 function Table(props) {
     const [tableBoxSizes, setTableBoxSizes] = useState({width: 0, height: 0})
@@ -19,26 +26,49 @@ function Table(props) {
 
     const refTableBox = useRef(null)
     // destruct data from context
-    const {state, dispatch, getTableData, table, columns} = useContext(TableGridContext)
+    const {state, state: {sorting}, dispatch, getTableData, table, columns, custom} = useContext(TableGridContext)
 
-    const {isLoading ,didInvalidate} = state
+    const {isLoading ,didInvalidate, isCtrlPressed} = state
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
-        if (!isLoading && didInvalidate) {
+        if (!isLoading && didInvalidate && !isCtrlPressed) {
             console.log('start fetching data')
-            const action = requestData({fetchFunction: getTableData, filter: 'test'})
+            const action = requestData({fetchFunction: getTableData, filter: 'test', sorting})
             console.log('data is fetched ')
             dispatch(action)
         }
-    }, [isLoading, didInvalidate, dispatch, getTableData])
+    }, [isLoading, didInvalidate, dispatch, getTableData, sorting, isCtrlPressed])
     //function for updating data in table
     function updateData() {
         return dispatch(invalidateData())
     }
-    window.test = updateData
+    function addSortAccessor(accessor) {
+        return dispatch(addSorting(accessor))
+    }
+    function setSortAccessor(accessor) {
+        return dispatch(setSorting(accessor))
+    }
+    function ctrlDownHandler(e) {
+        if (!isCtrlPressed) {
+            console.log('ctrl down', e.ctrlKey)
+            return dispatch(ctrlDown())
+        }
+
+    }
+    function ctrlUpHandler(e) {
+        if (isCtrlPressed) {
+            console.log('ctrl up', e.ctrlKey)
+            return dispatch(ctrlUp())
+        }
+
+    }
+    window.updateData = updateData
+    window.addSort = addSortAccessor
+    window.setSort = setSortAccessor
     //calculate table and columns settings and sizes
     // TODO: rewrite to using useMemo hook
-    const visibleColumns = columns.map(column => Object.assign(defaultColumnSettings(column), column)).filter(column => column.isVisible)
+    const columnsSettings = columns.map(column => Object.assign(defaultColumnSettings(column), column))
+    const visibleColumns = columnsSettings.filter(column => column.isVisible)
     const visibleColumnsSizesSettings = visibleColumns.filter(column => column.isVisible).map(column => ({
         minWidth: column.minWidth,
         maxWidth: column.maxWidth
@@ -68,43 +98,64 @@ function Table(props) {
     const tableFtBoxSizeCss = {
         width:  `${getTableFooterWidth()}px`
     }
+    const tableContext = {
+        sorting,
+        tableSettings,
+        columnsSettings,
+        visibleColumnsSettings,
+        scrollsSizes,
+        custom,
+        updateData,
+        addSortAccessor,
+        setSortAccessor
+    }
 
     return (
         <Fragment>
-            <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox}>
-                <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1")}>
-                    <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
-                        <table className={classNames("table", {"table-sm": tableSmall, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless}, css.fixTableSizes)} style={tableSizeCss}>
-                            <thead>
-                            {tableSettings.renderHeaderRow(tableSettings, visibleColumnsSettings, scrollsSizes)}
-                            </thead>
-                        </table>
+            <TableContextProvider {...tableContext}>
+                <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox} onKeyDown={ctrlDownHandler} onKeyUp={ctrlUpHandler} tabIndex="0">
+                    <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1")}>
+                        <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
+                            <table className={classNames("table", {"table-sm": tableSmall, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless}, css.fixTableSizes)} style={tableSizeCss}>
+                                <thead>
+                                    <HeaderRow>
+                                        {visibleColumnsSettings.map((columnSettings, index) => (<HeaderCell key={index} {...{columnSettings}} />))}
+                                        <ScrollCell scrollsSizes={scrollsSizes} />
+                                    </HeaderRow>
+                                </thead>
+                            </table>
+                        </div>
+                        <div className={classNames(css.tBdBox, "bg-light", "flex-grow-1")} style={tableBdBoxSizeCss}>
+                            <table className={classNames("table", {"table-sm": tableSmall, "table-striped": tableStriped, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless, "table-hover": tableHover }, css.fixTableSizes)} style={tableSizeCss}>
+                                <thead className={css.hiddenHeader}>
+                                <HeaderRow>
+                                    {visibleColumnsSettings.map((columnSettings, index) => (<SimpleHeaderCell key={index} {...{columnSettings}}  />))}
+                                </HeaderRow>
+                                </thead>
+                                <tbody>
+                                {state.data.map((rowData, index) => {
+                                    return (
+                                        <BodyRow key={index} rowData={rowData}>
+                                            {visibleColumnsSettings.map((columnSettings, index) => {
+                                                const {accessor} = columnSettings
+                                                return <BodyCell key={index} {...{rowData, accessor, columnSettings}} />
+                                            })}
+                                        </BodyRow>
+                                    )
+                                })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div className={classNames(css.tBdBox, "bg-light", "flex-grow-1")} style={tableBdBoxSizeCss}>
-                        <table className={classNames("table", {"table-sm": tableSmall, "table-striped": tableStriped, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless, "table-hover": tableHover }, css.fixTableSizes)} style={tableSizeCss}>
-                            <thead className={css.hiddenHeader}>
-
-                            {tableSettings.renderHeaderRow(tableSettings, visibleColumnsSettings, updateData)}
-                            </thead>
-                            <tbody>
-                            {state.data.map((rowData, index) => {
-                                return tableSettings.renderRow({rowData, rowIndex: index, columnsSettings: visibleColumnsSettings, updateData})
-                            })}
-                            </tbody>
-                        </table>
-                    </div>
+                    <div className={classNames("bg-warning")} style={tableFtBoxSizeCss}>Table Footer</div>
                 </div>
-                <div className={classNames("bg-warning")} style={tableFtBoxSizeCss}>Table Footer</div>
-            </div>
-            <ScrollbarSize onLoad={(measurements) => setScrollsSize({x: measurements.scrollbarHeight, y: measurements.scrollbarWidth})}/>
+                <ScrollbarSize onLoad={(measurements) => setScrollsSize({x: measurements.scrollbarHeight, y: measurements.scrollbarWidth})}/>
+            </TableContextProvider>
         </Fragment>
     )
-
     function onResizeHandler() {
         setTableBoxSizes({width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight})
     }
 }
-
-
 
 export default Table

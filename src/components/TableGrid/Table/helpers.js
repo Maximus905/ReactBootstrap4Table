@@ -38,3 +38,4 @@ export const calculateColumnsSizes = (tableBoxWidth, scrollsSizes, columnsSizesS
     }
     return columnsSizes
 }
+

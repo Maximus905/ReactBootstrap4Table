@@ -4,9 +4,15 @@ import TableGridProvider from './TableGridProvider'
 import Table from './Table'
 
 const TableGrid = props => {
-    console.log('tableGrid')
+    const {table, columns, getTableData, custom} = props
+    const tableGridContext = {
+        table,
+        columns,
+        getTableData,
+        custom
+    }
     return (
-        <TableGridProvider {...props}>
+        <TableGridProvider {...tableGridContext}>
             <Table />
         </TableGridProvider>
     );
@@ -15,8 +21,8 @@ const TableGrid = props => {
 TableGrid.propTypes = {
     table: PropTypes.shape({
         width: PropTypes.number, //width of table (% from tBox)
-        vBorder: PropTypes.string,
-        hBorder: PropTypes.string,
+        // vBorder: PropTypes.string,
+        // hBorder: PropTypes.string,
         //bs styles for table
         tableStriped: PropTypes.bool,
         tableDark: PropTypes.bool,
