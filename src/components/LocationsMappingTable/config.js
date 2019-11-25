@@ -4,7 +4,7 @@ import {getDataRemote} from './async/server'
 export const tableConfig = {
     getTableData: getDataRemote,
     table: {
-        tableDark: true,
+        tableDark: false,
         tableSmall: true,
         tableBordered: true,
         // renderRow: renderRowViaAccessors

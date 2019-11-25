@@ -1,0 +1,16 @@
+$font-size-base: 0.75rem;
+$filters-background-color: #616b75;
+$filters-font-color: #fff;
+$nav-tabs-link-padding: 0.3rem;
+
+.filters {
+    font-size: $font-size-base !important;
+}
+.navLink {
+    padding: $nav-tabs-link-padding !important;
+}
+
+.filtersDark {
+    color: $filters-font-color !important;
+    background-color: $filters-background-color !important;
+}

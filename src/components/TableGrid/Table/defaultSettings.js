@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
 import classNames from "classnames"
 import {TableContext} from '../TableContext'
-import {DropDown} from '../../DropDown'
+import Filters from "../../Filters";
 
 const sortIcons = {
     desc: <FontAwesomeIcon icon={faLongArrowAltDown} size={"sm"} />,
@@ -39,7 +39,8 @@ const DefaultHeaderCell = (props) => {
                     {getSortIcon()}{sortIndex && sortIndex > 0 ? <span>{sortIndex}</span> : ''}
                 </div>
             </div>
-            <div><DropDown/></div>
+            {/*<div><DropDown>test</DropDown></div>*/}
+            <div><Filters accessor={accessor}/></div>
         </div>
     </th>)
 }

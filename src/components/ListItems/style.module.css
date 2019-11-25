@@ -1,0 +1,9 @@
+.bsSearchBox {
+    padding: 4px;
+}
+.iconBox {
+    width: 20px;
+    position: absolute;
+    left: 0.1rem;
+    top: 0.25rem;
+}

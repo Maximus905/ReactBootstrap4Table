@@ -1,0 +1,14 @@
+.inner {
+    border: 0
+}
+.bsSearchBox {
+    padding: 4px;
+}
+.iconBox {
+    width: 20px;
+}
+.itemsBox {
+    max-width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+}

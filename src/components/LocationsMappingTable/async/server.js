@@ -17,7 +17,7 @@ export async function getRcList() {
 
 export async function getDataRemote(filter, sorting) {
     try {
-
+        console.log('send request')
         const response = await axios.get(LOCATIONS_URL, {
             params: {filter, sorting}
         })
