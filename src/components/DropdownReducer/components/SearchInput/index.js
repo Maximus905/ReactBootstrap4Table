@@ -1,19 +1,15 @@
 /** @jsx jsx */
-import {css, jsx} from "@emotion/core";
-import {useState, useEffect} from "react";
+import {css, jsx} from "@emotion/core"
+import {useContext} from 'react'
 import PropTypes from 'prop-types'
+import {DropdownContext} from "../../ContextProvider"
+import {changeInput} from "../../actions"
 
-export const SearchInput = (props) => {
-    const {onChangeInput, value} = props
-    const [inputValue, setInputValue] = useState('')
-    const fontRatio = 0.8
+const SearchInput = (props) => {
+    const {state: {inputValue}, dispatch, fontRatio} = useContext(DropdownContext)
+    // const fontRatio = 0.8
     const bdColor = 'rgb(206,212,218)'
-    const inputHandler = e => {
-        // setInputValue(e.target.value)
-        onChangeInput(e.target.value)
-    }
-    // useEffect(() => onChangeInput(inputValue), [inputValue])
-
+    const onChangeHandler = (e) => dispatch(changeInput(e.target.value))
     return (
         <div css={css`
             padding: 5px;
@@ -26,7 +22,7 @@ export const SearchInput = (props) => {
                 &:focus {
                   border-color: ${bdColor};
                 }
-            `} value={value} onChange={inputHandler} autoFocus={true} />
+            `} value={inputValue} onChange={onChangeHandler} autoFocus={true} />
         </div>
     )
 }
@@ -37,3 +33,4 @@ SearchInput.propTypes = {
 SearchInput.defaultProps = {
     onChangeInput: (inputValue) => console.log('onChangeInput', inputValue)
 }
+export default SearchInput

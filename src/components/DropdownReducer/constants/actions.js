@@ -1,0 +1,3 @@
+export const CLICK_ON_ITEM = 'CLICK_ON_ITEM'
+export const CHANGE_INPUT = 'CHANGE_INPUT'
+export const SET_ITEM_SIZES = 'SET_ITEM_SIZES'

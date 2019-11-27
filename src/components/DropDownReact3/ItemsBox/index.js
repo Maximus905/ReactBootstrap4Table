@@ -75,7 +75,7 @@ const longestRowIndex = ({data, fieldName}) => {
 }
 
 export const ItemsBox = (props) => {
-    const {maxHeight, maxWidth, data: dataSrc, onClickItem} = props
+    const {maxHeight, maxWidth, data: dataSrc, onClickItem, filter} = props
     const [data, setData] = useState(dataSrc)
     const [itemSize, setItemSize] = useState()
     const itemRef = createRef()
@@ -89,6 +89,7 @@ export const ItemsBox = (props) => {
     }, [itemRef])
     useEffect(() => {
         if (lastCheckedItem.current) onClickItem(lastCheckedItem.current)
+        lastCheckedItem.current = null
     }, [lastCheckedItem.current, onClickItem]);
     
     const onClickHandler = (value) => {
@@ -108,6 +109,11 @@ export const ItemsBox = (props) => {
             </div>
         )
     }
+    // const filteredItems = (templ) => {
+    //     const escTempl = templ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    //     return data
+    //         .filter(item => (new RegExp(escTempl)).test(item.label))
+    // }
     return (
         <List
             className={st.List}
@@ -121,10 +127,12 @@ export const ItemsBox = (props) => {
     )
 }
 ItemsBox.propTypes = {
-    onClickItem: PropTypes.func
+    onClickItem: PropTypes.func,
+    filter: PropTypes.string
 }
 ItemsBox.defaultProps = {
-    onClickItem: (value) => console.log(`Click on '${value}'`)
+    onClickItem: (value) => console.log(`Click on '${value}'`),
+    filter: ''
 }
 
 

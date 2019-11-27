@@ -12,6 +12,7 @@ import {SearchInput} from './Input'
 const DropDownReact3 = (props) => {
     const {fontRatio, data, maxWidth} = props
     const [dropdownOpen, setDropdownOpen] = useState(true)
+    const [filterString, setFilterString] = useState('')
     const toggle = () => setDropdownOpen(!dropdownOpen)
     const Dropdown = (props) => (
         <DropdownBs css={css`
@@ -40,13 +41,12 @@ const DropDownReact3 = (props) => {
             {props.children}
         </DropdownMenuBs>
     )
-
     return (
         <Dropdown isOpen={dropdownOpen} size={'sm'} toggle={toggle}>
             <DropdownButton/>
             <DropdownMenu>
-                <SearchInput />
-                <ItemsBox data={data} maxHeight={200} />
+                <SearchInput onChangeInput={setFilterString} value={filterString} />
+                <ItemsBox data={data} maxHeight={200} filter={filterString} />
             </DropdownMenu>
         </Dropdown>
     )

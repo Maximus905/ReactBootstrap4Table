@@ -4,7 +4,7 @@ import {action} from "@storybook/addon-actions"
 import DropDownReact3 from "./DropDownReact3"
 import faker from "faker";
 
-const fakeData = ((counter = 15000) => {
+const fakeData = ((counter = 150000) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []
