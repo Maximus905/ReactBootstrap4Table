@@ -6,8 +6,8 @@ import CheckIcon from "../CheckIcon";
 import {DropdownContext} from "../../ContextProvider";
 import {useContext} from "react";
 
-const DropdownItem = ({value, label, checked, onClick}) => {
-    const resLabel = `${label}`
+const DropdownItem = ({index, value, label, checked, onClick}) => {
+    const resLabel = `${index} ${label}`
 
     return (
         <DropdownItemBs tag={'div'} toggle={false} css={css`

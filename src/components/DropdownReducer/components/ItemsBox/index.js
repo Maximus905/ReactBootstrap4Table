@@ -8,6 +8,7 @@ import st from './style.module.css'
 import {DropdownContext} from "../../ContextProvider";
 import DropdownItem from "../DropdownItem"
 import {setItemSizes, clickOnItem} from "../../actions";
+import Fuse from "fuse.js";
 
 const DropdownItemFunc = (props) => (listProps) => {
     const {style, index} = listProps
@@ -16,7 +17,7 @@ const DropdownItemFunc = (props) => (listProps) => {
     const item = data[index]
     return (
         <div style={style}>
-            <DropdownItem {...{value: item.value, label: item.label, checked: item.checked, onClick: handler}} />
+            <DropdownItem {...{index, value: item.value, label: item.label, checked: item.checked, onClick: handler}} />
         </div>
     )
 }
@@ -30,10 +31,36 @@ const longestRowIndex = ({data, fieldName}) => {
     console.log(`longest item index: ${longestItem}`)
     return longestItem
 }
+const fuse = (data) => {
+    const fuseOption = {
+        shouldSort: true,
+        threshold: 0.2,
+        location: 0,
+        distance: 100,
+        maxPatternLength: 32,
+        minMatchCharLength: 1,
+        keys: [
+            "label"
+        ]
+    }
+
+}
 
 const ItemsBox = (props) => {
     const {state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch, onClickItem} = useContext(DropdownContext)
     const itemRef = createRef()
+    const fuseOption = {
+        shouldSort: true,
+        threshold: 0.15,
+        location: 0,
+        distance: 100,
+        maxPatternLength: 32,
+        minMatchCharLength: 1,
+        keys: [
+            "label"
+        ]
+    }
+    const fuse = useMemo(() => new Fuse(data, fuseOption), [data, fuseOption])
     useEffect(() => {
         if (!itemWidth && !itemHeight && itemRef.current && itemRef.current.offsetWidth && itemRef.current.offsetHeight) {
             const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
@@ -50,11 +77,19 @@ const ItemsBox = (props) => {
         const start = Date.now()
         const escTempl = template.replace(/[.*+?^${}()|[\]\\]/, '\\$&')
         const res =  data.filter(item => (new RegExp(escTempl, 'i')).test(item.label))
-        console.log(Date.now() - start)
+        console.log('js filter', Date.now() - start, res)
+        return res
+    }
+    const fuseFilter = (template) => {
+        if (!template) return data
+        const start = Date.now()
+        const res = fuse.search(template)
+        console.log('fuse filter', Date.now() - start, res.length)
         return res
     }
 
-    const filteredData = dataFilter(inputValue)
+    // const filteredData = dataFilter(inputValue)
+    const fuseFiltered = fuseFilter(inputValue)
     //if haven't set sizes of item for List component mount the longest item and get its sizes
     if (!itemWidth && ! itemHeight) {
         const longestItem = data[longestRowIndex({data, fieldName: 'label'})]
@@ -72,11 +107,11 @@ const ItemsBox = (props) => {
         <List
             className={st.List}
             height={maxHeight}
-            itemCount={filteredData.length}
+            itemCount={fuseFiltered.length}
             itemSize={itemHeight}
             width={itemWidth}
         >
-            {DropdownItemFunc({data: filteredData, onClick: onClickHandler})}
+            {DropdownItemFunc({data: fuseFiltered, onClick: onClickHandler})}
         </List>
     )
 }
