@@ -9,7 +9,7 @@ import LocationsMappingTable from './components/LocationsMappingTable'
 // import DropDown2 from "./components/DropDown2";
 // import DropDownReact from "./components/DropDownReact";
 // import DropDownReactWrap from "./components/DropDownReactWrap";
-import DropDownReducerWrap from "./components/DropDownReducerWrap";
+import DropdownListWrap from "./components/DropdownListWrap";
 
 const App = props => {
 
@@ -17,11 +17,10 @@ const App = props => {
         <Page>
             <PageHeader className="bg-light">This is a Page Header</PageHeader>
             <PageMain className="bg-white">
-                {/*<LocationsMappingTable />*/}
-                <div style={{padding: 20}}>
-                    <DropDownReducerWrap/>
-                    {/*<DropDownReactWrap/>*/}
-                </div>
+                <LocationsMappingTable />
+                {/*<div style={{padding: 20}}>*/}
+                {/*    <DropdownListWrap/>*/}
+                {/*</div>*/}
             </PageMain>
             <PageFooter className="bg-light">This is a Page Footer</PageFooter>
         </Page>

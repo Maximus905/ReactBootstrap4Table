@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import {css, jsx} from "@emotion/core";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faMinus} from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
 import {DropdownContext} from "../../ContextProvider";
 import {useContext} from "react";
 
 const bdColor = 'rgb(206,212,218)'
-const CheckIcon = ({checked}) => {
+const CheckIcon = ({checked, partlyChecked}) => {
     const {fontRatio} = useContext(DropdownContext)
     return (
         <div css={css`
@@ -20,13 +20,14 @@ const CheckIcon = ({checked}) => {
         border: 1px solid ${bdColor};
         border-radius: 5px;
     `} className="d-flex justify-content-center align-items-center">
-        {checked ? <FontAwesomeIcon icon={faCheck} css={css`font-size: ${fontRatio}rem; color: dimgrey`} /> : false}
+        {partlyChecked ? <FontAwesomeIcon icon={faMinus} css={css`font-size: ${fontRatio}rem; color: dimgrey`} /> : (checked ? <FontAwesomeIcon icon={faCheck} css={css`font-size: ${fontRatio}rem; color: dimgrey`} /> : false)}
     </div>
     )
 }
 
 CheckIcon.propTypes = {
-    checked: PropTypes.bool
+    checked: PropTypes.bool,
+    partlyChecked: PropTypes.bool
 }
 
 export default CheckIcon

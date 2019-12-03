@@ -9,4 +9,7 @@ export const initialState = {
     inputValue: '',
     itemWidth: null,
     itemHeight: null,
+    settingsOn: false,
+    lastClicked: {value: null},
+    checkedItemsCounter: 0
 }

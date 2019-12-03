@@ -1,0 +1,10 @@
+/*.ListItemEven,*/
+/*.ListItemOdd {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
+
+.emptyItem {
+    opacity: 0.7;
+}

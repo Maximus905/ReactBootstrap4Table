@@ -41,7 +41,6 @@ export const initialState = {
 export function dispatchMiddleware(dispatch) {
     async function getData(dispatch, fetchFunction, filter, sorting) {
         dispatch(loadingData())
-        console.log('ttt', filter, sorting)
         const data = await fetchFunction(filter, sorting)
         return dispatch(receiveData({data}))
     }

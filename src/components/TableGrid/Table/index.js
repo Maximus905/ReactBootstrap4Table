@@ -17,7 +17,7 @@ import BodyRow from '../BodyRow'
 import BodyCell from "../BodyCell";
 
 function Table(props) {
-    const [tableBoxSizes, setTableBoxSizes] = useState({width: 0, height: 0})
+    const [tableBoxSizes, setTableBoxSizes] = useState({width: 0, height: 0, bodyWidth: 0, bodyHeight: 0})
     const [scrollsSizes, setScrollsSize] = useState({x: 0, y: 0})
     const [columnsSizes, setColumnsSizes] = useState([])
     useEvent('resize', onResizeHandler)
@@ -25,6 +25,7 @@ function Table(props) {
     useEffect(() => onResizeHandler(), [])
 
     const refTableBox = useRef(null)
+    const refTableBodyBox = useRef(null)
     // destruct data from context
     const {state, state: {sorting}, dispatch, getTableData, table, columns, custom} = useContext(TableGridContext)
 
@@ -62,9 +63,9 @@ function Table(props) {
         }
 
     }
-    window.updateData = updateData
-    window.addSort = addSortAccessor
-    window.setSort = setSortAccessor
+    // window.updateData = updateData
+    // window.addSort = addSortAccessor
+    // window.setSort = setSortAccessor
     //calculate table and columns settings and sizes
     // TODO: rewrite to using useMemo hook
     const columnsSettings = columns.map(column => Object.assign(defaultColumnSettings(column), column))
@@ -100,6 +101,7 @@ function Table(props) {
     }
     const tableContext = {
         sorting,
+        tableBoxSizes,
         tableSettings,
         columnsSettings,
         visibleColumnsSettings,
@@ -125,7 +127,7 @@ function Table(props) {
                                 </thead>
                             </table>
                         </div>
-                        <div className={classNames(css.tBdBox, "bg-light", "flex-grow-1")} style={tableBdBoxSizeCss}>
+                        <div className={classNames(css.tBdBox, "bg-light", "flex-grow-1")} style={tableBdBoxSizeCss} ref={refTableBodyBox}>
                             <table className={classNames("table", {"table-sm": tableSmall, "table-striped": tableStriped, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless, "table-hover": tableHover }, css.fixTableSizes)} style={tableSizeCss}>
                                 <thead className={css.hiddenHeader}>
                                 <HeaderRow>
@@ -154,7 +156,10 @@ function Table(props) {
         </Fragment>
     )
     function onResizeHandler() {
-        setTableBoxSizes({width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight})
+        setTableBoxSizes({
+            width: refTableBox.current.clientWidth, height: refTableBox.current.clientHeight,
+            bodyWidth: refTableBodyBox.current.clientWidth, bodyHeight: refTableBodyBox.current.clientHeight
+        })
     }
 }
 

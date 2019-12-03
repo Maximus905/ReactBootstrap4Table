@@ -6,9 +6,7 @@ import {DropdownContext} from "../../ContextProvider"
 import {changeInput} from "../../actions"
 
 const SearchInput = (props) => {
-    const {state: {inputValue}, dispatch, fontRatio} = useContext(DropdownContext)
-    // const fontRatio = 0.8
-    const bdColor = 'rgb(206,212,218)'
+    const {state: {inputValue}, dispatch, fontRatio, bdColor} = useContext(DropdownContext)
     const onChangeHandler = (e) => dispatch(changeInput(e.target.value))
     return (
         <div css={css`

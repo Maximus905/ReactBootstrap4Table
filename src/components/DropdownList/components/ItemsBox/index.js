@@ -12,12 +12,12 @@ import Fuse from "fuse.js";
 
 const DropdownItemFunc = (props) => (listProps) => {
     const {style, index} = listProps
-    const {data, onClick} = props
-    const handler = () => onClick(data[index].value)
+    const {data, onClick, valueFieldName, labelFieldName} = props
+    const handler = () => onClick(data[index][valueFieldName], valueFieldName)
     const item = data[index]
     return (
         <div style={style}>
-            <DropdownItem {...{index, value: item.value, label: item.label, checked: item.checked, onClick: handler}} />
+            <DropdownItem {...{value: item[valueFieldName], label: item[labelFieldName], checked: item.checked, onClick: handler, valueFieldName, labelFieldName}} />
         </div>
     )
 }
@@ -28,26 +28,13 @@ const longestRowIndex = ({data, fieldName}) => {
         const length = item[fieldName].length
         return length > data[acc][fieldName].length ? index : acc
     }, 0)
-    console.log(`longest item index: ${longestItem}`)
+    // console.log(`longest item index: ${longestItem}`)
     return longestItem
 }
-const fuse = (data) => {
-    const fuseOption = {
-        shouldSort: true,
-        threshold: 0.2,
-        location: 0,
-        distance: 100,
-        maxPatternLength: 32,
-        minMatchCharLength: 1,
-        keys: [
-            "label"
-        ]
-    }
 
-}
 
 const ItemsBox = (props) => {
-    const {state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch, onClickItem} = useContext(DropdownContext)
+    const {state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch, onClickItem, onSelectAll, valueFieldName, labelFieldName} = useContext(DropdownContext)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -57,7 +44,7 @@ const ItemsBox = (props) => {
         maxPatternLength: 32,
         minMatchCharLength: 1,
         keys: [
-            "label"
+            labelFieldName
         ]
     }
     const fuse = useMemo(() => new Fuse(data, fuseOption), [data, fuseOption])
@@ -65,63 +52,48 @@ const ItemsBox = (props) => {
         if (!itemWidth && !itemHeight && itemRef.current && itemRef.current.offsetWidth && itemRef.current.offsetHeight) {
             const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
             dispatch(setItemSizes({width, height: itemRef.current.offsetHeight}))
-            console.log('ref', itemRef.current.offsetWidth, itemRef.current.offsetHeight)
+            // console.log('ref', itemRef.current.offsetWidth, itemRef.current.offsetHeight)
         }
     }, [itemRef])
 
-    const onClickHandler = (value) => {
-        dispatch(clickOnItem(value))
+    const onClickHandler = (value, valueFieldName) => {
+        dispatch(clickOnItem(value, valueFieldName))
     }
 
-    const dataFilter = (template) => {
-        const start = Date.now()
-        const escTempl = template.replace(/[.*+?^${}()|[\]\\]/, '\\$&')
-        const res =  data.filter(item => (new RegExp(escTempl, 'i')).test(item.label))
-        console.log('js filter', Date.now() - start, res)
-        return res
-    }
     const fuseFilter = (template) => {
         if (!template) return data
-        const start = Date.now()
-        const res = fuse.search(template)
-        console.log('fuse filter', Date.now() - start, res.length)
-        return res
+        return fuse.search(template)
     }
 
     // const filteredData = dataFilter(inputValue)
     const fuseFiltered = fuseFilter(inputValue)
+    // calculate height of listBox depend on amount of items
+    const listBoxHeight = () => {
+        return !itemHeight ? maxHeight : (fuseFiltered.length * itemHeight > maxHeight ? maxHeight : fuseFiltered.length * itemHeight)
+    }
     //if haven't set sizes of item for List component mount the longest item and get its sizes
     if (!itemWidth && ! itemHeight) {
-        const longestItem = data[longestRowIndex({data, fieldName: 'label'})]
+        const longestItem = data[longestRowIndex({data, fieldName: labelFieldName})]
         return (
             <div css={css`
             max-height: ${maxHeight}px;
             overflow-y: auto;
         `}>
-                <div css={css`overflow-y: scroll`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
+                <div css={css`overflow-y: scroll`} ref={itemRef}><DropdownItem {...{value: longestItem[valueFieldName], label: longestItem[labelFieldName], checked: longestItem.checked }} /></div>
             </div>
         )
     }
-    // console.log(dataFilter(inputValue,data))
     return (
-        <List
-            className={st.List}
-            height={maxHeight}
-            itemCount={fuseFiltered.length}
-            itemSize={itemHeight}
-            width={itemWidth}
-        >
-            {DropdownItemFunc({data: fuseFiltered, onClick: onClickHandler})}
-        </List>
+         <List
+             className={st.List}
+             height={listBoxHeight()}
+             itemCount={fuseFiltered.length}
+             itemSize={itemHeight}
+             width={itemWidth}
+         >
+             {DropdownItemFunc({data: fuseFiltered, onClick: onClickHandler, valueFieldName, labelFieldName})}
+         </List>
     )
-}
-ItemsBox.propTypes = {
-    onClickItem: PropTypes.func,
-    filter: PropTypes.string
-}
-ItemsBox.defaultProps = {
-    onClickItem: (value) => console.log(`Click on '${value}'`),
-    filter: ''
 }
 export default ItemsBox
 

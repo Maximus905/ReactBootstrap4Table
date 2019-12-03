@@ -2,6 +2,7 @@
   "name": "react_table",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/Projects/ReactProjects/react_table/build/",
   "dependencies": {
     "@emotion/core": "^10.0.22",
     "@fortawesome/fontawesome-svg-core": "^1.2.25",

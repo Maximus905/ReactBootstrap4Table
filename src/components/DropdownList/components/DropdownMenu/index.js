@@ -9,8 +9,8 @@ const DropdownMenu = (props) => {
     const {fontRatio, maxWidth} = useContext(DropdownContext)
     return (
         <DropdownMenuBs css={css`
-            top: -5px !important;
-            left: 5px !important;
+            //top: -5px !important;
+            //left: 5px !important;
             font-size: ${fontRatio}rem;
             padding: 0;
             max-width: ${maxWidth}px;
@@ -20,8 +20,6 @@ const DropdownMenu = (props) => {
     )
 }
 DropdownMenu.propTypes = {
-    ...DropdownMenuBs.propTypes,
-    fontRatio: PropTypes.number,
-    maxWidth: PropTypes.number
+    ...DropdownMenuBs.propTypes
 }
 export default DropdownMenu

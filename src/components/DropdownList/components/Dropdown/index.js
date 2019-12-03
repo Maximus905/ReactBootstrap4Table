@@ -10,7 +10,7 @@ const Dropdown = (props) => {
     return (
         <DropdownBs css={css`
             font-size: ${fontRatio}rem;
-        `} {...props}>
+        `} {...props} >
             {props.children}
         </DropdownBs>
     )

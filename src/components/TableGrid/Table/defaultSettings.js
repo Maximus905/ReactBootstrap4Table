@@ -5,6 +5,28 @@ import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-sv
 import classNames from "classnames"
 import {TableContext} from '../TableContext'
 import Filters from "../../Filters";
+import DropdownList from "../../DropdownList";
+import faker from "faker";
+
+const fake = ((counter = 100) => {
+    const time = Date.now()
+    faker.locale = 'ru'
+    const res = []
+    for ( let i = 0; i < counter; i++ ) {
+        res.push({
+            lab: faker.name.findName(),
+            val: faker.name.lastName(),
+            checked: true
+        })
+    }
+    res.push({
+        lab: '',
+        val: 'empty',
+        checked: true
+    })
+    console.log('fake data has been generated: ', Date.now() - time)
+    return res
+})()
 
 const sortIcons = {
     desc: <FontAwesomeIcon icon={faLongArrowAltDown} size={"sm"} />,
@@ -12,7 +34,7 @@ const sortIcons = {
 }
 
 const DefaultHeaderCell = (props) => {
-    const {sorting, addSortAccessor, setSortAccessor} = useContext(TableContext)
+    const {sorting, addSortAccessor, setSortAccessor, tableBoxSizes: {bodyHeight}} = useContext(TableContext)
     const {columnSettings, columnSettings: {accessor}} = props
     const accessorList = sorting.map(item => Object.keys(item)[0])
     const index = (accessors, accessorName) => {
@@ -40,7 +62,8 @@ const DefaultHeaderCell = (props) => {
                 </div>
             </div>
             {/*<div><DropDown>test</DropDown></div>*/}
-            <div><Filters accessor={accessor}/></div>
+            {/*<div><Filters accessor={accessor}/></div>*/}
+            <div><DropdownList maxWidth={300} maxHeight={bodyHeight * 0.8} data={fake} direction="down" /></div>
         </div>
     </th>)
 }
