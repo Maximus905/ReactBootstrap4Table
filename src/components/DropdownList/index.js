@@ -9,7 +9,7 @@ import DropdownButton from "./components/DropdownButton"
 import SelectAllBox from "./components/SelectAll";
 import {Dropdown as DropdownBs} from "reactstrap";
 const DropdownList = (props) => {
-    const {data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, valueFieldName, labelFieldName, emptyWildcard, ...bsProps} = props
+    const {data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, ...bsProps} = props
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -52,14 +52,16 @@ DropdownList.propTypes = {
     emptyWildcard: PropTypes.string,
     valueFieldName: PropTypes.string,
     labelFieldName: PropTypes.string,
+    checkedFieldName: PropTypes.string,
 }
 DropdownList.defaultProps = {
     fontRatio: 0.8,
     emptyWildcard: '<пусто>',
     valueFieldName: 'val',
     labelFieldName: 'lab',
+    checkedFieldName: 'checked',
     onClickItem: (item) => {console.log('onClick Item', item)},
-    onSelectAll: () => {}
+    onSelectAll: (status) => {console.log('onSelectAll', status)}
 }
 
 export default DropdownList

@@ -10,7 +10,7 @@ import {DropdownContext} from "../../ContextProvider";
 
 
 
-const DropdownItem = ({value, label, checked, partlyChecked, onClick, valueFieldName, labelFieldName}) => {
+const DropdownItem = ({value, label, checked, partlyChecked, onClick}) => {
     const {emptyWildcard} = useContext(DropdownContext)
     const resLabel = label === emptyWildcard ? <span className={cssStyle.emptyItem}>{label}</span> : label
     return (
@@ -22,18 +22,15 @@ const DropdownItem = ({value, label, checked, partlyChecked, onClick, valueField
                 background-color: #dcdcdc;
                 color: #999
             }
-        `} className="text-truncate" onClick={() => onClick({[valueFieldName]: value, [labelFieldName]: label})} title={resLabel} >
+        `} className="text-truncate" onClick={() => onClick(value)} title={resLabel} >
             <CheckIcon checked={checked} partlyChecked={partlyChecked} />
             {resLabel}
         </DropdownItemBs>
     )
 }
 DropdownItem.propTypes = {
-    index: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    valueFieldName: PropTypes.string,
-    labelFieldName: PropTypes.string,
     checked: PropTypes.bool,
     partlyChecked: PropTypes.bool,
     onClick: PropTypes.func

@@ -11,5 +11,6 @@ export const initialState = {
     itemHeight: null,
     settingsOn: false,
     lastClicked: {value: null},
-    checkedItemsCounter: 0
+    checkedItems: 0,
+    lastClickSelectAll: 0
 }

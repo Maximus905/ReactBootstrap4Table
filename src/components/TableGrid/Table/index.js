@@ -51,14 +51,12 @@ function Table(props) {
     }
     function ctrlDownHandler(e) {
         if (!isCtrlPressed) {
-            console.log('ctrl down', e.ctrlKey)
             return dispatch(ctrlDown())
         }
 
     }
     function ctrlUpHandler(e) {
         if (isCtrlPressed) {
-            console.log('ctrl up', e.ctrlKey)
             return dispatch(ctrlUp())
         }
 

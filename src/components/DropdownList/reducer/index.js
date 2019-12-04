@@ -1,24 +1,31 @@
 import {CLICK_ON_ITEM, CHANGE_INPUT, SET_ITEM_SIZES, CHECK_ALL, CHANGE_MENU_MAX_HEIGHT} from "../constants/actions"
-import {useMemo} from "react";
 
 const rootReducer = (state, action) => {
     const {type, payload} = action
-    const checkedCounter = () => state.data.reduce((acc, item) => item.checked ? ++acc : acc, 0)
     switch (type) {
         case CLICK_ON_ITEM:
-            const lastClicked = {value: payload.value}
+            const lastClicked = {value: payload}
+            let checkedItems = 0
             const data = state.data.map(item => {
-                if (item[payload.valueFieldName] !== payload.value) return item
-                lastClicked.checked = !item.checked
-                return  {...item, checked: !item.checked}
+                if (item.value === payload) {
+                    checkedItems = !item.checked ? ++checkedItems : checkedItems
+                    lastClicked.checked = !item.checked
+                    return  {...item, checked: !item.checked}
+                }
+                checkedItems = item.checked ? ++checkedItems : checkedItems
+                return  item
             })
-            return {...state, data, lastClicked}
+            return {...state, data, lastClicked, checkedItems}
         case CHANGE_INPUT:
             return {...state, inputValue: payload}
         case SET_ITEM_SIZES:
             return {...state, itemWidth: payload.width, itemHeight: payload.height}
         case CHECK_ALL:
-            return {...state, data: state.data.map(item => ({...item, checked: payload}))}
+            return {...state,
+                data: state.data.map(item => ({...item, checked: payload})),
+                checkedItems: payload ? state.data.length : 0,
+                lastClickSelectAll: Date.now()
+            }
         case CHANGE_MENU_MAX_HEIGHT:
             return  {...state, maxHeight: payload}
         default:
