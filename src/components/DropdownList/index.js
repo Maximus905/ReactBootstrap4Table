@@ -25,7 +25,7 @@ const DropdownList = (props) => {
         }
     }
 
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
         return (
         <ContextProvider {...props} bdColor={bdColor} >
             <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {

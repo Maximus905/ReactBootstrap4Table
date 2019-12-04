@@ -8,7 +8,7 @@ import Filters from "../../Filters";
 import DropdownList from "../../DropdownList";
 import faker from "faker";
 
-const fake = ((counter = 10000) => {
+const fake = ((counter = 20000) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []

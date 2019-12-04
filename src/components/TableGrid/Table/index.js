@@ -50,13 +50,15 @@ function Table(props) {
         return dispatch(setSorting(accessor))
     }
     function ctrlDownHandler(e) {
-        if (!isCtrlPressed) {
+        if (!isCtrlPressed && e.ctrlKey) {
+            console.log('ctrlDownHandler', e.ctrlKey)
             return dispatch(ctrlDown())
         }
 
     }
     function ctrlUpHandler(e) {
-        if (isCtrlPressed) {
+        if (isCtrlPressed && !e.ctrlKey) {
+            console.log('ctrlUpHandler', e.ctrlKey)
             return dispatch(ctrlUp())
         }
 
@@ -110,10 +112,15 @@ function Table(props) {
         setSortAccessor
     }
 
+    const onFocusHandler = (e) => {console.log('onFocus tbox', e.target)}
+    const onFocusHandlerHeader = (e) => {
+        console.log('onFocus header', e.target)
+    }
+    const onBlurHandler = (e) => {console.log('onBlur tbox')}
     return (
         <Fragment>
             <TableContextProvider {...tableContext}>
-                <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox} onKeyDown={ctrlDownHandler} onKeyUp={ctrlUpHandler} tabIndex="0">
+                <div className={classNames(css.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox} onKeyDown={ctrlDownHandler} onKeyUp={ctrlUpHandler} tabIndex="-1">
                     <div className={classNames(css.tHdBdBox, "d-flex", "flex-column", "flex-grow-1")}>
                         <div className={classNames(css.tHdBox, "bg-light")} style={tableHdBoxSizeCss}>
                             <table className={classNames("table", {"table-sm": tableSmall, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless}, css.fixTableSizes)} style={tableSizeCss}>
