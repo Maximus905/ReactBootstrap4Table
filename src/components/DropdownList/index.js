@@ -1,4 +1,5 @@
 import React, {useState} from "react"
+import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
 import Dropdown from "./components/Dropdown";
@@ -9,7 +10,7 @@ import DropdownButton from "./components/DropdownButton"
 import SelectAllBox from "./components/SelectAll";
 import {Dropdown as DropdownBs} from "reactstrap";
 const DropdownList = (props) => {
-    const {data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, ...bsProps} = props
+    const {data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, opened, ...bsProps} = props
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -25,7 +26,7 @@ const DropdownList = (props) => {
         }
     }
 
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(opened)
         return (
         <ContextProvider {...props} bdColor={bdColor} >
             <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {
@@ -53,6 +54,7 @@ DropdownList.propTypes = {
     valueFieldName: PropTypes.string,
     labelFieldName: PropTypes.string,
     checkedFieldName: PropTypes.string,
+    opened: PropTypes.bool
 }
 DropdownList.defaultProps = {
     fontRatio: 0.8,
@@ -60,6 +62,7 @@ DropdownList.defaultProps = {
     valueFieldName: 'val',
     labelFieldName: 'lab',
     checkedFieldName: 'checked',
+    opened: false,
     onClickItem: (item) => {console.log('onClick Item', item)},
     onSelectAll: (status) => {console.log('onSelectAll', status)}
 }

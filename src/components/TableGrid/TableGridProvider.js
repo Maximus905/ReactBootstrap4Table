@@ -1,5 +1,6 @@
 import React, {useReducer, createContext} from 'react'
-import rootReducer, {initialState, dispatchMiddleware} from './reducer'
+import rootReducer, {dispatchMiddleware} from './reducer'
+import {initialState} from "./constants/initial";
 
 export const TableGridContext = createContext()
 

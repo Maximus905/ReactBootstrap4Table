@@ -7,13 +7,13 @@ import {changeMenuMaxHeight} from "../actions";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName} = props
+    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, isOpen} = props
     let checkedItems = 0
     const replaceEmptyLabels = () => data.map(item => {
         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
         return  item[labelFieldName]
-            ? {...item, value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
-            : {...item, value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
+            ? {value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
+            : {value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
     })
     const convertData = () => data.map(item => {
         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems

@@ -1,6 +1,5 @@
 /**
- *
- * @type {{data: [], inputValue: string, itemWidth: number, itemHeight: number, longestItemIdx: number}}
+ * @type {DropDownStateShape} initialState
  */
 export const initialState = {
     data: [],

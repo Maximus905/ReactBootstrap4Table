@@ -63,9 +63,6 @@ function Table(props) {
         }
 
     }
-    // window.updateData = updateData
-    // window.addSort = addSortAccessor
-    // window.setSort = setSortAccessor
     //calculate table and columns settings and sizes
     // TODO: rewrite to using useMemo hook
     const columnsSettings = columns.map(column => Object.assign(defaultColumnSettings(column), column))
@@ -112,11 +109,6 @@ function Table(props) {
         setSortAccessor
     }
 
-    const onFocusHandler = (e) => {console.log('onFocus tbox', e.target)}
-    const onFocusHandlerHeader = (e) => {
-        console.log('onFocus header', e.target)
-    }
-    const onBlurHandler = (e) => {console.log('onBlur tbox')}
     return (
         <Fragment>
             <TableContextProvider {...tableContext}>

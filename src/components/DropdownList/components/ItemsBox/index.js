@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import {useState, createRef, useEffect, useRef, useContext, useMemo} from 'react'
+import {createRef, useEffect, useContext, useMemo} from 'react'
 import PropTypes from 'prop-types'
 import {css, jsx} from "@emotion/core";
 import {FixedSizeList as List} from "react-window"
@@ -34,7 +34,7 @@ const longestRowIndex = ({data, fieldName}) => {
 
 
 const ItemsBox = (props) => {
-    const {state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch, onClickItem, onSelectAll} = useContext(DropdownContext)
+    const {state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -86,6 +86,7 @@ const ItemsBox = (props) => {
             </div>
         )
     }
+
     return (
          <List
              className={st.List}

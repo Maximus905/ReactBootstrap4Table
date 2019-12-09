@@ -1,36 +1,50 @@
-/**
- * store structure:
- * @typedef {{
- *     lid: string,
- *     office: string,
- *     didInvalidate: boolean,
- *     isLoading: boolean
- *     isSelected: boolean,
- *     isEdited: boolean
- * }} rowData
- * @typedef {{
- *      data: rowData[],
- *      sorting: Array,
- *      isCtrlPressed: boolean,
- *      didInvalidate: boolean,
- *      isLoading: boolean,
- * }} storage
- */
-
-import {START_LOADING_ALL_DATA, REQUEST_DATA, RECEIVE_DATA, INVALIDATE_DATA, ADD_SORTING, SET_SORTING, CTRL_DOWN, CTRL_UP} from '../constants/actions'
-import {receiveData, loadingData, ctrlDown, ctrlUp} from '../actions'
+import {
+    START_LOADING_ALL_DATA, REQUEST_DATA, RECEIVE_DATA, INVALIDATE_DATA,
+    ADD_SORTING, SET_SORTING,
+    CTRL_DOWN, CTRL_UP,
+    SET_FILTER_TYPE, SET_FILTER_VALUE, ADD_FILTER_VALUE, REMOVE_FILTER_VALUE} from '../constants/actions'
+import {receiveData, loadingData} from '../actions'
 import {changeSorting} from './helpers'
+import {filterTemplate} from "../constants/initial";
 
 /**
- *
- * @type {storage} initialState
+ * @param {Filter} filter
+ * @param {string} accessor
+ * @param {FilterTypeItem} filterType
+ * @return {Filter}
  */
-export const initialState = {
-    data: [],
-    sorting: [],
-    isCtrlPressed: false,
-    isLoading: false,
-    didInvalidate: true,
+const setFilterType = (filter, accessor, filterType) => {
+    const item = {
+        ...filterTemplate,
+        predicate: filterType.value,
+        loadFromServer: filterType.loadFromServer,
+        didInvalidate: filterType.loadFromServer
+    }
+    return {...filter, [accessor]: item}
+}
+const setFilterValue = (filter, accessor, value) => {
+    return { ...filter, [accessor]: { ...filter[accessor], value: [value] } }
+}
+const addFilterValue = (filter, accessor, value) => {
+    const current = filter[accessor]
+
+    return { ...filter,
+        [accessor]: { ...current,
+            value: current.value.includes(value)
+                ? current.value
+                : current.value.push(value)
+        }
+    }
+}
+const remFilterValue = (filter, accessor, value) => {
+    const current = filter[accessor]
+    return { ...filter,
+        [accessor]: { ...current,
+            value: current.value.includes(value)
+                ? current.value.filter(item => item !== value)
+                : current.value
+        }
+    }
 }
 
 /**
@@ -56,7 +70,12 @@ export function dispatchMiddleware(dispatch) {
     }
 }
 
-
+/**
+ *
+ * @param {StateShape} state
+ * @param action
+ * @return {StateShape}
+ */
 const rootReducer = (state, action) => {
     console.log('reducer isLoading', state.isLoading, action)
     console.log('reducer didInvalidate', state.didInvalidate)
@@ -76,6 +95,14 @@ const rootReducer = (state, action) => {
             return {...state, isCtrlPressed: true}
         case CTRL_UP:
             return {...state, isCtrlPressed: false}
+        case SET_FILTER_TYPE:
+            return {...state, filter: setFilterType(state.filter, payload.accessor, payload.type)}
+        case SET_FILTER_VALUE:
+            return {...state, filter: setFilterValue(state.filter, payload.accessor, payload.type)}
+        case ADD_FILTER_VALUE:
+            return {...state, filter: addFilterValue(state.filter, payload.accessor, payload.type)}
+        case REMOVE_FILTER_VALUE:
+            return {...state, filter: remFilterValue(state.filter, payload.accessor, payload.type)}
         default:
             return state
     }

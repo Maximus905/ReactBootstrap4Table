@@ -1,3 +1,4 @@
+import './typeDefs'
 import React from 'react'
 import PropTypes from 'prop-types'
 import TableGridProvider from './TableGridProvider'

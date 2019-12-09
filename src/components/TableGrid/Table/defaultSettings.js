@@ -4,11 +4,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
 import classNames from "classnames"
 import {TableContext} from '../TableContext'
-import Filters from "../../Filters";
+// import Filters from "../../Filters";
 import DropdownList from "../../DropdownList";
+import {filterType} from "../constants/filters";
 import faker from "faker";
 
-const fake = ((counter = 20000) => {
+const fake = ((counter = 1000) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []
@@ -125,8 +126,7 @@ export const defaultColumnSettings = (columnProps) => ({
     filterable: false,
     filter: {
         filterBy: columnProps.accessor,
-        operator: '=',
-        operatorsList: [{'=': '='}]
+        type: filterType.EQ
     },
     sortable: true,
     renderCell: columnProps.renderCell ? columnProps.renderCell : renderCellDefault,
