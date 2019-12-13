@@ -1,3 +1,4 @@
+import React from 'react'
 import { configure, addParameters, addDecorator } from '@storybook/react';
 import {themes} from '@storybook/theming'
 import '@storybook/addon-console'

@@ -21,12 +21,14 @@ export const tableConfig = {
             accessor: 'loc',
             minWidth: 200,
             maxWidth: 750,
+            filterable: true
         },
         {
             title: 'Адрес',
             accessor: 'addr',
             minWidth: 200,
             maxWidth: 750,
+            filterable: true
         },
         {
             title: 'Регион',

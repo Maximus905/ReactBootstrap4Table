@@ -66,14 +66,19 @@ function Table(props) {
     //calculate table and columns settings and sizes
     // TODO: rewrite to using useMemo hook
     const columnsSettings = columns.map(column => Object.assign(defaultColumnSettings(column), column))
+    console.log('111', columns)
     const visibleColumns = columnsSettings.filter(column => column.isVisible)
     const visibleColumnsSizesSettings = visibleColumns.filter(column => column.isVisible).map(column => ({
         minWidth: column.minWidth,
         maxWidth: column.maxWidth
     }))
     const calculatedVisibleColumnsSizes = calculateColumnsSizes(tableBoxSizes.width, scrollsSizes, visibleColumnsSizesSettings)
-    const visibleColumnsSettings = ((columnsSettings, columnsSizes) => columnsSettings.map((column, index) => Object.assign(column, {width: columnsSizes[index].width})))(visibleColumns, calculatedVisibleColumnsSizes)
 
+    const visibleColumnsSettings = ((columnsSettings, columnsSizes) => columnsSettings.map((column, index) => Object.assign(column, {width: columnsSizes[index].width})))(visibleColumns, calculatedVisibleColumnsSizes)
+    console.log('col settings', visibleColumnsSettings)
+
+    const visibleColumnsFiltersSettings = visibleColumnsSettings.reduce((acc, column) => column.filterable ? {...acc, [column.accessor]: column.filter} : acc, {})
+console.log(visibleColumnsFiltersSettings)
     const tableSettings = Object.assign(defaultTableSettings(), table, {widthPx: calculatedVisibleColumnsSizes.reduce((sumWidth, column) => sumWidth + column.width, 0)})
     const {tableSmall, tableStriped, tableDark, tableBordered, tableBorderless, tableHover} = tableSettings
     // CSS style objects for table
@@ -102,6 +107,7 @@ function Table(props) {
         tableSettings,
         columnsSettings,
         visibleColumnsSettings,
+        visibleColumnsFiltersSettings,
         scrollsSizes,
         custom,
         updateData,

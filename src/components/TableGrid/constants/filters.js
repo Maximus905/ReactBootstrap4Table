@@ -12,5 +12,5 @@ export const filterType = {
     GE: {value: 'GE', label: '>='},
     STARTING: {value: 'STARTING', label: 'начинается с'},
     ENDING: {value: 'ENDING', label: 'заканчивается на'},
-    ONE_OF: {value: 'ONE_OF', label: 'список', loadFromServer: true}
+    LIST: {value: 'LIST', label: 'список', loadFromServer: true}
 }

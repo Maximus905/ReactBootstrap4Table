@@ -5,8 +5,9 @@ import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-sv
 import classNames from "classnames"
 import {TableContext} from '../TableContext'
 // import Filters from "../../Filters";
-import DropdownList from "../../DropdownList";
+import Filter from "../../Filter";
 import {filterType} from "../constants/filters";
+import {columnFilterSettingsTemplate} from "../constants/initial";
 import faker from "faker";
 
 const fake = ((counter = 1000) => {
@@ -64,7 +65,7 @@ const DefaultHeaderCell = (props) => {
             </div>
             {/*<div><DropDown>test</DropDown></div>*/}
             {/*<div><Filters accessor={accessor}/></div>*/}
-            <div><DropdownList maxWidth={300} maxHeight={bodyHeight * 0.8} data={fake} direction="down" /></div>
+            <div><Filter maxWidth={300} maxHeight={bodyHeight * 0.8} data={fake} direction="down" /></div>
         </div>
     </th>)
 }
@@ -117,18 +118,24 @@ export const defaultTableSettings = () => ({
     renderHeaderRow: renderHeaderRowDefault,
 })
 
-export const defaultColumnSettings = (columnProps) => ({
-    title: '',
-    accessor: '',
-    minWidth: 0, // min column width in px
-    maxWidth: 0, // min column width in px
-    isVisible: true,
-    filterable: false,
-    filter: {
-        filterBy: columnProps.accessor,
-        type: filterType.EQ
-    },
-    sortable: true,
-    renderCell: columnProps.renderCell ? columnProps.renderCell : renderCellDefault,
-    renderHeaderCell: columnProps.renderHeaderCell ? columnProps.renderHeaderCell : renderHeaderCellDefault
-})
+/**
+ *
+ * @param columnProps
+ * @return {ColumnShape}
+ */
+export const defaultColumnSettings = (columnProps) => {
+    const {filter, accessor} = columnProps
+    const columnFilter = filter ? {...columnFilterSettingsTemplate(accessor), ...filter} : columnFilterSettingsTemplate(accessor)
+    return ({
+        title: '',
+        accessor: '',
+        minWidth: 0, // min column width in px
+        maxWidth: 0, // min column width in px
+        isVisible: true,
+        filterable: false,
+        filter: columnFilter,
+        sortable: true,
+        renderCell: columnProps.renderCell ? columnProps.renderCell : renderCellDefault,
+        renderHeaderCell: columnProps.renderHeaderCell ? columnProps.renderHeaderCell : renderHeaderCellDefault
+    })
+}

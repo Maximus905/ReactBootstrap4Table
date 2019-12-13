@@ -8,27 +8,27 @@ import {changeSorting} from './helpers'
 import {filterTemplate} from "../constants/initial";
 
 /**
- * @param {Filter} filter
+ * @param {Filters} filters
  * @param {string} accessor
  * @param {FilterTypeItem} filterType
- * @return {Filter}
+ * @return {Filters}
  */
-const setFilterType = (filter, accessor, filterType) => {
+const setFilterType = (filters, accessor, filterType) => {
     const item = {
         ...filterTemplate,
         predicate: filterType.value,
         loadFromServer: filterType.loadFromServer,
         didInvalidate: filterType.loadFromServer
     }
-    return {...filter, [accessor]: item}
+    return {...filters, [accessor]: item}
 }
-const setFilterValue = (filter, accessor, value) => {
-    return { ...filter, [accessor]: { ...filter[accessor], value: [value] } }
+const setFilterValue = (filters, accessor, value) => {
+    return { ...filters, [accessor]: { ...filters[accessor], value: [value] } }
 }
-const addFilterValue = (filter, accessor, value) => {
-    const current = filter[accessor]
+const addFilterValue = (filters, accessor, value) => {
+    const current = filters[accessor]
 
-    return { ...filter,
+    return { ...filters,
         [accessor]: { ...current,
             value: current.value.includes(value)
                 ? current.value
@@ -36,9 +36,9 @@ const addFilterValue = (filter, accessor, value) => {
         }
     }
 }
-const remFilterValue = (filter, accessor, value) => {
-    const current = filter[accessor]
-    return { ...filter,
+const remFilterValue = (filters, accessor, value) => {
+    const current = filters[accessor]
+    return { ...filters,
         [accessor]: { ...current,
             value: current.value.includes(value)
                 ? current.value.filter(item => item !== value)
@@ -96,13 +96,13 @@ const rootReducer = (state, action) => {
         case CTRL_UP:
             return {...state, isCtrlPressed: false}
         case SET_FILTER_TYPE:
-            return {...state, filter: setFilterType(state.filter, payload.accessor, payload.type)}
+            return {...state, filters: setFilterType(state.filters, payload.accessor, payload.type)}
         case SET_FILTER_VALUE:
-            return {...state, filter: setFilterValue(state.filter, payload.accessor, payload.type)}
+            return {...state, filters: setFilterValue(state.filters, payload.accessor, payload.type)}
         case ADD_FILTER_VALUE:
-            return {...state, filter: addFilterValue(state.filter, payload.accessor, payload.type)}
+            return {...state, filters: addFilterValue(state.filters, payload.accessor, payload.type)}
         case REMOVE_FILTER_VALUE:
-            return {...state, filter: remFilterValue(state.filter, payload.accessor, payload.type)}
+            return {...state, filters: remFilterValue(state.filters, payload.accessor, payload.type)}
         default:
             return state
     }

@@ -3,7 +3,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TableGridProvider from './TableGridProvider'
 import Table from './Table'
+import {filterType} from "./constants/filters";
 
+/**
+ *
+ * @param props
+ * @return {*}
+ * @constructor
+ */
 const TableGrid = props => {
     const {table, columns, getTableData, custom} = props
     const tableGridContext = {
@@ -43,17 +50,17 @@ TableGrid.propTypes = {
         isVisible: PropTypes.bool,
         filterable: PropTypes.bool,
         filter: PropTypes.shape({
-            filterBy: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-            operator: PropTypes.string,
-            operatorsList: PropTypes.arrayOf(PropTypes.object), // array of available operators [{operatorValue: operatorName}]
+            accessor: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+            type: PropTypes.oneOf(Object.keys(filterType)),
+            allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
         }),
         renderCell: PropTypes.func,
         renderHeaderCell: PropTypes.func,
     })),
     globalFilter: PropTypes.shape({
-        filterBy: PropTypes.arrayOf(PropTypes.string),
-        operator: PropTypes.string,
-        operatorsList: PropTypes.arrayOf(PropTypes.object),
+        accessor: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+        type: PropTypes.oneOf(Object.keys(filterType)),
+        allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
     }),
     getTableData: PropTypes.func, // should return array of objects
     custom: PropTypes.objectOf(PropTypes.any)

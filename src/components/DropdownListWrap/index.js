@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import faker from 'faker'
-import DropdownList from "../DropdownList";
+import Filter from "../Filter";
 
 const fake = ((counter = 10000) => {
     const time = Date.now()
@@ -41,6 +41,6 @@ const DropdownListWrap = (props) => {
     const onClickItem = (value) => {
         console.log('ext onClick', value)
     }
-    return <DropdownList data={fakeIp} maxHeight={300} maxWidth={400} onClickItem={onClickItem} />
+    return <Filter data={fakeIp} maxHeight={300} maxWidth={400} onClickItem={onClickItem} />
 }
 export default DropdownListWrap

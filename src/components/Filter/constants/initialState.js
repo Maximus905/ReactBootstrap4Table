@@ -8,8 +8,10 @@ export const initialState = {
     inputValue: '',
     itemWidth: null,
     itemHeight: null,
+    settingItemWidth: null,
+    settingItemHeight: null,
     settingsOn: false,
-    lastClicked: {value: null},
+    lastClicked: {value: null, checked: false}, // for saving last clicked item from list
     checkedItems: 0,
     lastClickSelectAll: 0
 }

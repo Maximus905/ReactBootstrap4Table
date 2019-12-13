@@ -13,7 +13,7 @@
  * @type {Object}
  * @property {Array.<RowDataShape>} data
  * @property {Array.<string>} sorting
- * @property {Filter} filter
+ * @property {Filters} filters
  * @property {boolean} isCtrlPressed
  * @property {boolean} isLoading
  * @property {boolean} didInvalidate
@@ -35,6 +35,46 @@
  * @property{boolean} isLoading
  */
 /**
- * @typedef Filter
+ * @typedef Filters
  * @type {Object.<string, FilterItemShape>}
  */
+
+/**
+ * TableGrid component props
+ * @typedef TableGridProps
+ * @type {Object}
+ * @property {TableProps} table
+ * @property {ColumnsProps} columns
+ * @property {function} getTableData
+ * @property {Object} custom
+ */
+/**
+ * @typedef TableProps
+ * @type {Object}
+ */
+/**
+ * @typedef ColumnsProps
+ * @type {Object}
+ */
+/**
+ * @typedef ColumnShape
+ * @type {Object}
+ * @property {string} title
+ * @property {string} accessor
+ * @property {number} minWidth
+ * @property {number} maxWidth
+ * @property {boolean} isVisible
+ * @property {boolean} filterable
+ * @property {ColumnFilterSettings} filter
+ * @property {boolean} sortable
+ * @property {function} renderCell
+ * @property {function} renderHeaderCell
+ */
+/**
+ * @typedef ColumnFilterSettings
+ * @type {Object}
+ * @property {string} accessor
+ * @property {Object} type
+ * @property {Array.<string>} allowedTypes
+ */
+

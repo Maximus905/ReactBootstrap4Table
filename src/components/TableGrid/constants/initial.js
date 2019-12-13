@@ -6,7 +6,7 @@ import {filterType} from "./filters";
 export const initialState = {
     data: [],
     sorting: [],
-    filter: {},
+    filters: {},
     isCtrlPressed: false,
     isLoading: false,
     didInvalidate: true,
@@ -21,3 +21,9 @@ export const filterTemplate = {
     didInvalidate: false,
     isLoading: false
 }
+
+export const columnFilterSettingsTemplate = (accessor) => ({
+    accessor,
+    type: filterType.EQ,
+    allowedTypes: Object.keys(filterType)
+})
