@@ -1,5 +1,6 @@
 import {renderCellTest}  from './renderFunctions'
 import {getDataRemote} from './async/server'
+import {filterType as ft} from "../TableGrid/constants/filters";
 
 export const tableConfig = {
     getTableData: getDataRemote,
@@ -28,7 +29,12 @@ export const tableConfig = {
             accessor: 'addr',
             minWidth: 200,
             maxWidth: 750,
-            filterable: true
+            filterable: true,
+            filter: {
+                accessor: 'addr_alt',
+                type: 'LIST',
+                allowedTypes: [ft.EQ.value, ft.LIST.value]
+            }
         },
         {
             title: 'Регион',

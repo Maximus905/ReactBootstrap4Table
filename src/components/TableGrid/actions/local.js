@@ -8,7 +8,6 @@ import {
     REMOVE_FILTER_VALUE,
     SET_FILTER_VALUE,
     SET_FILTER_TYPE,
-    SET_COLUMN_FILTER_TYPE
 } from '../constants/actions'
 
 export const invalidateData = () => ({type: INVALIDATE_DATA})

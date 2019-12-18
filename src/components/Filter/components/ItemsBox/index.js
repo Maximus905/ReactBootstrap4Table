@@ -1,7 +1,6 @@
 /** @jsx jsx */
 
 import {createRef, useEffect, useContext, useMemo} from 'react'
-import PropTypes from 'prop-types'
 import {css, jsx} from "@emotion/core";
 import {FixedSizeList as List} from "react-window"
 import st from './style.module.css'
@@ -24,12 +23,10 @@ const DropdownItemFunc = (props) => (listProps) => {
 
 // calculate the widest row in list
 const longestRowIndex = ({data, fieldName}) => {
-    const longestItem = data.reduce((acc, item, index) => {
+    return data.reduce((acc, item, index) => {
         const length = item[fieldName].length
         return length > data[acc][fieldName].length ? index : acc
     }, 0)
-    // console.log(`longest item index: ${longestItem}`)
-    return longestItem
 }
 
 
@@ -52,7 +49,6 @@ const ItemsBox = (props) => {
         if (!itemWidth && !itemHeight && itemRef.current && itemRef.current.offsetWidth && itemRef.current.offsetHeight) {
             const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
             dispatch(setItemSizes({width, height: itemRef.current.offsetHeight}))
-            // console.log('ref', itemRef.current.offsetWidth, itemRef.current.offsetHeight)
         }
     }, [itemRef])
 

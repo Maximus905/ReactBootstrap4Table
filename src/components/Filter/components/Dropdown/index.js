@@ -1,5 +1,4 @@
 /**@jsx jsx */
-import PropTypes from 'prop-types'
 import {Dropdown as DropdownBs} from "reactstrap";
 import {css, jsx} from "@emotion/core";
 import {DropdownContext} from "../../ContextProvider";

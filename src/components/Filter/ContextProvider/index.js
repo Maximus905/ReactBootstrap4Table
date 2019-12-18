@@ -7,7 +7,7 @@ import {changeMenuMaxHeight} from "../actions";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, showSettingsTrigger, filterSettings} = props
+    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings} = props
     let checkedItems = 0
     const replaceEmptyLabels = () => data.map(item => {
         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
@@ -26,14 +26,13 @@ export const ContextProvider = (props) => {
     }, [maxHeight])
     useEffect(() => {
         if (state.lastClicked.value !== null) onClickItem(state.lastClicked)
-    }, [state.lastClicked])
+    }, [state.lastClicked, onClickItem])
     useEffect(() => {
-        console.log('selectAll', state.checkedItems === state.data.length)
         onSelectAll(state.checkedItems === state.data.length)
-    }, [state.lastClickSelectAll]);
+    }, [state.checkedItems, onSelectAll, state.data.length]);
 
     return (
-        <DropdownContext.Provider value={{state, dispatch, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, showSettingsTrigger, filterSettings}}>
+        <DropdownContext.Provider value={{state, dispatch, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings}}>
             {children}
         </DropdownContext.Provider>
     )
@@ -43,11 +42,13 @@ ContextProvider.propTypes = {
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
     onClickItem: PropTypes.func,
+    onClickSaveSettings: PropTypes.func,
     fontRatio: PropTypes.number,
     emptyWildcard: PropTypes.string,
     bdColor: PropTypes.string,
     valueFieldName: PropTypes.string,
     labelFieldName: PropTypes.string,
     checkedFieldName: PropTypes.string,
-    showSettingsTrigger: PropTypes.func
+    openSettingsMenu: PropTypes.func,
+    closeSettingsMenu: PropTypes.func,
 }

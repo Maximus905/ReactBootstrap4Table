@@ -16,7 +16,7 @@ import {filterTemplate} from "../constants/initial";
 const setFilterType = (filters, accessor, filterType) => {
     const item = {
         ...filterTemplate,
-        predicate: filterType.value,
+        type: filterType.value,
         loadFromServer: filterType.loadFromServer,
         didInvalidate: filterType.loadFromServer
     }

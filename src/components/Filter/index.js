@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from "react"
+import React, {useState, Fragment, useEffect} from "react"
 import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
@@ -12,9 +12,10 @@ import {Dropdown as DropdownBs} from "reactstrap";
 import SettingsBox from "./components/SettingsBox";
 import SettingsHeader from "./components/SettingsHeader";
 import {filterType} from "../TableGrid/constants/filters";
+import SimpleSearch from "./filters/SimpleSearch";
 
 const Filter = (props) => {
-    const {data, maxHeight, maxWidth, onClickItem, onSelectAll, onClickSettingsItem, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, opened, openSettings, filterSettings, ...bsProps} = props
+    const {accessor, data, maxHeight, maxWidth, onClickItem, onSelectAll, onClickSettingsItem, onSaveSettings, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, opened, openSettings, filterSettings, ...bsProps} = props
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -33,19 +34,34 @@ const Filter = (props) => {
     const [isOpen, setIsOpen] = useState(opened)
     const [showSettings, setShowSettings] = useState(openSettings)
     //settings list
-    const initialSettingList = filterSettings.allowedTypes.map(key => ({
-        value: filterType[key].value,
-        label: filterType[key].label,
-        checked: filterType[key].value === filterSettings.type.value,
-    }))
+    const initialSettingList = filterSettings && filterSettings.allowedTypes.map(key => {
+        return ({
+            value: filterType[key].value,
+            label: filterType[key].label,
+            checked: filterType[key].value === filterSettings.type,
+        })
+    })
     const [settingList, setSettingList] = useState(initialSettingList)
+
+    const closeSettingsMenu = () => {
+        setShowSettings(false)
+    }
+    const openSettingsMenu = () => {
+        setShowSettings(true)
+    }
+    const onClickSaveSettings = ((accessor) => () => {
+        const newType = settingList.reduce((acc, item) => item.checked ? acc = item.value : acc, '')
+        console.log('set new filter', newType)
+        onSaveSettings(accessor, newType)
+        closeSettingsMenu()
+    })(accessor)
+
+    useEffect(() => {
+        onClickSaveSettings()
+    }, [settingList])
+
     const onClickSettingItem = (value) => {
         setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
-    }
-
-    const showSettingsTrigger = () => {
-        setShowSettings(!showSettings)
-        console.log('showSettings', showSettings)
     }
     const DropdownFilter = () => (
         <Fragment>
@@ -60,14 +76,32 @@ const Filter = (props) => {
             <SettingsBox settingList={settingList} onClick={onClickSettingItem} />
         </Fragment>
     )
+    const filter = () => {
+        switch (filterSettings.type) {
+            case 'EQ':
+            case 'NE':
+            case 'LT':
+            case 'LE':
+            case 'GT':
+            case 'GE':
+            case 'STARTING':
+            case 'ENDING':
+                return <SimpleSearch filterType={filterSettings.type} />
+            case 'LIST':
+                return <DropdownFilter />
+            default:
+                return <div>Фильтр не выбран</div>
+
+        }
+    }
     return (
-        <ContextProvider {...props} bdColor={bdColor} showSettingsTrigger={showSettingsTrigger} >
+        <ContextProvider {...props} bdColor={bdColor} openSettingsMenu={openSettingsMenu} closeSettingsMenu={closeSettingsMenu}  onClickSaveSettings={onClickSaveSettings} >
             <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {
                 e.stopPropagation()
-            }} >
+            }}>
                 <DropdownButton/>
                 <DropdownMenu modifiers={{offset}} >
-                    { !showSettings && <DropdownFilter />}
+                    { !showSettings && filter()}
                     { showSettings && <SettingsMenu />}
                 </DropdownMenu>
             </Dropdown>
@@ -76,12 +110,14 @@ const Filter = (props) => {
 }
 Filter.propTypes = {
     ...DropdownBs.propTypes,
+    accessor: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
-    onClickItem: PropTypes.func, // last clicked item object is passed as argument
-    onSelectAll: PropTypes.func, // SelectAll checkbox status (true|false) is passed as argument
+    onClickItem: PropTypes.func, // for dropdown list filter: involved after click on item of filter list (last clicked item object is passed as argument)
+    onSelectAll: PropTypes.func, // for dropdown list filter: SelectAll checkbox status (true|false) is passed as argument
     onClickSettingsItem: PropTypes.func, // handler for clicking on Settings menu item
+    onSaveSettings: PropTypes.func, //ext handler for saving filter setting. (accessor, newType)
     fontRatio: PropTypes.number,
     emptyWildcard: PropTypes.string,
     valueFieldName: PropTypes.string,
@@ -90,14 +126,10 @@ Filter.propTypes = {
     opened: PropTypes.bool,
     openSettings: PropTypes.bool,
     filterSettings: PropTypes.shape({
-        accessor: PropTypes.string,
+        filterBy: PropTypes.string,
         allowedTypes: PropTypes.arrayOf(PropTypes.string),
-        type: PropTypes.shape({
-            value: PropTypes.string,
-            label: PropTypes.string,
-            loadFromServer: PropTypes.bool
-        })
-    })
+        type: PropTypes.string
+    }),
 }
 Filter.defaultProps = {
     fontRatio: 0.8,

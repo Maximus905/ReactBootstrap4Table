@@ -74,7 +74,7 @@
  * @typedef ColumnFilterSettings
  * @type {Object}
  * @property {string} accessor
- * @property {Object} type
+ * @property {string} type
  * @property {Array.<string>} allowedTypes
  */
 

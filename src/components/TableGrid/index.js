@@ -50,7 +50,7 @@ TableGrid.propTypes = {
         isVisible: PropTypes.bool,
         filterable: PropTypes.bool,
         filter: PropTypes.shape({
-            accessor: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+            filterBy: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
             type: PropTypes.oneOf(Object.keys(filterType)),
             allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
         }),

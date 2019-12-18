@@ -1,7 +1,6 @@
 /**@jsx jsx*/
 import {DropdownMenu as DropdownMenuBs} from "reactstrap"
 import {css, jsx} from "@emotion/core"
-import PropTypes from 'prop-types'
 import {DropdownContext} from "../../ContextProvider";
 import {useContext} from "react";
 

@@ -1,4 +1,4 @@
-import {CLICK_ON_ITEM, CHANGE_INPUT, SET_ITEM_SIZES, SET_SETTINGS_ITEM_SIZES, CHECK_ALL, CHANGE_MENU_MAX_HEIGHT} from "../constants/actions"
+import {CLICK_ON_ITEM, CLICK_ON_SETTINGS_ITEM, CHANGE_INPUT, SET_ITEM_SIZES, SET_SETTINGS_ITEM_SIZES, CHECK_ALL, CHANGE_MENU_MAX_HEIGHT} from "../constants/actions"
 
 const rootReducer = (state, action) => {
     const {type, payload} = action
@@ -16,6 +16,9 @@ const rootReducer = (state, action) => {
                 return  item
             })
             return {...state, data, lastClicked, checkedItems}
+        case CLICK_ON_SETTINGS_ITEM:
+            const lastChosenSetting = {value: payload}
+            return {...state, lastChosenSetting}
         case CHANGE_INPUT:
             return {...state, inputValue: payload}
         case SET_ITEM_SIZES:

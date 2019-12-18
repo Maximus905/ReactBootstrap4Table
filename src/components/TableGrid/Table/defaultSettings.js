@@ -6,7 +6,6 @@ import classNames from "classnames"
 import {TableContext} from '../TableContext'
 // import Filters from "../../Filters";
 import Filter from "../../Filter";
-import {filterType} from "../constants/filters";
 import {columnFilterSettingsTemplate} from "../constants/initial";
 import faker from "faker";
 
@@ -36,8 +35,9 @@ const sortIcons = {
 }
 
 const DefaultHeaderCell = (props) => {
-    const {sorting, addSortAccessor, setSortAccessor, tableBoxSizes: {bodyHeight}} = useContext(TableContext)
-    const {columnSettings, columnSettings: {accessor}} = props
+    const {sorting, addSortAccessor, setSortAccessor, tableBoxSizes: {bodyHeight}, visibleFiltersSettings, changeColumnFilterType} = useContext(TableContext)
+    const {columnSettings, columnSettings: {accessor, filterable}} = props
+    console.log('DefaultHeaderCell', accessor,  visibleFiltersSettings)
     const accessorList = sorting.map(item => Object.keys(item)[0])
     const index = (accessors, accessorName) => {
         if (accessors.length <= 1) return undefined
@@ -63,9 +63,7 @@ const DefaultHeaderCell = (props) => {
                     {getSortIcon()}{sortIndex && sortIndex > 0 ? <span>{sortIndex}</span> : ''}
                 </div>
             </div>
-            {/*<div><DropDown>test</DropDown></div>*/}
-            {/*<div><Filters accessor={accessor}/></div>*/}
-            <div><Filter maxWidth={300} maxHeight={bodyHeight * 0.8} data={fake} direction="down" /></div>
+            <div>{filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={bodyHeight * 0.8} data={fake} direction="down" filterSettings={visibleFiltersSettings[accessor]} onSaveSettings={changeColumnFilterType} />}</div>
         </div>
     </th>)
 }

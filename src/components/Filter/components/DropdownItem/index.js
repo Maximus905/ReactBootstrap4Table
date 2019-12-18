@@ -4,7 +4,6 @@ import {DropdownItem as DropdownItemBs} from "reactstrap";
 import {css, jsx} from "@emotion/core";
 import PropTypes from "prop-types";
 import CheckIcon from "../CheckIcon";
-import classNames from 'classnames'
 import cssStyle from './style.module.css'
 import {DropdownContext} from "../../ContextProvider";
 

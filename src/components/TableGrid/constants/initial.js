@@ -15,15 +15,15 @@ export const initialState = {
  * @type {FilterItemShape} filterTemplate
  */
 export const filterTemplate = {
-    predicate: filterType.EQ,
+    type: filterType.EQ,
     value: [],
     loadFromServer: false,
     didInvalidate: false,
     isLoading: false
 }
 
-export const columnFilterSettingsTemplate = (accessor) => ({
-    accessor,
-    type: filterType.EQ,
+export const columnFilterSettingsTemplate = (filterBy) => ({
+    filterBy,
+    type: filterType.EQ.value,
     allowedTypes: Object.keys(filterType)
 })

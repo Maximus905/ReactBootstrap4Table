@@ -4,12 +4,12 @@
  * @enum {FilterTypeItem} filterType
  */
 export const filterType = {
-    EQ: {value: 'EQ', label: '='},
-    NE: {value: 'NE', label: '!='},
-    LT: {value: 'LT', label: '<'},
-    LE: {value: 'LE', label: '<='},
-    GT: {value: 'GT', label: '>'},
-    GE: {value: 'GE', label: '>='},
+    EQ: {value: 'EQ', label: '=', filterName: 'равно'},
+    NE: {value: 'NE', label: '!=', filterName: 'не равно'},
+    LT: {value: 'LT', label: '<', filterName: 'меньше'},
+    LE: {value: 'LE', label: '<=', filterName: 'меньше или равно'},
+    GT: {value: 'GT', label: '>', filterName: 'больше'},
+    GE: {value: 'GE', label: '>=', filterName: 'больше или равно'},
     STARTING: {value: 'STARTING', label: 'начинается с'},
     ENDING: {value: 'ENDING', label: 'заканчивается на'},
     LIST: {value: 'LIST', label: 'список', loadFromServer: true}

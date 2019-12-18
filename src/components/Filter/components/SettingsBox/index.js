@@ -1,15 +1,13 @@
 /** @jsx jsx */
 
-import {createRef, useEffect, useContext, useMemo, useState} from 'react'
+import {createRef, useEffect, useContext} from 'react'
 import PropTypes from 'prop-types'
 import {css, jsx} from "@emotion/core";
 import {FixedSizeList as List} from "react-window"
 import st from './style.module.css'
 import {DropdownContext} from "../../ContextProvider";
-import {TableContext} from "../../../TableGrid/TableContext";
 import DropdownItem from "../DropdownItem"
-import {setSettingsItemSizes, clickOnItem} from "../../actions";
-import {filterType} from "../../../TableGrid/constants/filters";
+import {setSettingsItemSizes} from "../../actions";
 
 const DropdownItemFunc = (props) => (listProps) => {
     const {style, index} = listProps
@@ -34,15 +32,8 @@ const longestRowIndex = ({data, fieldName}) => {
 
 const SettingsBox = (props) => {
     const {settingList, onClick} = props
-    const {state: {maxHeight, maxWidth, settingItemWidth, settingItemHeight, }, dispatch, filterSettings} = useContext(DropdownContext)
-    // const initialSettingList = filterSettings.allowedTypes.map(key => ({
-    //     value: filterType[key].value,
-    //     label: filterType[key].label,
-    //     checked: filterType[key].value === filterSettings.type.value,
-    // }))
-    // const [settingList, setSettingList] = useState(initialSettingList)
+    const {state: {maxHeight, maxWidth, settingItemWidth, settingItemHeight, }, dispatch} = useContext(DropdownContext)
 
-    console.log('settingList', filterSettings)
     const itemRef = createRef()
 
     useEffect(() => {
@@ -50,12 +41,8 @@ const SettingsBox = (props) => {
             const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
             dispatch(setSettingsItemSizes({width, height: itemRef.current.offsetHeight}))
         }
-    }, [itemRef])
+    }, [itemRef, dispatch, maxWidth, settingItemHeight, settingItemWidth])
 
-    // const onClickHandler = (value) => {
-    //     setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
-    //     // dispatch(clickOnItem(value))
-    // }
 
     // calculate height of listBox depend on amount of items
     const listBoxHeight = () => {
