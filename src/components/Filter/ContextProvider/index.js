@@ -7,7 +7,7 @@ import {changeMenuMaxHeight} from "../actions";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings} = props
+    const {children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings, onChangeSimpleSearch} = props
     let checkedItems = 0
     const replaceEmptyLabels = () => data.map(item => {
         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
@@ -25,14 +25,17 @@ export const ContextProvider = (props) => {
         dispatch(changeMenuMaxHeight(maxHeight))
     }, [maxHeight])
     useEffect(() => {
-        if (state.lastClicked.value !== null) onClickItem(state.lastClicked)
+        if (state.lastClicked.value !== null) {
+            console.log('on click item', data.length, state.checkedItems)
+            onClickItem(state.lastClicked)
+        }
     }, [state.lastClicked, onClickItem])
     useEffect(() => {
         onSelectAll(state.checkedItems === state.data.length)
     }, [state.checkedItems, onSelectAll, state.data.length]);
 
     return (
-        <DropdownContext.Provider value={{state, dispatch, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings}}>
+        <DropdownContext.Provider value={{state, dispatch, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings, onChangeSimpleSearch}}>
             {children}
         </DropdownContext.Provider>
     )

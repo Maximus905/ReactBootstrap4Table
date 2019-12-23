@@ -15,9 +15,9 @@ export const initialState = {
  * @type {FilterItemShape} filterTemplate
  */
 export const filterTemplate = {
-    type: filterType.EQ,
+    type: filterType.EQ.value,
     value: [],
-    loadFromServer: false,
+    notInList: false, // get all exclude items from list
     didInvalidate: false,
     isLoading: false
 }

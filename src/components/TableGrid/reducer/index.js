@@ -6,19 +6,19 @@ import {
 import {receiveData, loadingData} from '../actions'
 import {changeSorting} from './helpers'
 import {filterTemplate} from "../constants/initial";
+import {filterType as availableFilterTypes} from "../constants/filters";
 
 /**
  * @param {Filters} filters
  * @param {string} accessor
- * @param {FilterTypeItem} filterType
+ * @param {string} filterType
  * @return {Filters}
  */
 const setFilterType = (filters, accessor, filterType) => {
     const item = {
         ...filterTemplate,
-        type: filterType.value,
-        loadFromServer: filterType.loadFromServer,
-        didInvalidate: filterType.loadFromServer
+        type: filterType,
+        didInvalidate: !!availableFilterTypes[filterType].loadFromServer
     }
     return {...filters, [accessor]: item}
 }
@@ -31,8 +31,8 @@ const addFilterValue = (filters, accessor, value) => {
     return { ...filters,
         [accessor]: { ...current,
             value: current.value.includes(value)
-                ? current.value
-                : current.value.push(value)
+                ? current.value.push(value)
+                : current.value
         }
     }
 }
@@ -98,11 +98,11 @@ const rootReducer = (state, action) => {
         case SET_FILTER_TYPE:
             return {...state, filters: setFilterType(state.filters, payload.accessor, payload.type)}
         case SET_FILTER_VALUE:
-            return {...state, filters: setFilterValue(state.filters, payload.accessor, payload.type)}
+            return {...state, filters: setFilterValue(state.filters, payload.accessor, payload.value)}
         case ADD_FILTER_VALUE:
-            return {...state, filters: addFilterValue(state.filters, payload.accessor, payload.type)}
+            return {...state, filters: addFilterValue(state.filters, payload.accessor, payload.value)}
         case REMOVE_FILTER_VALUE:
-            return {...state, filters: remFilterValue(state.filters, payload.accessor, payload.type)}
+            return {...state, filters: remFilterValue(state.filters, payload.accessor, payload.value)}
         default:
             return state
     }

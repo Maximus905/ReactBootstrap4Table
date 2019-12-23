@@ -14,6 +14,7 @@ import SimpleHeaderCell from '../SimpleHeaderCell'
 import ScrollCell from '../ScrollCell'
 import BodyRow from '../BodyRow'
 import BodyCell from "../BodyCell";
+import {setFilterType} from "../actions";
 
 function Table(props) {
     const [tableBoxSizes, setTableBoxSizes] = useState({width: 0, height: 0, bodyWidth: 0, bodyHeight: 0})
@@ -26,7 +27,7 @@ function Table(props) {
     const refTableBodyBox = useRef(null)
     // destruct data from context
     const {state, state: {sorting}, dispatch, getTableData, table, columns, custom} = useContext(TableGridContext)
-
+    console.log('TableGridContext state', state)
     const {isLoading ,didInvalidate, isCtrlPressed} = state
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
@@ -89,9 +90,12 @@ function Table(props) {
     const visibleColumnsSettings = addSizesToSettings(visibleColumns, calculatedVisibleColumnsSizes)
 
     const [visibleFiltersSettings, setVisibleFiltersSettings] = useState(getFiltersSettings(visibleColumns))
+    //TODO visibleFilterSettings for filters with LIST type should be changed by setting didInvalidate: true for reloading list of values
+    console.log('visibleFiltersSettings', visibleFiltersSettings)
     const changeColumnFilterType = (accessor, newType) => {
         console.log('changeColumnSettings', accessor, newType)
         setVisibleFiltersSettings({...visibleFiltersSettings, [accessor]: {...visibleFiltersSettings[accessor], type: newType}})
+        dispatch(setFilterType({accessor, type: newType}))
     }
 
     const tableSettings = Object.assign(defaultTableSettings(), table, {widthPx: calculatedVisibleColumnsSizes.reduce((sumWidth, column) => sumWidth + column.width, 0)})

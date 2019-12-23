@@ -12,5 +12,5 @@ export const filterType = {
     GE: {value: 'GE', label: '>=', filterName: 'больше или равно'},
     STARTING: {value: 'STARTING', label: 'начинается с'},
     ENDING: {value: 'ENDING', label: 'заканчивается на'},
-    LIST: {value: 'LIST', label: 'список', loadFromServer: true}
+    LIST: {value: 'LIST', label: 'список', loadFromServer: true, didInvalidate: true, isLoading: false}
 }

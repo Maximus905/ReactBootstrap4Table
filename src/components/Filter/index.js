@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from "react"
+import React, {useState, Fragment, useEffect, useContext} from "react"
 import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
@@ -13,9 +13,12 @@ import SettingsBox from "./components/SettingsBox";
 import SettingsHeader from "./components/SettingsHeader";
 import {filterType} from "../TableGrid/constants/filters";
 import SimpleSearch from "./filters/SimpleSearch";
+import {setFilterValue} from "../TableGrid/actions";
+import {TableGridContext} from "../TableGrid/TableGridProvider";
 
 const Filter = (props) => {
     const {accessor, data, maxHeight, maxWidth, onClickItem, onSelectAll, onClickSettingsItem, onSaveSettings, fontRatio, valueFieldName, labelFieldName, checkedFieldName, emptyWildcard, opened, openSettings, filterSettings, ...bsProps} = props
+    const {dispatch} = useContext(TableGridContext)
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -51,7 +54,7 @@ const Filter = (props) => {
     }
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? acc = item.value : acc, '')
-        console.log('set new filter', newType)
+        // console.log('set new filter', newType)
         onSaveSettings(accessor, newType)
         closeSettingsMenu()
     })(accessor)
@@ -63,10 +66,14 @@ const Filter = (props) => {
     const onClickSettingItem = (value) => {
         setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
     }
+    const onChangeSimpleSearch = value => {
+        console.log('onChangeSimpleSearch', value)
+        dispatch(setFilterValue({accessor, value}))
+    }
     const DropdownFilter = () => (
         <Fragment>
             <SelectAllBox/>
-            <SearchInput onChangeInput={() => {console.log('test')}} />
+            <SearchInput />
             <ItemsBox/>
         </Fragment>
     )
@@ -94,8 +101,16 @@ const Filter = (props) => {
 
         }
     }
+    const filterContext = {
+        ...props,
+        bdColor,
+        openSettingsMenu,
+        closeSettingsMenu,
+        onClickSaveSettings,
+        onChangeSimpleSearch
+    }
     return (
-        <ContextProvider {...props} bdColor={bdColor} openSettingsMenu={openSettingsMenu} closeSettingsMenu={closeSettingsMenu}  onClickSaveSettings={onClickSaveSettings} >
+        <ContextProvider {...filterContext} >
             <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {
                 e.stopPropagation()
             }}>

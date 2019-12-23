@@ -1,15 +1,18 @@
 /**@jsx jsx*/
 import {css, jsx} from "@emotion/core";
-import {Fragment} from 'react'
+import {Fragment, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import {filterType as allFilterTypes} from "../../../TableGrid/constants/filters";
 import {useContext} from "react";
 import {DropdownContext} from "../../ContextProvider";
 import SettingsIcon from "../../components/SettingsIcon";
 
-const SimpleSearch = ({filterType, value, onChangeValue}) => {
+const SimpleSearch = ({filterType}) => {
     const label = allFilterTypes[filterType].filterName ? allFilterTypes[filterType].filterName : allFilterTypes[filterType].label
-    const {bdColor, fontRatio} = useContext(DropdownContext)
+    const {bdColor, fontRatio, onChangeSimpleSearch} = useContext(DropdownContext)
+    const [value, setValue] = useState('')
+    const onChangeHandler = (e) => setValue(e.target.value)
+    useEffect(() => onChangeSimpleSearch(value), [value])
     return (
         <Fragment>
             <div className="d-flex justify-content-between align-items-center" css={css`
@@ -36,18 +39,15 @@ const SimpleSearch = ({filterType, value, onChangeValue}) => {
                 &:focus {
                   border-color: ${bdColor};
                 }
-            `} value={value} onChange={(e) => onChangeValue(e.target.value)} autoFocus={true} />
+            `} value={value} onChange={onChangeHandler} autoFocus={true} />
             </div>
         </Fragment>
     )
 }
 SimpleSearch.propTypes = {
     filterType: PropTypes.string,
-    value: PropTypes.string,
-    onChangeValue: PropTypes.func
 }
 SimpleSearch.defaultProps = {
-    onChangeValue: (value) => console.log('onChangeValue', value)
 }
 
 export default SimpleSearch

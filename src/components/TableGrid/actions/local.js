@@ -21,7 +21,7 @@ export const setFilterValue = ({accessor, value}) => ({type: SET_FILTER_VALUE, p
 /**
  *
  * @param {string} accessor
- * @param {FilterTypeItem} type
- * @return {{type: string, payload: {accessor: string, type: FilterTypeItem}}}
+ * @param {string} type
+ * @return {{type: string, payload: {accessor: string, type: string}}}
  */
 export const setFilterType = ({accessor, type}) => ( {type: SET_FILTER_TYPE, payload: {accessor, type}})

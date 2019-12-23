@@ -28,9 +28,8 @@
 /**
  * @typedef FilterItemShape
  * @type {Object}
- * @property {filterType} predicate
+ * @property {filterType} type
  * @property {Array.<string>} value
- * @property {boolean} loadFromServer
  * @property {boolean} didInvalidate
  * @property{boolean} isLoading
  */

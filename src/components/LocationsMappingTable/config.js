@@ -31,7 +31,7 @@ export const tableConfig = {
             maxWidth: 750,
             filterable: true,
             filter: {
-                accessor: 'addr_alt',
+                filterBy: 'addr_alt',
                 type: 'LIST',
                 allowedTypes: [ft.EQ.value, ft.LIST.value]
             }
