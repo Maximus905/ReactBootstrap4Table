@@ -5,7 +5,7 @@ import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-sv
 import classNames from "classnames"
 import {TableContext} from '../TableContext'
 // import Filters from "../../Filters";
-import Filter from "../../Filter";
+import Filter from "../../Filter_orig";
 import {columnFilterSettingsTemplate} from "../constants/initial";
 import faker from "faker";
 

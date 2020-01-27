@@ -1,0 +1,146 @@
+@startuml
+namespace Common {
+    enum filterTypes {
+        EQ
+        NE
+        LT
+        LE
+        GT
+        GE
+        STARTING
+        ENDING
+        LIST
+    }
+}
+
+namespace TableGrid {
+    class context << (C, red) >> {
+        state: Object
+        dispatch: Object
+        table
+        columns: Object
+        {method}getTableData
+        custom: Object
+    }
+    class state <<(S,green)>> {
+        data: []
+        sorting: Sorting[]
+        filters: Object
+        isCtrlPressed: bool
+        didInvalidate: bool
+    }
+    class Sorting {
+        [accessor]: 'asc'|'desc'
+    }
+    class Filters {
+        [accessor]: filter
+    }
+    class filter << filter values and type >> {
+        value: [string | number]
+        type: enum filterTypes
+        didInvalidate: bool // if true value list for this filter should be updated
+    }
+    class columns {
+        title: string
+        accessor: string
+        minWidth: number // min column width in px
+        maxWidth: number // min column width in px
+        isVisible: bool,
+        filterable: bool,
+        filter: Object,
+        sortable: bool,
+        {method} renderCell
+        {method} renderHeaderCell
+    }
+    class  l_actions << (A, red) Local Actions >> {
+        invalidateData()
+        addSorting(accessor)
+        setSorting(accessor)
+        ctrlDown()
+        ctrlUp()
+        addFilterValue({accessor, value})
+        removeFilterValue({accessor, value})
+        setFilterValue({accessor, value})
+        setFilterType({accessor, value})
+    }
+    class s_actions << (A, red) Server Actions >> {
+        loadingData()
+        requestData({fetchFunction, filter, sorting})
+        receiveData({data})
+    }
+
+    context *-- state
+    context *-left- columns
+    state *-down- Filters
+    state *-down- Sorting
+    Filters *-- filter
+    filter *-- Common.filterTypes
+    state <|-- l_actions
+    state <|-- s_actions
+}
+namespace Table {
+    class states << (S, red) >> {
+        tableBoxSizes: Object
+        scrollsSizes: Object
+
+    }
+    class context <<(C, green)>> {
+        sorting: TableGrid.state.sorting
+        tableBoxSizes: Object
+        tableSettings: Object
+        columnsSettings,
+        visibleColumnsSettings,
+        visibleFiltersSettings,
+        scrollsSizes,
+        custom,
+        updateData()
+        addSortAccessor(accessor)
+        setSortAccessor(accessor)
+        changeColumnFilterType(accessor, newType)
+    }
+    class tableSettings {
+        width: number //table width in percents
+        globalFilter: bool,
+        tableSmall: bool,
+        tableStriped: bool,
+        tableDark: bool,
+        tableBordered: bool,
+        tableBorderless: bool,
+        tableHover: bool,
+        {method} renderRow: renderRowDefault,
+        {method} renderHeaderRow: renderHeaderRowDefault,
+    }
+    class tableBoxSizes {
+        width: number
+        height: number
+        bodyWidth: number
+        bodyHeight: number
+    }
+    class columnsSettings << from TableGrid.context.columns >> {
+        title: string
+        accessor: string
+        minWidth: number // min column width in px
+        maxWidth: number // min column width in px
+        isVisible: bool,
+        filterable: bool,
+        filter: Object,
+        sortable: bool,
+        {method} renderCell
+        {method} renderHeaderCell
+    }
+    class filter {
+        filterBy: string
+        type: enum filterTypes
+        allowedTypes: enum filterTypes[]
+    }
+
+    context *-- tableSettings
+    context *-- tableBoxSizes
+    columnsSettings *--filter
+    filter *-- Common.filterTypes :allowedTypes
+}
+TableGrid.state --|> Table.context :sorting
+
+
+
+@enduml

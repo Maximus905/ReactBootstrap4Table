@@ -1,0 +1,170 @@
+@startuml
+namespace common {
+    enum filterTypes {
+        EQ
+        NE
+        LT
+        LE
+        GT
+        GE
+        STARTING
+        ENDING
+        LIST
+    }
+}
+namespace Table {
+    class props <<(P, aqua)>> {
+        columns: oneColumnSettings[]
+        table: <tableSettings>
+        globalFilter: <globalFilterSettings>
+        custom: <custom>
+        getTableData()
+    }
+    class actions <<(A, red)>> {
+        invalidateData()
+        --sorting--
+        addSorting()
+        setSorting()
+        ctrlDown()
+        ctrlUp()
+        --filter--
+        setFilterType()
+        addFilterValue()
+        removeFilterValue()
+        setFilterValue()
+        --server--
+        loadingData()
+        requestData()
+        receiveData()
+    }
+    class context << (C, red) >> {
+        ...reducer state
+        --ext methods--
+        dispatch()
+        getTableData()
+        renderCell()
+        renderHeaderCell()
+        renderRow()
+        renderHeaderRow()
+    }
+    class "reducer state" as reducerState <<(S,green)>> {
+        --current states--
+        data: []
+        sorting: Object[]
+        filters: {[accessor]: <filterValue>}
+        isCtrlPressed: bool
+        isLoading: bool
+        didInvalidate: bool
+        --current dimensions--
+        dimensions: <current dimensions>
+        --table settings--
+        tableSettings: <current table settings>
+        --columns settings--
+        columnsSettings: <current columns settings>
+        visibleColumnsOrder: Array<accessors>
+        filtersSettings: <current filters settings>
+        custom: <custom>
+    }
+    class sorting {
+        [accessor]: 'asc'|'desc'
+    }
+    class filterValue {
+        filterBy: string|string[]
+        value: [string | number]
+        type: enum filterTypes
+        didInvalidate: bool
+    }
+    class "current dimensions" as liveDimensions {
+        tWidth: number //sum of all visible columns width
+        tBoxWidth: number
+        tBoxHeight: number
+        tBodyBoxWidth: number
+        tBodyBoxHeight: number
+        vScroll: number
+        hScroll: number
+    }
+    class tableSettings {
+        width: number //table width in percents
+        globalFilter: bool
+        tableSmall: bool
+        tableStriped: bool
+        tableDark: bool
+        tableBordered: bool
+        tableBorderless: bool
+        tableHover: bool
+        --render methods--
+        renderRow()
+        renderHeaderRow()
+    }
+    class "current table settings" as liveTableSettings {
+        width: number //table width in percents
+        globalFilter: bool
+        tableSmall: bool
+        tableStriped: bool
+        tableDark: bool
+        tableBordered: bool
+        tableBorderless: bool
+        tableHover: bool
+    }
+
+    class "one column settings" as oneColumnSettings {
+        title: string
+        accessor: string
+        minWidth: number // min column width in px
+        maxWidth: number // min column width in px
+        isVisible: bool,
+        sortable: bool,
+        filterable: bool,
+        filter: <filtersSettings>,
+        --render methods--
+        renderCell()
+        renderHeaderCell()
+    }
+    class globalFilterSettings {
+        filterBy: string|string[]
+        type: common.filterTypes
+        allowedTypes: common.filterTypes[]
+    }
+    class "current columns settings" as liveColumnsSettings {
+        [accessor]: <column settings>
+    }
+    class "current one column settings" as liveOneColumnSettings {
+        title: string
+        accessor: string
+        minWidth: number // min column width in px
+        maxWidth: number // min column width in px
+        width: number
+        isVisible: bool,
+        filterable: bool,
+        sortable: bool,
+
+    }
+    class oneFilterSettings {
+        filterBy: string|string[]
+        type: common.filterTypes
+        allowedTypes: common.filterTypes[]
+    }
+    class "current filters settings" as liveFiltersSettings {
+        [accessor]: filterSettings
+    }
+    class custom {
+        //Any users props
+    }
+
+    context <|-left- reducerState
+    reducerState *-- filterValue
+    props *-- tableSettings
+    props *-- oneColumnSettings
+    props *-- globalFilterSettings
+    props *-- custom
+    reducerState *-- sorting
+    reducerState *-- custom
+    reducerState *-- liveColumnsSettings
+    liveColumnsSettings *-- liveOneColumnSettings
+    reducerState *-- liveTableSettings
+    oneColumnSettings *-- oneFilterSettings :filter
+    reducerState *-- liveFiltersSettings
+    liveFiltersSettings *-- oneFilterSettings
+    reducerState *-- liveDimensions
+}
+@enduml

@@ -1,0 +1,27 @@
+@startwbs
+* Table
+** TableContext
+*** tableBox
+**** tableHeaderBodyBox
+***** tableHeaderBox
+****** table
+******* thead
+******* HeaderRow
+******** Array.HeaderCell
+******** ScrollCell
+*****< tableBodyBox
+****** table
+
+******* thead
+******** HeaderRow hidden
+********* SimpleHeaderCell 1
+********* SimpleHeaderCell N
+
+******* tbody
+******** BodyRow 1
+********* BodyCell 1
+********* BodyCell N
+******** BodyRow N
+********* BodyCell 1
+********* BodyCell N
+@endwbs

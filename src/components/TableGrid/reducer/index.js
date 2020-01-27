@@ -78,7 +78,7 @@ export function dispatchMiddleware(dispatch) {
  */
 const rootReducer = (state, action) => {
     console.log('reducer isLoading', state.isLoading, action)
-    console.log('reducer didInvalidate', state.didInvalidate)
+    console.log('reducer didInvalidate', state.didInvalidate, state)
     const {payload, type} = action
     switch (type) {
         case START_LOADING_ALL_DATA:

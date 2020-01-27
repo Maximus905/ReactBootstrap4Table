@@ -1,0 +1,81 @@
+@startuml
+participant App
+participant Filter
+participant dataLoader
+participant reducer
+participant state
+
+App -> state: set initial reducer state
+state -> App: initial data
+Filter <- state: filtersSettings
+dataLoader <- state: filters value
+dataLoader -> state: data from server
+state -> App: loaded data
+
+== Filter event: change type of filter ==
+Filter -> App: onSaveSettings(accessor, newType)
+App -> reducer: SET_FILTER_TYPE(accessor, newType)
+reducer ->state: **filtersSettings[accessor]** - set new type
+reducer -> state: **filters[accessor]** - set new type
+reducer --> state: **filters[accessor]** - clear value
+group Only if previous filters[accessor] value was not empty
+    reducer -> state: **filters[another accessors]** - set **didInvalidate** if it need
+    note right
+            for all filters with preloaded
+            lists of values
+    end note
+    reducer --> state: **state** - set **didInvalidate**
+        note right
+            set didInvalidate
+            only if need reload list values
+            for current filter
+        end note
+    dataLoader <-- state: filters value
+    dataLoader --> state: data from server
+    state --> App: loaded data
+end
+
+== Filter event: set value of filter ==
+Filter -> App: onChangeFilter({accessor, value, append: false, remove: false)}
+App -> reducer: SET_FILTER_VALUE(accessor, value)
+reducer -> state: **filters[accessor]** - set value as [value]
+reducer -> state: **filters[another accessors]** - set **didInvalidate**
+    note right
+        set didInvalidate
+        only if need reload list values
+        for current filter
+    end note
+reducer --> state: **state** - set **didInvalidate**
+dataLoader <-- state: filters value
+dataLoader --> state: data from server
+state --> App: loaded data
+
+== Filter event: append value to filter ==
+Filter -> App: onChangeFilter({accessor, value, append: true, remove: false)}
+reducer -> state: **filters[accessor]** - add value to array of values
+reducer -> state: **filters[another accessors]** - set **didInvalidate**
+    note right
+        set didInvalidate
+        only if need reload list values
+        for current filter
+    end note
+reducer --> state: **state** - set **didInvalidate**
+dataLoader <-- state: filters value
+dataLoader --> state: data from server
+state --> App: loaded data
+
+== Filter event: remove filter's value ==
+Filter -> App: onChangeFilter({accessor, value, append: false, remove: true)}
+reducer -> state: **filters[accessor]** - remove value from array of values
+reducer -> state: **filters[another accessors]** - set **didInvalidate**
+    note right
+        set didInvalidate
+        only if need reload list values
+        for current filter
+    end note
+reducer --> state: **state** - set **didInvalidate**
+dataLoader <-- state: filters value
+dataLoader --> state: data from server
+state --> App: loaded data
+
+@enduml
