@@ -2,6 +2,7 @@
  * @typedef DropDownStateShape
  * @type {Object}
  * @property {array.<DropDownDataItemShape>} data
+ * @property {boolean} selectAll
  * @property {number} maxHeight
  * @property {number} maxWidth
  * @property {string} inputValue

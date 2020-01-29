@@ -47,9 +47,17 @@ export const oneFilterSettingsTemplate = {
     type: filterTypes.EQ.value,
     allowedTypes: Object.values(filterTypes).map(item => item.value)
 }
-export const emptyFilterTemplate = {
+export const emptyTextFilterTemplate = {
     filterBy: '',
     value: [],
     type: '',
-    didInvalidate: false
+    // didInvalidate: false //calculated from filterType
+}
+export const emptyListFilterTemplate = {
+    filterBy: '',
+    value: [],
+    selectAllState: true,
+    list: [],
+    type: '',
+    // didInvalidate: true //calculated from filterType
 }

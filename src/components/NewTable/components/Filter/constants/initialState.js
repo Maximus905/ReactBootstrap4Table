@@ -3,6 +3,7 @@
  */
 export const initialState = {
     data: [],
+    selectAll: true,
     maxHeight: 0,
     maxWidth: 0,
     inputValue: '',

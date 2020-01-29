@@ -1,4 +1,11 @@
-import {tableSettingsTemplate, oneColumnSettingsTemplate, oneFilterSettingsTemplate, emptyFilterTemplate, initialState} from "../constatnts/initial"
+import {
+    tableSettingsTemplate,
+    oneColumnSettingsTemplate,
+    oneFilterSettingsTemplate,
+    emptyTextFilterTemplate,
+    initialState,
+    emptyListFilterTemplate
+} from "../constatnts/initial"
 import filterTypes from "../constatnts/filterTypes";
 export * from './sortingHandler'
 export * from './filterHandlers'
@@ -51,12 +58,22 @@ export const initialEmptyFiltersFromProps = ({columns}) => (
     columns.reduce((acc, colSettings) => {
         const {accessor, filterable, filter} = colSettings
         const filterSettings = {...oneFilterSettingsTemplate, filterBy: accessor, ...filter}
+        if (!filterable) return acc
         // console.log('fs', filterSettings)
-        if (filterable) acc[accessor] = {
-            ...emptyFilterTemplate,
-            filterBy: filterSettings.filterBy,
-            type: filterSettings.type,
-            didInvalidate:  !!filterTypes[filterSettings.type].loadFromServer
+        if (filterSettings.type === filterTypes.LIST.value) {
+            acc[accessor] = {
+                ...emptyListFilterTemplate,
+                filterBy: filterSettings.filterBy,
+                type: filterSettings.type,
+                didInvalidate:  !!filterTypes[filterSettings.type].loadFromServer
+            }
+        } else {
+            acc[accessor] = {
+                ...emptyTextFilterTemplate,
+                filterBy: filterSettings.filterBy,
+                type: filterSettings.type,
+                didInvalidate:  !!filterTypes[filterSettings.type].loadFromServer
+            }
         }
         // console.log('acc', acc)
         return acc

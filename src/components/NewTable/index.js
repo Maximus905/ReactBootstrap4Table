@@ -1,10 +1,10 @@
 /**@jsx jsx*/
 import {css, jsx} from "@emotion/core"
-import React, {useReducer, useRef, useEffect, useMemo} from 'react'
+import React, {useReducer, useRef, useEffect, useMemo, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import myCss from './style.module.css'
 //actions
-import {setScrollSizes, pageResizing, tableResizing} from "./actions";
+import {setScrollSizes, pageResizing, tableResizing, invalidateData} from "./actions";
 //components
 import HeaderRow from "./components/HeaderRow"
 import HeaderCell from "./components/HeaderCell";
@@ -26,7 +26,7 @@ import Cell from "./components/Cell";
 import SimpleHeaderCell from "./components/SimpleHeaderCell";
 
 const NewTable = props => {
-    const {getTableData, table } = props
+    const {getTableData, table, getFilterList, filterLabelName, filterValueName, filterCheckedName } = props
     const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
     const asyncDispatch = dispatchMiddleware(dispatch)
@@ -36,7 +36,7 @@ const NewTable = props => {
         dimensions: {tWidth, vScroll, tBoxWidth},
         columnsSettings, visibleColumnsOrder,
     } = state
-    console.log('data', state.filters, isLoading, didInvalidate)
+    console.log('data', state.filters['column1'], state.filters['column2'], isLoading, didInvalidate)
     useEvent('resize', onResizeHandler)
     const refTableBox = useRef(null)
     const refTableBodyBox = useRef(null)
@@ -62,11 +62,24 @@ const NewTable = props => {
             asyncDispatch(action)
             console.log('data is fetched ')
         }
-    }, [isLoading, didInvalidate, dispatch, getTableData, sorting, isCtrlPressed])
+    }, [isLoading, didInvalidate, dispatch, getTableData, isCtrlPressed])
     useEffect(() => {
         console.log('useEffect on filters changing', filters)
     }, [filters]);
-
+    // invalidate data with timeout
+    const timeIdRef = useRef(null)
+    const handlerInvalidate = () => dispatch(invalidateData())
+    const invalidateDataWithTimeout = (delay) => {
+        if (timeIdRef.current) {
+            clearTimeout(timeIdRef.current)
+        }
+        if (delay) {
+            timeIdRef.current = setTimeout(handlerInvalidate, delay)
+        } else {
+            timeIdRef.current = null
+            invalidateData()
+        }
+    }
     // Ctrl key handlers
     function ctrlDownHandler(e) {
         if (!isCtrlPressed && e.ctrlKey) {
@@ -83,14 +96,21 @@ const NewTable = props => {
             return dispatch(ctrlUp())
         }
     }
+    // filters list handle
+
     const context = {
         state,
         dispatch: asyncDispatch,
+        invalidateDataWithTimeout,
         getTableData,
+        getFilterList,
         renderHeaderRow,
         renderHeaderCell,
         renderRow,
-        renderCell
+        renderCell,
+        filterLabelName,
+        filterValueName,
+        filterCheckedName,
     }
     // const sorter = (accessor) => (<Sorter accessor={accessor} />)
     return (
@@ -168,6 +188,15 @@ NewTable.propTypes = {
         allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
     }),
     getTableData: PropTypes.func, // should return array of objects like {'accessor: 'value'}
-    custom: PropTypes.objectOf(PropTypes.any)
+    custom: PropTypes.objectOf(PropTypes.any),
+    getFilterList: PropTypes.func, //async function to get list for filter. async ({accessor, filters}) => ({})
+    filterValueName: PropTypes.string, // is used in filter list object
+    filterLabelName: PropTypes.string, // is used in filter list object
+    filterCheckedName: PropTypes.string, // is used in filter list object
+}
+NewTable.defaultProps = {
+    filterValueName: 'val',
+    filterLabelName: 'lab',
+    filterCheckedName: 'checked'
 }
 export default NewTable

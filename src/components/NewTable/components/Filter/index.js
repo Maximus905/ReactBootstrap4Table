@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect, useContext} from "react"
+import React, {useState, Fragment, useEffect, useContext, useReducer} from "react"
 import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
@@ -14,6 +14,9 @@ import SettingsHeader from "./components/SettingsHeader";
 import filterTypes from "../../constatnts/filterTypes";
 import SimpleSearch from "./filters/SimpleSearch";
 import TableContext from "../../TableContext";
+import rootReducer from "./reducer";
+import {initialState} from "./constants/initialState";
+import {changeSimpleSearchInput} from "./actions";
 
 const Filter = (props) => {
     const {
@@ -40,7 +43,9 @@ const Filter = (props) => {
         openSettings,
         filterSettings,
         ...bsProps} = props
-    const {dispatch} = useContext(TableContext)
+//***************0********************
+    //const {dispatch} = useContext(TableContext) //doesn't used at all
+//*************0e***************
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -67,7 +72,21 @@ const Filter = (props) => {
         })
     })
     const [settingList, setSettingList] = useState(initialSettingList)
-
+//****************1***************
+    //let checkedItems = 0
+    //const replaceEmptyLabels = () => data.map(item => {
+    //    checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
+    //    return  item[labelFieldName]
+    //        ? {value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
+    //        : {value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
+    //})
+    //const convertData = () => data.map(item => {
+    //    checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
+    //    return {...item, label: item[labelFieldName], checked: item[checkedFieldName]}
+    //})
+    //// state and dispatch for DropDown
+    //const [state, dispatch] = useReducer(rootReducer, {...initialState, data : emptyWildcard ? replaceEmptyLabels() : convertData(), maxHeight, maxWidth, checkedItems}, (iniState) => iniState)
+//******************1e*****************
     const closeSettingsMenu = () => {
         setShowSettings(false)
     }
@@ -76,7 +95,9 @@ const Filter = (props) => {
     }
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? acc = item.value : acc, '')
-        console.log('set new filter', accessor, newType)
+//****************2****************
+        //dispatch(changeSimpleSearchInput(''))
+//*****************2e*****************
         onSaveSettings({accessor, newType})
         closeSettingsMenu()
     })(accessor)
@@ -126,6 +147,10 @@ const Filter = (props) => {
     }
     const filterContext = {
         ...props,
+//*************3*************
+        //state,
+        //dispatch,
+//***************3e*********************
         bdColor,
         openSettingsMenu,
         closeSettingsMenu,
@@ -181,7 +206,7 @@ Filter.defaultProps = {
     opened: false,
     openSettings: false,
     onChangeTextSearch: ({accessor, value}) => console.log('onChangeTextSearch', accessor, value),
-    onClickItem: (item) => console.log('onClick Item', item),
+    onClickItem: ({accessor, item}) => console.log('onClick Item', accessor, item),
     onSelectAll: (status) => console.log('onSelectAll', status),
     onClickSettingsItem: () => console.log('onClick Settings Item'),
     onSaveSettings: (accessor, newType) => console.log('onClickSaveSettings', accessor, newType)

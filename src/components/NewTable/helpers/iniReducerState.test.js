@@ -41,7 +41,14 @@ const getConfig = () => ({
 const result = {
     data: [],
     sorting: [],
-    filters: {},
+    filters: {
+        title_2: {
+            filterBy: 'title_f_2',
+            type: 'EQ',
+            value: [],
+            didInvalidate: false
+        }
+    },
     isCtrlPressed: false,
     isLoading: false,
     didInvalidate: true,

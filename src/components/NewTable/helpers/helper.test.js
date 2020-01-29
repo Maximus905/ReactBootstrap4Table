@@ -44,6 +44,38 @@ const getConfig = () => ({
         },
     ]
 })
+const getConfigWithListFilter = () => ({
+    getTableData: () => {},
+    table: {
+        tableDark: true,
+        tableSmall: true,
+        tableBordered: true,
+        renderRow: () => 'render row',
+        renderHeaderRow: () => 'render header row'
+    },
+    columns: [
+        {
+            title: 'title 1',
+            accessor: 'title_1',
+            minWidth: 150,
+            maxWidth: 200,
+        },
+        {
+            title: 'title 2',
+            accessor: 'title_2',
+            minWidth: 200,
+            maxWidth: 300,
+            filterable: true,
+            filter: {
+                filterBy: 'title_f_2',
+                type: 'LIST',
+                allowedTypes: [ft.EQ.value, ft.LIST.value]
+            },
+            renderCell: () => 'render cell',
+            renderHeaderCell: () => 'render header cell'
+        },
+    ]
+})
 
 
 test('tableSettingsFromProps', () => {
@@ -132,7 +164,7 @@ test('filtersSettingsFromProps', () => {
         }
     })
 })
-test('initialEmptyFiltersFromProps', () => {
+test('initialEmptyFiltersFromProps - EQ filter', () => {
     const config = getConfig()
     expect(initialEmptyFiltersFromProps(config)).toEqual({
         title_2: {
@@ -140,6 +172,20 @@ test('initialEmptyFiltersFromProps', () => {
             value: [],
             type: ft.EQ.value,
             didInvalidate: false
+        }
+    })
+})
+test('initialEmptyFiltersFromProps - LIST filter', () => {
+    const config = getConfigWithListFilter()
+
+    expect(initialEmptyFiltersFromProps(config)).toEqual({
+        title_2: {
+            filterBy: 'title_f_2',
+            value: [],
+            selectAllState: true,
+            type: ft.LIST.value,
+            list: [],
+            didInvalidate: true
         }
     })
 })

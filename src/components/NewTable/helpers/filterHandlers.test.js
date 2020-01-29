@@ -40,6 +40,7 @@ test('change filter type in Filters', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -53,6 +54,7 @@ test('change filter type in Filters', () => {
         column2: {
             filterBy: 'column2',
             type: ft.LIST.value,
+            list: [],
             value: ['val3', 'val4'],
             didInvalidate: true
         },
@@ -64,12 +66,15 @@ test('change filter type in Filters', () => {
             filterBy: 'column1',
             type: ft.LIST.value,
             value: [],
+            list: [],
+            selectAllState: true,
             didInvalidate: true
         },
         column2: {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }
@@ -86,6 +91,7 @@ test('change filter type in Filters', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -95,12 +101,15 @@ test('change filter type in Filters', () => {
             filterBy: 'column1',
             type: ft.LIST.value,
             value: [],
+            list: [],
+            selectAllState: true,
             didInvalidate: true
         },
         column2: {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -118,6 +127,7 @@ test('filters - set value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -132,6 +142,7 @@ test('filters - set value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }
@@ -150,6 +161,7 @@ test('filters - set empty value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -164,6 +176,7 @@ test('filters - set empty value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }
@@ -182,6 +195,7 @@ test('filters - add value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -196,6 +210,7 @@ test('filters - add value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }
@@ -212,6 +227,7 @@ test('filters - add value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -226,6 +242,7 @@ test('filters - add value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }
@@ -244,6 +261,7 @@ test('filters - remove value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -260,6 +278,7 @@ test('filters - remove value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: false
         },
     }
@@ -274,6 +293,7 @@ test('filters - remove value', () => {
             filterBy: 'column2',
             type: ft.LIST.value,
             value: ['val3', 'val4'],
+            list: [],
             didInvalidate: true
         },
     }

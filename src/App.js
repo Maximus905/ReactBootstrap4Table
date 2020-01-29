@@ -4,16 +4,45 @@ import {Page, PageHeader, PageMain, PageFooter} from "./components/Page"
 import NewTable from "./components/NewTable";
 // import {filterType as ft} from "./components/TableGrid/constants/filters";
 import ft from "./components/NewTable/constatnts/filterTypes";
+import faker from "faker";
 const mockData = () => [...new Array(50)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+
+const fake = ((counter = 1000) => {
+    const time = Date.now()
+    faker.locale = 'ru'
+    const res = []
+    for ( let i = 0; i < counter; i++ ) {
+        res.push({
+            lab: faker.name.findName(),
+            val: faker.name.lastName(),
+            checked: true
+        })
+    }
+    res.push({
+        lab: '',
+        val: 'empty',
+        checked: true
+    })
+    console.log('fake data has been generated: ', Date.now() - time)
+    return res
+})()
+
 async function getData() {
     let promise = new Promise(resolve => {
         setTimeout(() => resolve(mockData()), 2000)
     })
     return await promise
 }
+async function getFakeFilterList() {
+    const promise = new Promise(resolve => {
+        setTimeout(() => resolve(fake))
+    })
+    return promise
+}
 
 const config = {
     getTableData: getData,
+    getFilterList: getFakeFilterList,
     columns: [
         {
             accessor: 'column1',

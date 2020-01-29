@@ -14,6 +14,7 @@ import {
 } from "../../../actions";
 import Filter from "../../Filter";
 import faker from "faker";
+import {TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE, TIMEOUT_CHANGE_SORTING} from "../../../constatnts/timouts";
 
 const fake = ((counter = 1000) => {
     const time = Date.now()
@@ -36,16 +37,13 @@ const fake = ((counter = 1000) => {
 })()
 
 const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
-    const {state: {columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch} = useContext(TableContext)
+    const {state: {columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, invalidateDataWithTimeout} = useContext(TableContext)
     const {title, sortable, filterable, width} = columnsSettings[accessor]
-    console.log('filter settings', accessor, filtersSettings)
+    // console.log('filter settings', accessor, filtersSettings)
 
     const onChangeFilterType = ({accessor, newType}) => {
-        console.log('onChangeFilterType', accessor, newType)
+        // console.log('onChangeFilterType', accessor, newType)
         dispatch(setFilterType({accessor, type: newType}))
-    }
-    const onChangeTextSearch = ({accessor, value}) => {
-        dispatch(setFilterValue({accessor, value}))
     }
     const onChangeFilterValue = ({accessor, value, append = false, remove = false}) => {
         console.log('defaultHeaderCell onChangeFilterValue', append, remove)
@@ -56,26 +54,17 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                 dispatch(removeFilterValue({accessor, value}))
             } else {
                 dispatch(setFilterValue({accessor, value}))
+                invalidateDataWithTimeout(TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE)
             }
         }
-        // switch (append, remove) {
-        //     case !append && !remove:
-        //         dispatch(setFilterValue({accessor, value}))
-        //         break
-        //     case append && ! remove:
-        //         dispatch(addFilterValue({accessor, value}))
-        //         break
-        //     case !append && remove:
-        //         dispatch(removeFilterValue({accessor, value}))
-        //         break
-        //     default:
-        //         console.log('onChangeFilterValue - wrong combination append and remove ')
-        //     return
-        // }
     }
-
     const handlerOnClick = (e) => {
-        e.ctrlKey ? dispatch(addSorting(accessor)) : dispatch(setSorting(accessor))
+        if (e.ctrlKey) {
+            dispatch(addSorting(accessor))
+        } else {
+            dispatch(setSorting(accessor))
+            invalidateDataWithTimeout(TIMEOUT_CHANGE_SORTING)
+        }
     }
     return (
         <th css={css`width: ${width}px; cursor: default`} className='align-top' onClick={sortable ? handlerOnClick : undefined} >

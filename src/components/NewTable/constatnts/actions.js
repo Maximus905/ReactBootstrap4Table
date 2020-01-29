@@ -2,6 +2,11 @@ export const LOADING_DATA = 'LOADING_DATA'
 export const REQUEST_DATA = 'REQUEST_DATA'
 export const RECEIVE_DATA = 'RECEIVE_DATA'
 export const INVALIDATE_DATA = 'INVALIDATE_DATA'
+//get list of data for filter with type LIST
+export const LOADING_FILTER_LIST = 'LOADING_FILTER_LIST'
+export const REQUEST_FILTER_LIST = 'REQUEST_FILTER_LIST'
+export const RECEIVE_FILTER_LIST = 'RECEIVE_FILTER_LIST'
+export const INVALIDATE_FILTER_LIST = 'INVALIDATE_FILTER_LIST'
 //scroll sizes
 export const SET_SCROLL_SIZES = 'SET_SCROLL_SIZES'
 //sorting

@@ -1,15 +1,26 @@
 import filterTypes from "../constatnts/filterTypes";
+import {emptyListFilterTemplate, emptyTextFilterTemplate} from "../constatnts/initial";
 
 export const filtersSettings_ChangeFilterType = ({filtersSettings, accessor, type}) => ({...filtersSettings, [accessor]: {...filtersSettings[accessor], type}})
+const filter_updateFilterType = ({type, filter}) => (
+    (type === filterTypes.LIST.value) ? ({
+        ...emptyListFilterTemplate,
+        filterBy: filter.filterBy,
+        type,
+        value: [],
+        didInvalidate:  !!filterTypes[type].loadFromServer
+    }) : ({
+        ...emptyTextFilterTemplate,
+        filterBy: filter.filterBy,
+        type,
+        value: [],
+        didInvalidate:  !!filterTypes[type].loadFromServer
+    })
+)
 export const filters_ChangeFilterType = ({filters, accessor, type}) => {
     const isValueEmpty = !filters[accessor].value.length
     return Object.entries(filters).reduce((res, [key, filter]) => {
-        res[key] = key === accessor ? {
-            ...filter,
-            type,
-            value: [],
-            didInvalidate: !!filterTypes[type].loadFromServer
-        } : (
+        res[key] = key === accessor ? filter_updateFilterType({type, filter}) : (
             filterTypes[filter.type].loadFromServer && !isValueEmpty ? {...filter, didInvalidate: true} : filter
         )
         return res

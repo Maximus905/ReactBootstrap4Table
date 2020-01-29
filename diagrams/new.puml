@@ -18,34 +18,26 @@ namespace Table {
         table: <tableSettings>
         globalFilter: <globalFilterSettings>
         custom: <custom>
+        filterLabelName: string
+        filterValueName: string
+        filterCheckedName: string
         getTableData()
-    }
-    class actions <<(A, red)>> {
-        invalidateData()
-        --sorting--
-        addSorting()
-        setSorting()
-        ctrlDown()
-        ctrlUp()
-        --filter--
-        setFilterType()
-        addFilterValue()
-        removeFilterValue()
-        setFilterValue()
-        --server--
-        loadingData()
-        requestData()
-        receiveData()
+        getFilterList({accessor, filters})
     }
     class context << (C, red) >> {
-        ...reducer state
+        state: <reducer state>
         --ext methods--
         dispatch()
+        --from props--
         getTableData()
+        getFilterList({accessor, filters})
         renderCell()
         renderHeaderCell()
         renderRow()
         renderHeaderRow()
+        filterLabelName
+        filterValueName
+        filterCheckedName
     }
     class "reducer state" as reducerState <<(S,green)>> {
         --current states--
@@ -65,6 +57,23 @@ namespace Table {
         filtersSettings: <current filters settings>
         custom: <custom>
     }
+    class actions <<(A, red)>> {
+        invalidateData()
+        --sorting--
+        addSorting()
+        setSorting()
+        ctrlDown()
+        ctrlUp()
+        --filter--
+        setFilterType()
+        addFilterValue()
+        removeFilterValue()
+        setFilterValue()
+        --server--
+        loadingData()
+        requestData()
+        receiveData()
+    }
     class sorting {
         [accessor]: 'asc'|'desc'
     }
@@ -73,6 +82,9 @@ namespace Table {
         value: [string | number]
         type: enum filterTypes
         didInvalidate: bool
+        --only for LIST filter--
+        selectAllState: bool
+        list: [] | Object[]
     }
     class "current dimensions" as liveDimensions {
         tWidth: number //sum of all visible columns width

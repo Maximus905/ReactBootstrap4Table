@@ -1,12 +1,14 @@
 import {
+    CTRL_DOWN, CTRL_UP,
     PAGE_RESIZING,
     SET_SCROLL_SIZES,
     TABLE_RESIZING,
     SET_SORTING,
     ADD_SORTING,
-    LOADING_DATA, RECEIVE_DATA,
+    INVALIDATE_DATA, LOADING_DATA, REQUEST_DATA, RECEIVE_DATA,
     SET_FILTER_TYPE,
-    SET_FILTER_VALUE
+    SET_FILTER_VALUE,
+    INVALIDATE_FILTER_LIST, LOADING_FILTER_LIST, REQUEST_FILTER_LIST, RECEIVE_FILTER_LIST
 } from "../constatnts/actions";
 import {
     calculateColumnsDim,
@@ -18,8 +20,7 @@ import {
 } from "../helpers";
 
 // import {changeSorting} from "../helpers/sortingHandler";
-import {CTRL_DOWN, CTRL_UP, REQUEST_DATA} from "../../TableGrid/constants/actions";
-import {loadingData, receiveData} from "../actions";
+import {loadingData, receiveData, loadingFilterList, receiveFilterList} from "../actions";
 
 /**
  * using for dispatching async actions like request data from server
@@ -29,15 +30,22 @@ import {loadingData, receiveData} from "../actions";
 export function dispatchMiddleware(dispatch) {
     async function getData(dispatch, fetchFunction, filter, sorting) {
         dispatch(loadingData())
-        const data = await fetchFunction(filter, sorting)
+        const data = await fetchFunction({filter, sorting})
         dispatch(receiveData(data))
+    }
+    async function getFilterList(dispatch, fetchFunction, accessor, filter, sorting) {
+        dispatch(loadingFilterList(accessor))
+        const data = await fetchFunction({accessor,filter, sorting})
+        dispatch(receiveFilterList({accessor, data}))
     }
     return (action) => {
         const {type, payload} = action
+        const {fetchFunction, filter, sorting} = payload
         switch (type) {
             case REQUEST_DATA:
-                const {fetchFunction, filter, sorting} = payload
                 return getData(dispatch, fetchFunction, filter, sorting)
+            case REQUEST_FILTER_LIST:
+                return getFilterList(dispatch, fetchFunction, filter, sorting)
             default:
                 return dispatch(action)
         }
@@ -67,21 +75,24 @@ export const rootReducer = (state, action) => {
             const newTableWidth = tableWidth({columnsSettings: newColumnsSettings})
             return {...state, dimensions: {...dimensions, tWidth: newTableWidth}, columnsSettings: newColumnsSettings}
         case SET_SORTING:
-            console.log('set sorting')
-            return {...state, sorting: changeSorting({sorting, accessor: payload}), didInvalidate: true}
+            // console.log('set sorting')
+            return {...state, sorting: changeSorting({sorting, accessor: payload})}
         case ADD_SORTING:
-            console.log('add sorting')
+            // console.log('add sorting')
             return {...state, sorting: changeSorting({sorting, accessor: payload, appendMode: true}), didInvalidate: true}
 // data handling
+        case INVALIDATE_DATA:
+            // console.log('invalidate data')
+            return {...state, didInvalidate: true}
         case LOADING_DATA:
-            console.log('loading data')
+            // console.log('loading data')
             return {...state, isLoading: true, didInvalidate: false}
         case RECEIVE_DATA:
-            console.log('receive data')
+            // console.log('receive data')
             return {...state, isLoading: false, didInvalidate: false, data: payload}
 // filters events handling
         case SET_FILTER_TYPE:
-            console.log('SET_FILTER_TYPE')
+            // console.log('SET_FILTER_TYPE')
             const isValueEmpty = !filters[payload.accessor].value.length
             return {...state,
                 filters: filters_ChangeFilterType({accessor: payload.accessor, type: payload.type, filters}),
@@ -89,11 +100,15 @@ export const rootReducer = (state, action) => {
                 didInvalidate: isValueEmpty ? didInvalidate : true
             }
         case SET_FILTER_VALUE:
-            console.log('reducer SET_FILTER_VALUE')
+            // console.log('reducer SET_FILTER_VALUE')
             return {...state,
                 filters: filters_setValue({filters, value: payload.value, accessor: payload.accessor}),
                 // didInvalidate: true
             }
+        case LOADING_FILTER_LIST:
+            return state
+        case RECEIVE_FILTER_LIST:
+
         default:
             return state
     }

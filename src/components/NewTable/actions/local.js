@@ -1,4 +1,6 @@
 import {
+    INVALIDATE_DATA,
+    //sorting
     ADD_SORTING,
     SET_SORTING,
     CTRL_DOWN,
@@ -18,6 +20,8 @@ import {
     PAGE_RESIZING,
     TABLE_RESIZING
 } from '../constatnts/actions'
+//invalidate data
+export const invalidateData = () => ({type: INVALIDATE_DATA})
 //scroll
 export const setScrollSizes = ({vScroll, hScroll}) => ({type: SET_SCROLL_SIZES, payload: {vScroll, hScroll}})
 //resizing
