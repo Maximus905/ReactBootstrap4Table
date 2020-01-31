@@ -14,6 +14,7 @@ import {
 
 const getConfig = () => ({
     getTableData: () => {},
+    getFilterList: ({accessor, filters}) => {},
     table: {
         tableDark: true,
         tableSmall: true,
@@ -46,6 +47,7 @@ const getConfig = () => ({
 })
 const getConfigWithListFilter = () => ({
     getTableData: () => {},
+    getFilterList: ({accessor, filters}) => {},
     table: {
         tableDark: true,
         tableSmall: true,

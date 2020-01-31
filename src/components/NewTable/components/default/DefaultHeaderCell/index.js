@@ -75,7 +75,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onSaveSettings={onChangeFilterType} onChangeTextSearch={onChangeFilterValue} />}
+                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onSaveSettings={onChangeFilterType} onChangeTextSearch={onChangeFilterValue} onChangeFilter={onChangeFilterValue} />}
             </div>
         </th>
     )

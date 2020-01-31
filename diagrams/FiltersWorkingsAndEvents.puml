@@ -1,9 +1,11 @@
 @startuml
 participant App
-participant Filter
 participant dataLoader
-participant reducer
-participant state
+participant "App reducer" as reducer
+participant "App state" as state
+participant Filter
+participant "filterReducer" as fReducer
+participant "filterState" as fState
 
 App -> state: set initial reducer state
 state -> App: initial data
@@ -25,11 +27,6 @@ group Only if previous filters[accessor] value was not empty
             lists of values
     end note
     reducer --> state: **state** - set **didInvalidate**
-        note right
-            set didInvalidate
-            only if need reload list values
-            for current filter
-        end note
     dataLoader <-- state: filters value
     dataLoader --> state: data from server
     state --> App: loaded data
@@ -78,4 +75,27 @@ dataLoader <-- state: filters value
 dataLoader --> state: data from server
 state --> App: loaded data
 
+==Filter type LIST: click on item==
+Filter -> fReducer: CLICK_ON_ITEM(value)
+fReducer -> fState: add/remove value to/from **checkedItems[]**
+    note right
+        if in **checkedItems[]** - remove
+        else - append
+    end note
+fReducer -> fState: set checkbox for this item in list
+fReducer -> fState: **checkedItemsCounter** = amount of selected items in list
+Filter <- fState: render new state
+
+==Filter type LIST: click on selectAll checkbox==
+Filter -> fReducer: CLICK_ON_SELECT_ALL
+fReducer -> fState: **selectAll** = !selectAll
+fReducer -> fState: select all items in list
+fReducer -> fState: **checkedItems** = []
+fReducer -> fState: **checkedItemsCounter** = 0 or length of list
+    note right
+        depends on new state of selectAll
+        if selectAll is **true** - select all items
+        else - unselect all in list
+    end note
+Filter <- fState: render new state
 @enduml

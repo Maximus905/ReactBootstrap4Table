@@ -5,14 +5,14 @@ import {DropdownContext} from "../../ContextProvider";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from '@fortawesome/free-solid-svg-icons'
 import {useContext, useMemo} from "react";
-import {checkAll, clickOnSelectAll} from "../../actions";
+import {clickOnSelectAll} from "../../actions";
 
 const SelectAllBox = (props) => {
-    const {bdColor, onSelectAll, state: {data, selectAll, checkedItems}, dispatch, openSettingsMenu} = useContext(DropdownContext)
+    const {bdColor, onSelectAll, state: {data, selectAll, checkedItems, checkedItemsCounter}, dispatch, openSettingsMenu} = useContext(DropdownContext)
     // const checkedCount = useMemo(() => data.reduce((acc, item) => item.checked ? ++acc : acc, 0), [data])
     // const checked = checkedCount === data.length
     // const partlyChecked = checkedCount > 0 && checkedCount < data.length
-    const partlyChecked = checkedItems > 0 && checkedItems < data.length
+    // const partlyChecked = checkedItems > 0 && checkedItems < data.length
     // const nextCheckStatus = () => checkedCount === 0
     const selectAllHandler = () => {
         dispatch(clickOnSelectAll())
@@ -24,7 +24,7 @@ const SelectAllBox = (props) => {
         border-bottom: 1px solid ${bdColor};
         padding-right: 0.5rem;
     `}>
-            <DropdownItem checked={checkedItems} partlyChecked={partlyChecked} onClick={selectAllHandler} label="Выделить все" value="" index=""/>
+            <DropdownItem checked={selectAll} partlyChecked={checkedItems.length > 0} onClick={selectAllHandler} label="Выделить все" value="" index=""/>
             <div css={css`padding: 2px;
               border-radius: 3px;
               border: 1px solid ${bdColor}

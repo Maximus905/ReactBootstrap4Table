@@ -12,20 +12,19 @@ export const ContextProvider = (props) => {
 //**********************5e******************
 //*********4*************
     const {accessor, children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings, onChangeSimpleSearch} = props
-     let checkedItems = 0
+     let checkedItemsCounter = 0
      const replaceEmptyLabels = () => data.map(item => {
-         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
+         checkedItemsCounter = item[checkedFieldName] ? ++checkedItemsCounter : checkedItemsCounter
          return  item[labelFieldName]
              ? {value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
              : {value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
      })
      const convertData = () => data.map(item => {
-         checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
+         checkedItemsCounter = item[checkedFieldName] ? ++checkedItemsCounter : checkedItemsCounter
          return {...item, label: item[labelFieldName], checked: item[checkedFieldName]}
      })
      // state and dispatch for DropDown
-     const [state, dispatch] = useReducer(rootReducer, {...initialState, data : emptyWildcard ? replaceEmptyLabels() : convertData(), maxHeight, maxWidth, checkedItems})
-//**************4e***********************
+     const [state, dispatch] = useReducer(rootReducer, {...initialState, data : emptyWildcard ? replaceEmptyLabels() : convertData(), maxHeight, maxWidth, checkedItemsCounter})
     useEffect(() => {
         dispatch(changeMenuMaxHeight(maxHeight))
     }, [maxHeight])
@@ -39,11 +38,14 @@ export const ContextProvider = (props) => {
     // useEffect(() => {
     //     onSelectAll(state.checkedItems === state.data.length)
     // }, [state.checkedItems, onSelectAll, state.data.length]);
-    //fired when change simple search input value
+
     useEffect(() => {
         onChangeSimpleSearch(state.simpleSearchInputValue)
     }, [state.simpleSearchInputValue])
-    //fired when change filter settings
+
+    useEffect(() => {
+        console.log('change checkedItems: ', state.checkedItems)
+    }, [state.checkedItems])
     useEffect(() => {
         console.log('filter settings ', accessor, filterSettings)
         dispatch(changeSimpleSearchInput(''))

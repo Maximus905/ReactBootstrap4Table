@@ -4,7 +4,7 @@ import {
     CHANGE_INPUT,
     SET_ITEM_SIZES,
     SET_SETTINGS_ITEM_SIZES,
-    CHECK_ALL,
+    // CHECK_ALL,
     CHANGE_MENU_MAX_HEIGHT,
     CHANGE_SIMPLE_SEARCH_INPUT,
     CLICK_ON_SELECT_ALL
@@ -15,7 +15,7 @@ export const clickOnSettingsItem = (value) => ({type: CLICK_ON_SETTINGS_ITEM, pa
 export const changeInput = (value) => ({type: CHANGE_INPUT, payload: value})
 export const setItemSizes = ({width, height}) => ({type: SET_ITEM_SIZES, payload: {width, height}})
 export const setSettingsItemSizes = ({width, height}) => ({type: SET_SETTINGS_ITEM_SIZES, payload: {width, height}})
-export const checkAll = (checked) => ({type: CHECK_ALL, payload: checked})
+// export const checkAll = (checked) => ({type: CHECK_ALL, payload: checked})
 export const clickOnSelectAll = () => ({type: CLICK_ON_SELECT_ALL})
 export const changeMenuMaxHeight = (value) => ({type: CHANGE_MENU_MAX_HEIGHT, payload: value})
 export const changeSimpleSearchInput = (value) => ({type: CHANGE_SIMPLE_SEARCH_INPUT, payload: value})

@@ -33,7 +33,8 @@ const Filter = (props) => {
         // wildcard for empty value in list
         emptyWildcard,
         // callback for text search filter
-        onChangeTextSearch,
+        onChangeTextSearch, //unused. Was replaced with onChangeFilter
+        onChangeFilter,
         //callbacks for setting menu
         onClickSettingsItem,
         onSaveSettings,
@@ -72,21 +73,6 @@ const Filter = (props) => {
         })
     })
     const [settingList, setSettingList] = useState(initialSettingList)
-//****************1***************
-    //let checkedItems = 0
-    //const replaceEmptyLabels = () => data.map(item => {
-    //    checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
-    //    return  item[labelFieldName]
-    //        ? {value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
-    //        : {value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
-    //})
-    //const convertData = () => data.map(item => {
-    //    checkedItems = item[checkedFieldName] ? ++checkedItems : checkedItems
-    //    return {...item, label: item[labelFieldName], checked: item[checkedFieldName]}
-    //})
-    //// state and dispatch for DropDown
-    //const [state, dispatch] = useReducer(rootReducer, {...initialState, data : emptyWildcard ? replaceEmptyLabels() : convertData(), maxHeight, maxWidth, checkedItems}, (iniState) => iniState)
-//******************1e*****************
     const closeSettingsMenu = () => {
         setShowSettings(false)
     }
@@ -95,9 +81,6 @@ const Filter = (props) => {
     }
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? acc = item.value : acc, '')
-//****************2****************
-        //dispatch(changeSimpleSearchInput(''))
-//*****************2e*****************
         onSaveSettings({accessor, newType})
         closeSettingsMenu()
     })(accessor)
@@ -111,7 +94,8 @@ const Filter = (props) => {
     }
     const onChangeSimpleSearch = value => {
         console.log('onChangeSimpleSearch', accessor, value)
-        onChangeTextSearch({accessor, value, append: false, remove: false})
+        // onChangeTextSearch({accessor, value, append: false, remove: false})
+        onChangeFilter({accessor, value, append: false, remove: false})
         // dispatch(setFilterValue({accessor, value}))
     }
     const DropdownFilter = () => (
@@ -179,6 +163,7 @@ Filter.propTypes = {
     maxWidth: PropTypes.number,
     //handlers
     onChangeTextSearch: PropTypes.func,//for text search filter
+    onChangeFilter: PropTypes.func,
     onClickItem: PropTypes.func, // for dropdown list filter: involved after click on item of filter list (last clicked item object is passed as argument)
     onSelectAll: PropTypes.func, // for dropdown list filter: SelectAll checkbox status (true|false) is passed as argument
     onClickSettingsItem: PropTypes.func, // handler for clicking on Settings menu item

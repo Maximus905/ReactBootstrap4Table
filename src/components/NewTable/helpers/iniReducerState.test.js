@@ -3,6 +3,7 @@ import {tableSettingsFromProps, columnsSettingsFromProps, sortingFromProps, filt
 
 const getConfig = () => ({
     getTableData: () => {},
+    getFilterList: ({accessor, filters}) => {},
     table: {
         tableDark: false,
         tableSmall: true,

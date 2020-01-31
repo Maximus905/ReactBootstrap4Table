@@ -7,7 +7,7 @@ import {changeInput} from "../../actions"
 import {Badge} from 'reactstrap'
 
 const SearchInput = (props) => {
-    const {state: {inputValue, checkedItems}, dispatch, fontRatio, bdColor} = useContext(DropdownContext)
+    const {state: {inputValue, checkedItemsCounter}, dispatch, fontRatio, bdColor} = useContext(DropdownContext)
     const onChangeHandler = (e) => {
         dispatch(changeInput(e.target.value))
     }
@@ -25,7 +25,7 @@ const SearchInput = (props) => {
                   border-color: ${bdColor};
                 }
             `} value={inputValue} onChange={onChangeHandler} autoFocus={true} />
-            <Badge pill css={css`position: absolute; top: auto; right: 10px`}>{checkedItems}</Badge>
+            <Badge pill css={css`position: absolute; top: auto; right: 10px`}>{checkedItemsCounter}</Badge>
         </div>
     )
 }
