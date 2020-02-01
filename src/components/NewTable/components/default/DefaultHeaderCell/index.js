@@ -8,9 +8,6 @@ import {
     setSorting,
     addSorting,
     setFilterType,
-    setFilterValue,
-    addFilterValue,
-    removeFilterValue
 } from "../../../actions";
 import Filter from "../../Filter";
 import faker from "faker";
@@ -39,25 +36,12 @@ const fake = ((counter = 1000) => {
 const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
     const {state: {columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, invalidateDataWithTimeout} = useContext(TableContext)
     const {title, sortable, filterable, width} = columnsSettings[accessor]
-    // console.log('filter settings', accessor, filtersSettings)
 
     const onChangeFilterType = ({accessor, newType}) => {
         // console.log('onChangeFilterType', accessor, newType)
         dispatch(setFilterType({accessor, type: newType}))
     }
-    const onChangeFilterValue = ({accessor, value, append = false, remove = false}) => {
-        console.log('defaultHeaderCell onChangeFilterValue', append, remove)
-        if (append) {
-            if (!remove) dispatch(addFilterValue({accessor, value}))
-        } else {
-            if (remove) {
-                dispatch(removeFilterValue({accessor, value}))
-            } else {
-                dispatch(setFilterValue({accessor, value}))
-                invalidateDataWithTimeout(TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE)
-            }
-        }
-    }
+
     const onChangeFilterHandler = ({accessor, filterBy, type, value, selectAllState}) => {
         console.log('onChangeFilterHandler', accessor, filterBy, type, value, selectAllState)
     }

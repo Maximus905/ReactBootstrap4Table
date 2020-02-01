@@ -14,8 +14,6 @@ const rootReducer = (state, action) => {
     const newState = {}
     switch (type) {
         case CLICK_ON_ITEM:
-            // const lastClicked = {value: payload}
-
             //add/remove clicked item into checkedItems array
             const itemIndex = state.filterValue.indexOf(payload)
             if (itemIndex < 0) {
@@ -34,12 +32,9 @@ const rootReducer = (state, action) => {
                 newState.checkedItemsCounter = item.checked ? ++newState.checkedItemsCounter : newState.checkedItemsCounter
                 return  item
             })
-            // return {...state, data, lastClicked, ...newState}
             return {...state, data, ...newState}
         case CLICK_ON_SETTINGS_ITEM:
-            // const lastChosenSetting = {value: payload}
             return {...state, filterValue: [], settingList: state.settingList.map(item => ({...item, checked: item.value === payload}))}
-            // return {...state, filterValue: [], lastChosenSetting}
         case CLICK_ON_SELECT_ALL:
             return {...state,
                 selectAll: !state.selectAll,

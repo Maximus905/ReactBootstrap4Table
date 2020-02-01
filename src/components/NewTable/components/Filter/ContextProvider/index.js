@@ -1,8 +1,8 @@
-import React, {createContext, useEffect, useMemo, useReducer, useState} from "react"
+import React, {createContext, useEffect, useMemo, useReducer} from "react"
 import PropTypes from 'prop-types'
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
-import {changeMenuMaxHeight, changeSimpleSearchInput, clickOnSettingsItem, initializeFilterList} from "../actions";
+import {changeMenuMaxHeight, clickOnSettingsItem, initializeFilterList} from "../actions";
 import ft from "../../../constatnts/filterTypes";
 export const DropdownContext = createContext()
 
@@ -21,19 +21,9 @@ export const ContextProvider = (props) => {
             })
         })
     ), [filterSettings])
-    // const [settingList, setSettingList] = useState(initialSettingList)
 
     let checkedItemsCounter = data.length
-    // const replaceEmptyLabels = () => data.map(item => {
-    //     checkedItemsCounter = item[checkedFieldName] ? ++checkedItemsCounter : checkedItemsCounter
-    //     return  item[labelFieldName]
-    //         ? {value: item[valueFieldName], label: item[labelFieldName], checked: item[checkedFieldName]}
-    //         : {value: item[valueFieldName], label: emptyWildcard, checked: item[checkedFieldName]}
-    // })
-    // const convertData = () => data.map(item => {
-    //     checkedItemsCounter = item[checkedFieldName] ? ++checkedItemsCounter : checkedItemsCounter
-    //     return {...item, label: item[labelFieldName], checked: item[checkedFieldName]}
-    // })
+
     const replaceEmptyLabels = (checkStatus = true) => data.map(item => {
         return  item[labelFieldName]
             ? {value: item[valueFieldName], label: item[labelFieldName], checked: checkStatus}
@@ -85,29 +75,7 @@ export const ContextProvider = (props) => {
         onChangeFilterExt({accessor, filterBy, type, value: filterValue, selectAllState})
     }, [selectAllState, filterValue])
 
-    //*******************************
-    // useEffect(() => {
-    //     if (state.lastClicked.value !== null) {
-    //         console.log('on click item', data.length, state.checkedItems, onClickItem)
-    //         onClickItem({accessor, item: state.lastClicked})
-    //     }
-    // }, [state.lastClicked, onClickItem])
-    // fired when change amount of checked items or data list length
-    // useEffect(() => {
-    //     onSelectAll(state.checkedItems === state.data.length)
-    // }, [state.checkedItems, onSelectAll, state.data.length]);
-    //*************************************
-    //
-    // useEffect(() => {
-    //     console.log('change checkedItems: ', state.checkedItems)
-    // }, [state.checkedItems])
-    // useEffect(() => {
-    //     console.log('filter settings ', accessor, filterSettings)
-    //     dispatch(changeSimpleSearchInput(''))
-    // }, [filterSettings])
-
     return (
-        // <DropdownContext.Provider value={{state, dispatch, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings, onChangeSimpleSearch}}>
         <DropdownContext.Provider value={{state, dispatch,
             fontRatio, bdColor,
             emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
