@@ -8,7 +8,7 @@ import {useContext, useMemo} from "react";
 import {clickOnSelectAll} from "../../actions";
 
 const SelectAllBox = (props) => {
-    const {bdColor, onSelectAll, state: {data, selectAll, checkedItems, checkedItemsCounter}, dispatch, openSettingsMenu} = useContext(DropdownContext)
+    const {bdColor, onSelectAll, state: {data, selectAll, filterValue, checkedItemsCounter}, dispatch, openSettingsMenu} = useContext(DropdownContext)
     // const checkedCount = useMemo(() => data.reduce((acc, item) => item.checked ? ++acc : acc, 0), [data])
     // const checked = checkedCount === data.length
     // const partlyChecked = checkedCount > 0 && checkedCount < data.length
@@ -17,14 +17,13 @@ const SelectAllBox = (props) => {
     const selectAllHandler = () => {
         dispatch(clickOnSelectAll())
     }
-    console.log('checkd items', checkedItems)
     //() => dispatch(checkAll(nextCheckStatus()))
     return (
         <div className="d-flex justify-content-between align-items-center" css={css`
         border-bottom: 1px solid ${bdColor};
         padding-right: 0.5rem;
     `}>
-            <DropdownItem checked={selectAll} partlyChecked={checkedItems.length > 0} onClick={selectAllHandler} label="Выделить все" value="" index=""/>
+            <DropdownItem checked={selectAll} partlyChecked={filterValue.length > 0} onClick={selectAllHandler} label="Выделить все" value="" index=""/>
             <div css={css`padding: 2px;
               border-radius: 3px;
               border: 1px solid ${bdColor}

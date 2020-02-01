@@ -23,6 +23,7 @@ export const SET_FILTER_TYPE = 'SET_FILTER_TYPE'
 export const ADD_FILTER_VALUE = 'ADD_FILTER_VALUE'
 export const REMOVE_FILTER_VALUE = 'REMOVE_FILTER_VALUE'
 export const SET_FILTER_VALUE = 'SET_FILTER_VALUE'
+export const SET_FILTER = 'SET_FILTER'
 //box dimensions
 export const PAGE_RESIZING = 'PAGE_RESIZING'
 export const TABLE_RESIZING = 'TABLE_RESIZING'

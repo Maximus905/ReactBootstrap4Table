@@ -9,7 +9,9 @@ participant "filterState" as fState
 
 App -> state: set initial reducer state
 state -> App: initial data
-Filter <- state: filtersSettings
+state -> Filter: filtersSettings
+state -> Filter: filters[accessor] - filter state
+Filter -> fState: set state
 dataLoader <- state: filters value
 dataLoader -> state: data from server
 state -> App: loaded data

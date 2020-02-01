@@ -12,6 +12,7 @@ import {
     REMOVE_FILTER_VALUE,
     SET_FILTER_VALUE,
     SET_FILTER_TYPE,
+    SET_FILTER,
     //current table settings
     SET_TABLE_WIDTH, SET_ALL_COLUMNS_SETTINGS, SET_ONE_COLUMN_SETTINGS,
     //scroll
@@ -40,6 +41,7 @@ export const setFilterType = ({accessor, type}) => ({type: SET_FILTER_TYPE, payl
 export const addFilterValue = ({accessor, value}) => ({type: ADD_FILTER_VALUE, payload: {accessor, value}})
 export const removeFilterValue = ({accessor, value}) => ({type: REMOVE_FILTER_VALUE, payload: {accessor, value}})
 export const setFilterValue = ({accessor, value}) => ({type: SET_FILTER_VALUE, payload: {accessor, value}})
+export const setFilter = ({accessor, filterBy, type, value, selectAllState}) => ({type: SET_FILTER_VALUE, payload: {accessor, filterBy, type, value, selectAllState}})
 //current table settings
 export const setTableWidth = (width) => ({type: SET_TABLE_WIDTH, payload: width})
 /**

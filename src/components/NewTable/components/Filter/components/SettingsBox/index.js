@@ -56,7 +56,7 @@ const SettingsBox = (props) => {
             max-height: ${maxHeight}px;
             overflow-y: auto;
         `}>
-                <div css={css`overflow-y: scroll`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
+            <div css={css`overflow-y: scroll`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
             </div>
         )
     }

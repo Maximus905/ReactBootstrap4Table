@@ -10,9 +10,10 @@ import {changeSimpleSearchInput} from "../../actions";
 
 const SimpleSearch = ({filterType}) => {
     const label = allFilterTypes[filterType].filterName ? allFilterTypes[filterType].filterName : allFilterTypes[filterType].label
-    const {state: {simpleSearchInputValue}, dispatch, bdColor, fontRatio, onChangeSimpleSearch} = useContext(DropdownContext)
+    const {state: {filterValue}, dispatch, bdColor, fontRatio, onChangeSimpleSearch} = useContext(DropdownContext)
     // const [value, setValue] = useState('')
     // const onChangeHandler = (e) => setValue(e.target.value)
+    const inputValue = filterValue.length ? filterValue[0] : ''
     const onChangeHandler = (e) => {
         dispatch(changeSimpleSearchInput(e.target.value))
     }
@@ -43,7 +44,7 @@ const SimpleSearch = ({filterType}) => {
                 &:focus {
                   border-color: ${bdColor};
                 }
-            `} value={simpleSearchInputValue} onChange={onChangeHandler} autoFocus={true} />
+            `} value={inputValue} onChange={onChangeHandler} autoFocus={true} />
             </div>
         </Fragment>
     )

@@ -37,6 +37,15 @@ export const filters_setValue = ({filters, accessor, value}) => (
         return res
     }, {})
 )
+export const filters_changeFilter = ({filters, accessor, filterBy, type, value, selectAllState}) => {
+    const current = filters[accessor]
+    const isValueEmpty = !filters[accessor].value.length
+    if (current.type !== type) {
+        return filters_ChangeFilterType({filters, accessor, type})
+    } else {
+
+    }
+}
 export const filters_addValue = ({filters, accessor, value}) => {
     if (filters[accessor].value.includes(value)) return filters
     return Object.entries(filters).reduce((res, [key, filter]) => {

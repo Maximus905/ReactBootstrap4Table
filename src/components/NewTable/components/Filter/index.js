@@ -21,32 +21,28 @@ import {changeSimpleSearchInput} from "./actions";
 const Filter = (props) => {
     const {
         accessor,
-        data,
+        data, //filter list for LIST type
         maxHeight, maxWidth,
-        //callbacks for drop-down filter
-        onClickItem,
-        onSelectAll,
-        // key names for drop-down filter
         valueFieldName,
         labelFieldName,
         checkedFieldName,
-        // wildcard for empty value in list
         emptyWildcard,
-        // callback for text search filter
-        onChangeTextSearch, //unused. Was replaced with onChangeFilter
-        onChangeFilter,
-        //callbacks for setting menu
-        onClickSettingsItem,
-        onSaveSettings,
-
+        onChangeFilter: onChangeFilterExt,
+        onSaveSettings: onSaveSettingsExt,
         fontRatio,
         opened,
         openSettings,
         filterSettings,
+        //callbacks for drop-down filter
+        // onClickItem,
+        // onSelectAll,
+        // key names for drop-down filter
+        // wildcard for empty value in list
+        // callback for text search filter
+        // onChangeTextSearch, //unused. Was replaced with onChangeFilter
+        //callbacks for setting menu
+        // onClickSettingsItem,
         ...bsProps} = props
-//***************0********************
-    //const {dispatch} = useContext(TableContext) //doesn't used at all
-//*************0e***************
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -80,8 +76,8 @@ const Filter = (props) => {
         setShowSettings(true)
     }
     const onClickSaveSettings = ((accessor) => () => {
-        const newType = settingList.reduce((acc, item) => item.checked ? acc = item.value : acc, '')
-        onSaveSettings({accessor, newType})
+        const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
+        onSaveSettingsExt({accessor, newType})
         closeSettingsMenu()
     })(accessor)
 
@@ -92,11 +88,16 @@ const Filter = (props) => {
     const onClickSettingItem = (value) => {
         setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
     }
-    const onChangeSimpleSearch = value => {
-        console.log('onChangeSimpleSearch', accessor, value)
-        // onChangeTextSearch({accessor, value, append: false, remove: false})
-        onChangeFilter({accessor, value, append: false, remove: false})
-        // dispatch(setFilterValue({accessor, value}))
+    // const onChangeSimpleSearch = ({accessor, filterBy, type, value, selectAllState}) => {
+    //     console.log('onChangeSimpleSearch', accessor, value)
+    //     //update filter in App
+    //     onChangeFilterExt({accessor, filterBy, type, value, selectAllState})
+    //     // dispatch(setFilterValue({accessor, value}))
+    // }
+    const onChangeFilter = ({accessor, filterBy, type, value, selectAllState}) => {
+        // console.log('onChangeSimpleSearch', accessor, value)
+        //update filter in App
+        onChangeFilterExt({accessor, filterBy, type, value, selectAllState})
     }
     const DropdownFilter = () => (
         <Fragment>
@@ -138,8 +139,7 @@ const Filter = (props) => {
         bdColor,
         openSettingsMenu,
         closeSettingsMenu,
-        onClickSaveSettings,
-        onChangeSimpleSearch
+        onChangeFilter
     }
     return (
         <ContextProvider {...filterContext} >
@@ -162,11 +162,11 @@ Filter.propTypes = {
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
     //handlers
-    onChangeTextSearch: PropTypes.func,//for text search filter
-    onChangeFilter: PropTypes.func,
-    onClickItem: PropTypes.func, // for dropdown list filter: involved after click on item of filter list (last clicked item object is passed as argument)
-    onSelectAll: PropTypes.func, // for dropdown list filter: SelectAll checkbox status (true|false) is passed as argument
-    onClickSettingsItem: PropTypes.func, // handler for clicking on Settings menu item
+    // onChangeTextSearch: PropTypes.func,//for text search filter
+    onChangeFilter: PropTypes.func, // every time when filter changes
+    // onClickItem: PropTypes.func, // for dropdown list filter: involved after click on item of filter list (last clicked item object is passed as argument)
+    // onSelectAll: PropTypes.func, // for dropdown list filter: SelectAll checkbox status (true|false) is passed as argument
+    // onClickSettingsItem: PropTypes.func, // handler for clicking on Settings menu item
     onSaveSettings: PropTypes.func, //ext handler for saving filter setting. (accessor, newType) => {}
     //
     fontRatio: PropTypes.number,
@@ -190,10 +190,10 @@ Filter.defaultProps = {
     checkedFieldName: 'checked',
     opened: false,
     openSettings: false,
-    onChangeTextSearch: ({accessor, value}) => console.log('onChangeTextSearch', accessor, value),
-    onClickItem: ({accessor, item}) => console.log('onClick Item', accessor, item),
-    onSelectAll: (status) => console.log('onSelectAll', status),
-    onClickSettingsItem: () => console.log('onClick Settings Item'),
+    // onChangeTextSearch: ({accessor, value}) => console.log('onChangeTextSearch', accessor, value),
+    // onClickItem: ({accessor, item}) => console.log('onClick Item', accessor, item),
+    // onSelectAll: (status) => console.log('onSelectAll', status),
+    // onClickSettingsItem: () => console.log('onClick Settings Item'),
     onSaveSettings: (accessor, newType) => console.log('onClickSaveSettings', accessor, newType)
 }
 

@@ -36,7 +36,7 @@ const NewTable = props => {
         dimensions: {tWidth, vScroll, tBoxWidth},
         columnsSettings, visibleColumnsOrder,
     } = state
-    console.log('data', state.filters['column1'], state.filters['column2'], isLoading, didInvalidate)
+    console.log('Table level Filters', state.filters['column1'], state.filters['column2'], isLoading, didInvalidate)
     useEvent('resize', onResizeHandler)
     const refTableBox = useRef(null)
     const refTableBodyBox = useRef(null)
@@ -54,7 +54,6 @@ const NewTable = props => {
     }
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
-        console.log('effect', isLoading, didInvalidate)
         if (!isLoading && didInvalidate && !isCtrlPressed) {
             console.log('start fetching data', filters , sorting)
             // const action = requestData({fetchFunction: getTableData, filters: {}, sorting})
@@ -84,9 +83,7 @@ const NewTable = props => {
     function ctrlDownHandler(e) {
         if (!isCtrlPressed && e.ctrlKey) {
             console.log('ctrlDownHandler', e.ctrlKey)
-            const res = dispatch(ctrlDown())
-            console.log('ctrl result', res)
-            return res
+            return dispatch(ctrlDown())
         }
 
     }

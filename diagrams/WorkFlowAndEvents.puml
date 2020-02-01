@@ -1,0 +1,158 @@
+@startuml
+participant App
+participant dataLoader
+participant "App reducer" as reducer
+participant "App state" as state
+participant Filter
+participant "filterReducer" as fReducer
+participant "filterState" as fState
+
+App -> state: set initial reducer state
+state -> App: initial data
+Filter <- state: filterSettings from filtersSettings[accessor]
+Filter -> fState: set filterReducer state from filterSettings
+fState -> Filter: state
+Filter -> App: onChangeFilter({accessor, filterBy, type, value, selectAllState})
+    note right
+        **selectAllState** is passed only
+        for LIST kind of filters
+    end note
+App -> reducer: SET_FILTER({accessor, filterBy, type, value, selectAllState})
+
+alt action(SET_FILTER)
+else filterBy || type was changed
+reducer -> state: **filters[accessor]** = {filterBy, type}
+    note right
+        **value** and **selectAllState** set to initial value ([] and true)
+        **didInvalidate** for accessor is set depends on new **type**
+    end note
+
+group only if value of filter was not empty
+    reducer -> state: **filters[another accessors]** - set **didInvalidate** if it need
+        note right
+                for all filters with preloaded
+                lists of values from server
+        end note
+    reducer -> state: set **didInvalidate** for App data
+end
+else value || selectAllState were changed
+reducer -> state: **filters[accessor]** = {value, selectAllState}
+    note right
+        **filter, type, didInvalidate** keep the same
+    end note
+reducer -> state: **filters[another accessors]** - set **didInvalidate**
+    note right
+            for all filters with preloaded
+            lists of values from server
+    end note
+reducer -> state: set **didInvalidate** for App data
+end
+==Listener of filters state in App==
+dataLoader <- state: filters state
+dataLoader -> state: data from server
+state -> App: loaded data
+
+== Filter event: change type of filter ==
+Filter -> App: onSaveSettings(accessor, newType)
+App -> reducer: SET_FILTER_TYPE(accessor, newType)
+reducer -> state: **filtersSettings[accessor]** - set new type
+state -> Filter: updated filtersSettings
+Filter -> fState: set filterReducer state from filterSettings
+fState -> Filter: state
+Filter -> App: onChangeFilter({accessor, filterBy, type, value, selectAllState})
+    note right
+        **selectAllState** is passed only
+        for LIST kind of filters
+    end note
+App -> reducer: **action(SET_FILTER({accessor, filterBy, type, value, selectAllState}))**
+
+
+'reducer -> state: **filters[accessor]** - set new type
+'reducer --> state: **filters[accessor]** - clear value
+'group Only if previous filters[accessor] value was not empty
+'    reducer -> state: **filters[another accessors]** - set **didInvalidate** if it need
+'    note right
+'            for all filters with preloaded
+'            lists of values
+'    end note
+'    reducer --> state: **state** - set **didInvalidate**
+'    dataLoader <-- state: filters value
+'    dataLoader --> state: data from server
+'    state --> App: loaded data
+'end
+==Filter event: change value or selectAllState==
+Filter -> App: onChangeFilter({accessor, filterBy, type, value, selectAllState})
+    note right
+        **selectAllState** is passed only
+        for LIST kind of filters
+    end note
+App -> reducer: **action(SET_FILTER({accessor, filterBy, type, value, selectAllState}))**
+
+
+'== Filter event: set value of filter ==
+'Filter -> App: onChangeFilter({accessor, value, append: false, remove: false)}
+'App -> reducer: SET_FILTER_VALUE(accessor, value)
+'reducer -> state: **filters[accessor]** - set value as [value]
+'reducer -> state: **filters[another accessors]** - set **didInvalidate**
+'    note right
+'        set didInvalidate
+'        only if need reload list values
+'        for current filter
+'    end note
+'reducer --> state: **state** - set **didInvalidate**
+'dataLoader <-- state: filters value
+'dataLoader --> state: data from server
+'state --> App: loaded data
+'
+'== Filter event: append value to filter ==
+'Filter -> App: onChangeFilter({accessor, value, append: true, remove: false)}
+'reducer -> state: **filters[accessor]** - add value to array of values
+'reducer -> state: **filters[another accessors]** - set **didInvalidate**
+'    note right
+'        set didInvalidate
+'        only if need reload list values
+'        for current filter
+'    end note
+'reducer --> state: **state** - set **didInvalidate**
+'dataLoader <-- state: filters value
+'dataLoader --> state: data from server
+'state --> App: loaded data
+'
+'== Filter event: remove filter's value ==
+'Filter -> App: onChangeFilter({accessor, value, append: false, remove: true)}
+'reducer -> state: **filters[accessor]** - remove value from array of values
+'reducer -> state: **filters[another accessors]** - set **didInvalidate**
+'    note right
+'        set didInvalidate
+'        only if need reload list values
+'        for current filter
+'    end note
+'reducer --> state: **state** - set **didInvalidate**
+'dataLoader <-- state: filters value
+'dataLoader --> state: data from server
+'state --> App: loaded data
+'
+==Filter type LIST: click on item==
+Filter -> fReducer: CLICK_ON_ITEM(value)
+fReducer -> fState: add/remove value to/from **checkedItems[]**
+    note right
+        if in **checkedItems[]** - remove
+        else - append
+    end note
+fReducer -> fState: set checkbox for this item in list
+fReducer -> fState: **checkedItemsCounter** = amount of selected items in list
+Filter <- fState: render new state
+
+==Filter type LIST: click on selectAll checkbox==
+Filter -> fReducer: CLICK_ON_SELECT_ALL
+fReducer -> fState: **selectAll** = !selectAll
+fReducer -> fState: select all items in list
+fReducer -> fState: **checkedItems** = []
+fReducer -> fState: **checkedItemsCounter** = 0 or length of list
+    note right
+        depends on new state of selectAll
+        if selectAll is **true** - select all items
+        else - unselect all in list
+    end note
+Filter <- fState: render new state
+@enduml

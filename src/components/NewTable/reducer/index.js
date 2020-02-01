@@ -8,6 +8,7 @@ import {
     INVALIDATE_DATA, LOADING_DATA, REQUEST_DATA, RECEIVE_DATA,
     SET_FILTER_TYPE,
     SET_FILTER_VALUE,
+    SET_FILTER,
     INVALIDATE_FILTER_LIST, LOADING_FILTER_LIST, REQUEST_FILTER_LIST, RECEIVE_FILTER_LIST
 } from "../constatnts/actions";
 import {
@@ -105,6 +106,8 @@ export const rootReducer = (state, action) => {
                 filters: filters_setValue({filters, value: payload.value, accessor: payload.accessor}),
                 // didInvalidate: true
             }
+        case SET_FILTER:
+
         case LOADING_FILTER_LIST:
             return state
         case RECEIVE_FILTER_LIST:

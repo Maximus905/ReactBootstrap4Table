@@ -58,6 +58,9 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
             }
         }
     }
+    const onChangeFilterHandler = ({accessor, filterBy, type, value, selectAllState}) => {
+        console.log('onChangeFilterHandler', accessor, filterBy, type, value, selectAllState)
+    }
     const handlerOnClick = (e) => {
         if (e.ctrlKey) {
             dispatch(addSorting(accessor))
@@ -75,7 +78,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onSaveSettings={onChangeFilterType} onChangeTextSearch={onChangeFilterValue} onChangeFilter={onChangeFilterValue} />}
+                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onSaveSettings={onChangeFilterType} onChangeFilter={onChangeFilterHandler} />}
             </div>
         </th>
     )
