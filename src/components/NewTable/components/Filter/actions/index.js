@@ -7,7 +7,8 @@ import {
     // CHECK_ALL,
     CHANGE_MENU_MAX_HEIGHT,
     CHANGE_SIMPLE_SEARCH_INPUT,
-    CLICK_ON_SELECT_ALL
+    CLICK_ON_SELECT_ALL,
+    INITIALIZE_FILTER_LIST
 } from "../constants/actions";
 
 export const clickOnItem = (value) => ({type: CLICK_ON_ITEM, payload: value})
@@ -20,4 +21,4 @@ export const clickOnSelectAll = () => ({type: CLICK_ON_SELECT_ALL})
 export const changeMenuMaxHeight = (value) => ({type: CHANGE_MENU_MAX_HEIGHT, payload: value})
 export const changeSimpleSearchInput = (value) => ({type: CHANGE_SIMPLE_SEARCH_INPUT, payload: value})
 //filters
-export const setFilterValue = () => {}
+export const initializeFilterList = (initialState) => ({type: INITIALIZE_FILTER_LIST, payload: initialState})

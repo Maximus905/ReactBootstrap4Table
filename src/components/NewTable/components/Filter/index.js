@@ -8,6 +8,7 @@ import ItemsBox from "./components/ItemsBox"
 import DropdownMenu from "./components/DropdownMenu"
 import DropdownButton from "./components/DropdownButton"
 import SelectAllBox from "./components/SelectAll";
+import SettingsMenu from "./components/SettingsMenu";
 import {Dropdown as DropdownBs} from "reactstrap";
 import SettingsBox from "./components/SettingsBox";
 import SettingsHeader from "./components/SettingsHeader";
@@ -57,48 +58,49 @@ const Filter = (props) => {
             }
         }
     }
-
     const [isOpen, setIsOpen] = useState(opened)
     const [showSettings, setShowSettings] = useState(openSettings)
     //settings list
-    const initialSettingList = filterSettings && filterSettings.allowedTypes.map(key => {
-        return ({
-            value: filterTypes[key].value,
-            label: filterTypes[key].label,
-            checked: filterTypes[key].value === filterSettings.type,
-        })
-    })
-    const [settingList, setSettingList] = useState(initialSettingList)
+    // const initialSettingList = filterSettings && filterSettings.allowedTypes.map(key => {
+    //     return ({
+    //         value: filterTypes[key].value,
+    //         label: filterTypes[key].label,
+    //         checked: filterTypes[key].value === filterSettings.type,
+    //     })
+    // })
     const closeSettingsMenu = () => {
         setShowSettings(false)
     }
     const openSettingsMenu = () => {
         setShowSettings(true)
     }
-    const onClickSaveSettings = ((accessor) => () => {
-        const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
-        onSaveSettingsExt({accessor, newType})
-        closeSettingsMenu()
-    })(accessor)
-
-    useEffect(() => {
-        onClickSaveSettings()
-    }, [settingList])
-
-    const onClickSettingItem = (value) => {
-        setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
-    }
+//******************11*************
+//     const [settingList, setSettingList] = useState(initialSettingList)
+//     const onClickSaveSettings = ((accessor) => () => {
+//         const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
+//         onSaveSettingsExt({accessor, newType})
+//         closeSettingsMenu()
+//     })(accessor)
+//
+//     useEffect(() => {
+//         onClickSaveSettings()
+//     }, [settingList])
+//
+//     const onClickSettingItem = (value) => {
+//         setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
+//     }
+//*******************11e*************
     // const onChangeSimpleSearch = ({accessor, filterBy, type, value, selectAllState}) => {
     //     console.log('onChangeSimpleSearch', accessor, value)
     //     //update filter in App
     //     onChangeFilterExt({accessor, filterBy, type, value, selectAllState})
     //     // dispatch(setFilterValue({accessor, value}))
     // }
-    const onChangeFilter = ({accessor, filterBy, type, value, selectAllState}) => {
-        // console.log('onChangeSimpleSearch', accessor, value)
-        //update filter in App
-        onChangeFilterExt({accessor, filterBy, type, value, selectAllState})
-    }
+    // const onChangeFilter = ({accessor, filterBy, type, value, selectAllState}) => {
+    //     // console.log('onChangeSimpleSearch', accessor, value)
+    //     //update filter in App
+    //     onChangeFilterExt({accessor, filterBy, type, value, selectAllState})
+    // }
     const DropdownFilter = () => (
         <Fragment>
             <SelectAllBox/>
@@ -106,12 +108,14 @@ const Filter = (props) => {
             <ItemsBox/>
         </Fragment>
     )
-    const SettingsMenu = () => (
-        <Fragment>
-            <SettingsHeader/>
-            <SettingsBox settingList={settingList} onClick={onClickSettingItem} />
-        </Fragment>
-    )
+//***********************11*****************
+//     const SettingsMenu = () => (
+//         <Fragment>
+//             <SettingsHeader/>
+//             <SettingsBox settingList={settingList} onClick={onClickSettingItem} />
+//         </Fragment>
+//     )
+//************************11e
     const filter = () => {
         switch (filterSettings.type) {
             case 'EQ':
@@ -133,13 +137,13 @@ const Filter = (props) => {
     const filterContext = {
         ...props,
 //*************3*************
-        //state,
-        //dispatch,
+//         state,
+//         dispatch,
 //***************3e*********************
         bdColor,
         openSettingsMenu,
         closeSettingsMenu,
-        onChangeFilter
+        // onChangeFilter
     }
     return (
         <ContextProvider {...filterContext} >

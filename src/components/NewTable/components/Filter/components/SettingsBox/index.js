@@ -35,7 +35,9 @@ const SettingsBox = (props) => {
     const {state: {maxHeight, maxWidth, settingItemWidth, settingItemHeight, }, dispatch} = useContext(DropdownContext)
 
     const itemRef = createRef()
-
+    const onClickHandler = () => {
+        onClick()
+    }
     useEffect(() => {
         if (!settingItemWidth && !settingItemHeight && itemRef.current && itemRef.current.offsetWidth && itemRef.current.offsetHeight) {
             const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
