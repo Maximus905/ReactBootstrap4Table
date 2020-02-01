@@ -38,7 +38,7 @@ const rootReducer = (state, action) => {
             return {...state, data, ...newState}
         case CLICK_ON_SETTINGS_ITEM:
             // const lastChosenSetting = {value: payload}
-            return {...state, filterValue: []}
+            return {...state, filterValue: [], settingList: state.settingList.map(item => ({...item, checked: item.value === payload}))}
             // return {...state, filterValue: [], lastChosenSetting}
         case CLICK_ON_SELECT_ALL:
             return {...state,

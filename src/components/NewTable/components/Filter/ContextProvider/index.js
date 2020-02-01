@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useReducer, useState} from "react"
+import React, {createContext, useEffect, useMemo, useReducer, useState} from "react"
 import PropTypes from 'prop-types'
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
@@ -7,23 +7,21 @@ import ft from "../../../constatnts/filterTypes";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-//***********************5********************
-    //const {state, dispatch, accessor, children, data, maxHeight, maxWidth, onClickItem, onSelectAll, fontRatio, bdColor, emptyWildcard, valueFieldName, labelFieldName, checkedFieldName, openSettingsMenu, closeSettingsMenu, filterSettings, onClickSaveSettings, onChangeSimpleSearch} = props
-//**********************5e******************
-//*********4*************
     const {accessor, children, data, filterSettings, filterSettings: {filterBy, type},
         maxHeight, maxWidth, fontRatio, bdColor,
         emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
         openSettingsMenu, closeSettingsMenu, onChangeFilter: onChangeFilterExt, onSaveSettings: onSaveSettingsExt} = props
     /// settings filter
-    const initialSettingList = filterSettings && filterSettings.allowedTypes.map(key => {
-        return ({
-            value: ft[key].value,
-            label: ft[key].label,
-            checked: ft[key].value === filterSettings.type,
+    const initialSettingList = useMemo(() => (
+        filterSettings && filterSettings.allowedTypes.map(key => {
+            return ({
+                value: ft[key].value,
+                label: ft[key].label,
+                checked: ft[key].value === filterSettings.type,
+            })
         })
-    })
-    const [settingList, setSettingList] = useState(initialSettingList)
+    ), [filterSettings])
+    // const [settingList, setSettingList] = useState(initialSettingList)
 
     let checkedItemsCounter = data.length
     // const replaceEmptyLabels = () => data.map(item => {
@@ -46,8 +44,13 @@ export const ContextProvider = (props) => {
     })
     const initialFilterList = emptyWildcard ? replaceEmptyLabels() : convertData()
     // state and dispatch for DropDown
-    const [state, dispatch] = useReducer(rootReducer, {...initialState, data: initialFilterList, maxHeight, maxWidth, checkedItemsCounter})
-    const {selectAll: selectAllState, filterValue} = state
+    const [state, dispatch] = useReducer(rootReducer, {...initialState,
+        data: initialFilterList,
+        maxHeight, maxWidth,
+        checkedItemsCounter,
+        settingList: initialSettingList
+    })
+    const {selectAll: selectAllState, filterValue, settingList} = state
 
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
@@ -61,11 +64,9 @@ export const ContextProvider = (props) => {
     }, [settingList])
 
     const onClickSettingItem = (value) => {
-        setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
-        dispatch(clickOnSettingsItem())
+        // setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
+        dispatch(clickOnSettingsItem(value))
     }
-
-
 
     useEffect(() => {
         dispatch(changeMenuMaxHeight(maxHeight))

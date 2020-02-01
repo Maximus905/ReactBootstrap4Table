@@ -18,5 +18,5 @@ export const initialState = {
     filterValue: [],
     checkedItemsCounter: 0,
     lastClickSelectAll: 0,
-    simpleSearchInputValue: ''
+    settingList: []
 }
