@@ -1,10 +1,10 @@
 /**@jsx jsx*/
 import {css, jsx} from "@emotion/core"
-import React, {useReducer, useRef, useEffect, useMemo, useCallback} from 'react'
+import {useReducer, useRef, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import myCss from './style.module.css'
 //actions
-import {setScrollSizes, pageResizing, tableResizing, invalidateData} from "./actions";
+import {setScrollSizes, pageResizing, tableResizing, invalidateData, resetInvalidateDelay} from "./actions";
 //components
 import HeaderRow from "./components/HeaderRow"
 import HeaderCell from "./components/HeaderCell";
@@ -30,11 +30,10 @@ const NewTable = props => {
     const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
     const asyncDispatch = dispatchMiddleware(dispatch)
-    const {isLoading, didInvalidate, sorting, filters, isCtrlPressed,
+    const {isLoading, didInvalidate, invalidateWithDelay, sorting, filters, isCtrlPressed,
         tableSettings: {tableSmall, tableStriped, tableDark, tableBordered, tableBorderless, tableHover},
-        dimensions,
         dimensions: {tWidth, vScroll, tBoxWidth},
-        columnsSettings, visibleColumnsOrder,
+        visibleColumnsOrder,
     } = state
     console.log('Table level Filters', state.filters['column1'], state.filters['column2'], isLoading, didInvalidate)
     useEvent('resize', onResizeHandler)
@@ -42,6 +41,7 @@ const NewTable = props => {
     const refTableBodyBox = useRef(null)
     useEffect(() => onResizeHandler(), [])
     useEffect(() => {
+        console.log('useEffect tableResizing')
         dispatch(tableResizing())
     }, [tBoxWidth, vScroll, props.columns])
     function onResizeHandler() {
@@ -55,28 +55,39 @@ const NewTable = props => {
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
         if (!isLoading && didInvalidate && !isCtrlPressed) {
-            console.log('start fetching data', filters , sorting)
+            console.log('useEffect start fetching data',didInvalidate, filters , sorting)
             // const action = requestData({fetchFunction: getTableData, filters: {}, sorting})
             const action = requestData({fetchFunction: getTableData, filters , sorting})
             asyncDispatch(action)
             console.log('data is fetched ')
         }
-    }, [isLoading, didInvalidate, dispatch, getTableData, isCtrlPressed])
+    }, [isLoading, didInvalidate, isCtrlPressed])
+
     useEffect(() => {
         console.log('useEffect on filters changing', filters)
     }, [filters]);
+
+    useEffect(() => {
+        if (invalidateWithDelay) {
+            dispatch(resetInvalidateDelay())
+            invalidateDataWithTimeout(invalidateWithDelay)
+        }
+        console.log('useEffect invalidateWithDelay', invalidateWithDelay)
+
+    }, [invalidateWithDelay])
+
     // invalidate data with timeout
     const timeIdRef = useRef(null)
-    const handlerInvalidate = () => dispatch(invalidateData())
     const invalidateDataWithTimeout = (delay) => {
+        console.log('invalidate')
         if (timeIdRef.current) {
             clearTimeout(timeIdRef.current)
         }
         if (delay) {
-            timeIdRef.current = setTimeout(handlerInvalidate, delay)
+            timeIdRef.current = setTimeout(() => dispatch(invalidateData()), delay)
         } else {
             timeIdRef.current = null
-            invalidateData()
+            dispatch(invalidateData())
         }
     }
     // Ctrl key handlers

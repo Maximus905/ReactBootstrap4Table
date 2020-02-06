@@ -9,8 +9,7 @@ const sortIcons = {
 }
 
 const SortIcon = ({accessor}) => {
-    const {state: {sorting, columnsSettings}} = useContext(TableContext)
-    // if (!columnsSettings[accessor].sortable) return null
+    const {state: {sorting,}} = useContext(TableContext)
     const sortObj = sorting.filter((item) => Object.keys(item)[0] === accessor)[0]
     const sortIcon = sortObj ? sortIcons[sortObj[accessor]] : undefined
     const sortIndex = () => {

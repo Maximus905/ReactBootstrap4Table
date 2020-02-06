@@ -6,7 +6,8 @@ export const initialState = {
     filters: {},
     isCtrlPressed: false,
     isLoading: false,
-    didInvalidate: true,
+    invalidateWithDelay: 1200,
+    didInvalidate: false,
 
     dimensions: {
         tWidth: 0,

@@ -2,12 +2,15 @@ import React, {createContext, useEffect, useMemo, useReducer} from "react"
 import PropTypes from 'prop-types'
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
-import {changeMenuMaxHeight, clickOnSettingsItem, initializeFilterList} from "../actions";
+import {
+    changeFilterType,
+    changeMenuMaxHeight,
+} from "../actions";
 import ft from "../../../constatnts/filterTypes";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-    const {accessor, children, data, filterSettings, filterSettings: {filterBy, type},
+    const {accessor, children, data, filterSettings, filterSettings: {filterBy},
         maxHeight, maxWidth, fontRatio, bdColor,
         emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
         openSettingsMenu, closeSettingsMenu, onChangeFilter: onChangeFilterExt, onSaveSettings: onSaveSettingsExt} = props
@@ -44,39 +47,43 @@ export const ContextProvider = (props) => {
 
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
-        if (newType === ft.LIST.value) dispatch(initializeFilterList({data: initialFilterList, selectAll: true, checkedItemsCounter}))
-        onSaveSettingsExt({accessor, newType})
         closeSettingsMenu()
+        onSaveSettingsExt({accessor, newType})
     })(accessor)
-
+    // auto close settings menu
     useEffect(() => {
         onClickSaveSettings()
     }, [settingList])
 
     const onClickSettingItem = (value) => {
-        // setSettingList(settingList.map(item => ({...item, checked: item.value === value})))
-        dispatch(clickOnSettingsItem(value))
+        const currentType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
+        const newState = {}
+        if (currentType !== value) {
+            newState.settingList = settingList.map(item => ({...item, checked: item.value === value}))
+            newState.filterValue = filterValue.length > 0 ? [] : filterValue
+            newState.inputValue = ''
+            newState.data = (value === ft.LIST.value) ? initialFilterList : state.data
+            newState.selectAll = (value === ft.LIST.value) ? true : selectAllState
+            newState.checkedItemsCounter = (value === ft.LIST.value) ? initialFilterList.length : state.checkedItemsCounter
+            dispatch(changeFilterType(newState))
+        } else {
+            closeSettingsMenu()
+        }
     }
 
     useEffect(() => {
         dispatch(changeMenuMaxHeight(maxHeight))
     }, [maxHeight])
 
-    //invoke external onChangeFilter for every changing of filter filterBy or type
-    useEffect(() => {
-        console.log('change filter type', filterBy, type, selectAllState, filterValue)
-        onChangeFilterExt({accessor, filterBy, type, value: filterValue, selectAllState})
-    }, [filterBy, type])
-
     //invoke external onChangeFilter for every changing of filter selectAllState or filterValue
     useEffect(() => {
-        console.log('change filter value', filterBy, type, selectAllState, filterValue)
-        // const value = (type === ft.LIST.value) ? [...checkedItems] : [simpleSearchValue]
-        onChangeFilterExt({accessor, filterBy, type, value: filterValue, selectAllState})
-    }, [selectAllState, filterValue])
+        const currentType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
+        console.log('change filter value', accessor, filterBy, currentType, selectAllState, filterValue)
+        onChangeFilterExt({accessor, filterBy, type: currentType, value: filterValue, selectAllState})
+    }, [settingList, selectAllState, filterValue])
 
     return (
-        <DropdownContext.Provider value={{state, dispatch,
+        <DropdownContext.Provider value={{accessor, state, dispatch,
             fontRatio, bdColor,
             emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
             openSettingsMenu, closeSettingsMenu,

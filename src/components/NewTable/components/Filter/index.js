@@ -1,16 +1,13 @@
-import React, {useState, Fragment} from "react"
+import React, {useEffect, useState} from "react"
 import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
 import Dropdown from "./components/Dropdown";
-import SearchInput from "./components/SearchInput"
-import ItemsBox from "./components/ItemsBox"
 import DropdownMenu from "./components/DropdownMenu"
 import DropdownButton from "./components/DropdownButton"
-import SelectAllBox from "./components/SelectAll";
 import SettingsMenu from "./components/SettingsMenu";
 import {Dropdown as DropdownBs} from "reactstrap";
-import SimpleSearch from "./filters/SimpleSearch";
+import FilterBody from "./components/FilterBody";
 
 
 const Filter = (props) => {
@@ -24,6 +21,7 @@ const Filter = (props) => {
         emptyWildcard,
         onChangeFilter: onChangeFilterExt,
         onSaveSettings: onSaveSettingsExt,
+        onOpen,
         fontRatio,
         opened,
         openSettings,
@@ -52,37 +50,16 @@ const Filter = (props) => {
         setShowSettings(true)
     }
 
-    const DropdownFilter = () => (
-        <Fragment>
-            <SelectAllBox/>
-            <SearchInput />
-            <ItemsBox/>
-        </Fragment>
-    )
-
-    const filter = () => {
-        switch (filterSettings.type) {
-            case 'EQ':
-            case 'NE':
-            case 'LT':
-            case 'LE':
-            case 'GT':
-            case 'GE':
-            case 'STARTING':
-            case 'ENDING':
-                return <SimpleSearch filterType={filterSettings.type} />
-            case 'LIST':
-                return <DropdownFilter />
-            default:
-                return <div>Фильтр не выбран</div>
-        }
-    }
     const filterContext = {
         ...props,
         bdColor,
         openSettingsMenu,
         closeSettingsMenu,
     }
+    useEffect(() => {
+        console.log('useEffect isOpen')
+        if (isOpen) onOpen({accessor})
+    }, [isOpen])
     return (
         <ContextProvider {...filterContext} >
             <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {
@@ -90,7 +67,8 @@ const Filter = (props) => {
             }}>
                 <DropdownButton/>
                 <DropdownMenu modifiers={{offset}} >
-                    { !showSettings && filter()}
+                    {/*{ !showSettings && filter()}*/}
+                    { !showSettings && <FilterBody />}
                     { showSettings && <SettingsMenu />}
                 </DropdownMenu>
             </Dropdown>
@@ -106,6 +84,7 @@ Filter.propTypes = {
     //handlers
     onChangeFilter: PropTypes.func, // every time when filter changes
     onSaveSettings: PropTypes.func, //ext handler for saving filter setting. (accessor, newType) => {}
+    onOpen: PropTypes.func,
     //
     fontRatio: PropTypes.number,
     emptyWildcard: PropTypes.string,
@@ -128,7 +107,8 @@ Filter.defaultProps = {
     checkedFieldName: 'checked',
     opened: false,
     openSettings: false,
-    onSaveSettings: (accessor, newType) => console.log('onClickSaveSettings', accessor, newType)
+    onSaveSettings: ({accessor, newType}) => {console.log('onClickSaveSettings', accessor, newType)},
+    onOpen: ({accessor}) => console.log('onOpen', accessor)
 }
 
 export default Filter

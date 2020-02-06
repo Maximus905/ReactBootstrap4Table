@@ -1,5 +1,6 @@
 import {
     INVALIDATE_DATA,
+    RESET_INVALIDATE_DELAY,
     //sorting
     ADD_SORTING,
     SET_SORTING,
@@ -8,11 +9,11 @@ import {
     //change type of filter in filters settings
     FILTER_SETTINGS_SET_TYPE,
     //change value and type of current filters
-    ADD_FILTER_VALUE,
-    REMOVE_FILTER_VALUE,
-    SET_FILTER_VALUE,
+    // ADD_FILTER_VALUE,
+    // REMOVE_FILTER_VALUE,
+    // SET_FILTER_VALUE,
     SET_FILTER_TYPE,
-    SET_FILTER,
+    CHANGE_FILTER,
     //current table settings
     SET_TABLE_WIDTH, SET_ALL_COLUMNS_SETTINGS, SET_ONE_COLUMN_SETTINGS,
     //scroll
@@ -23,6 +24,7 @@ import {
 } from '../constatnts/actions'
 //invalidate data
 export const invalidateData = () => ({type: INVALIDATE_DATA})
+export const resetInvalidateDelay = () => ({type: RESET_INVALIDATE_DELAY})
 //scroll
 export const setScrollSizes = ({vScroll, hScroll}) => ({type: SET_SCROLL_SIZES, payload: {vScroll, hScroll}})
 //resizing
@@ -38,10 +40,10 @@ export const ctrlUp = () => ({type: CTRL_UP})
 export const filterSettingsSetType = ({accessor, type}) => ({type: FILTER_SETTINGS_SET_TYPE, payload: {accessor, type}})
 //current filter
 export const setFilterType = ({accessor, type}) => ({type: SET_FILTER_TYPE, payload: {accessor, type}})
-export const addFilterValue = ({accessor, value}) => ({type: ADD_FILTER_VALUE, payload: {accessor, value}})
-export const removeFilterValue = ({accessor, value}) => ({type: REMOVE_FILTER_VALUE, payload: {accessor, value}})
-export const setFilterValue = ({accessor, value}) => ({type: SET_FILTER_VALUE, payload: {accessor, value}})
-export const setFilter = ({accessor, filterBy, type, value, selectAllState}) => ({type: SET_FILTER_VALUE, payload: {accessor, filterBy, type, value, selectAllState}})
+// export const addFilterValue = ({accessor, value}) => ({type: ADD_FILTER_VALUE, payload: {accessor, value}})
+// export const removeFilterValue = ({accessor, value}) => ({type: REMOVE_FILTER_VALUE, payload: {accessor, value}})
+// export const setFilterValue = ({accessor, value}) => ({type: SET_FILTER_VALUE, payload: {accessor, value}})
+export const changeFilter = ({accessor, filterBy, type, value, selectAllState}) => ({type: CHANGE_FILTER, payload: {accessor, filterBy, type, value, selectAllState}})
 //current table settings
 export const setTableWidth = (width) => ({type: SET_TABLE_WIDTH, payload: width})
 /**

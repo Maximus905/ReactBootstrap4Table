@@ -6,7 +6,7 @@ import {
     SET_ITEM_SIZES,
     SET_SETTINGS_ITEM_SIZES,
     CHANGE_MENU_MAX_HEIGHT,
-    CHANGE_SIMPLE_SEARCH_INPUT, INITIALIZE_FILTER_LIST,
+    CHANGE_SIMPLE_SEARCH_INPUT, INITIALIZE_FILTER_LIST, CLEAR_FILTER_VALUE, CHANGE_FILTER_TYPE,
 } from "../constants/actions"
 
 const rootReducer = (state, action) => {
@@ -34,7 +34,9 @@ const rootReducer = (state, action) => {
             })
             return {...state, data, ...newState}
         case CLICK_ON_SETTINGS_ITEM:
-            return {...state, filterValue: [], settingList: state.settingList.map(item => ({...item, checked: item.value === payload}))}
+            return {...state, settingList: state.settingList.map(item => ({...item, checked: item.value === payload}))}
+        case CHANGE_FILTER_TYPE:
+            return {...state, ...payload}
         case CLICK_ON_SELECT_ALL:
             return {...state,
                 selectAll: !state.selectAll,
@@ -44,7 +46,9 @@ const rootReducer = (state, action) => {
                 // lastClickSelectAll: Date.now()
             }
         case INITIALIZE_FILTER_LIST:
-            return {...state, data: payload.data, selectAll: payload.selectAll, checkedItemsCounter: payload.checkedItemsCounter}
+            return {...state, filterValue: [], data: payload.data, selectAll: payload.selectAll, checkedItemsCounter: payload.checkedItemsCounter}
+        case CLEAR_FILTER_VALUE:
+            return {...state, filterValue: []}
         case CHANGE_INPUT:
             // handle changing input value for dropdown filter search field
             return {...state, inputValue: payload}

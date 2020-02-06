@@ -7,11 +7,12 @@ import TableContext from "../../../TableContext";
 import {
     setSorting,
     addSorting,
-    setFilterType,
+    setFilterType, changeFilter,
 } from "../../../actions";
 import Filter from "../../Filter";
+import ft from "../../../constatnts/filterTypes";
 import faker from "faker";
-import {TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE, TIMEOUT_CHANGE_SORTING} from "../../../constatnts/timouts";
+import {TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE, TIMEOUT_CHANGE_SORTING} from "../../../constatnts/timeouts";
 
 const fake = ((counter = 1000) => {
     const time = Date.now()
@@ -34,23 +35,19 @@ const fake = ((counter = 1000) => {
 })()
 
 const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
-    const {state: {columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, invalidateDataWithTimeout} = useContext(TableContext)
+    const {state: {filters, columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch} = useContext(TableContext)
     const {title, sortable, filterable, width} = columnsSettings[accessor]
 
-    const onChangeFilterType = ({accessor, newType}) => {
-        // console.log('onChangeFilterType', accessor, newType)
-        dispatch(setFilterType({accessor, type: newType}))
-    }
-
     const onChangeFilterHandler = ({accessor, filterBy, type, value, selectAllState}) => {
-        console.log('onChangeFilterHandler', accessor, filterBy, type, value, selectAllState)
+        dispatch(changeFilter({accessor, type, value, selectAllState}))
     }
+    const filterState = filters[accessor]
     const handlerOnClick = (e) => {
         if (e.ctrlKey) {
             dispatch(addSorting(accessor))
         } else {
             dispatch(setSorting(accessor))
-            invalidateDataWithTimeout(TIMEOUT_CHANGE_SORTING)
+            // invalidateDataWithTimeout(TIMEOUT_CHANGE_SORTING)
         }
     }
     return (
@@ -62,7 +59,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onSaveSettings={onChangeFilterType} onChangeFilter={onChangeFilterHandler} />}
+                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={fake} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} />}
             </div>
         </th>
     )

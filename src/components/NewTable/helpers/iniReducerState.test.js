@@ -52,6 +52,7 @@ const result = {
     },
     isCtrlPressed: false,
     isLoading: false,
+    invalidateWithDelay: false,
     didInvalidate: true,
 
     dimensions: {

@@ -8,8 +8,8 @@ import {
     calculateColumnsDim,
     tableWidth,
     visibleColumnsOrderFromProps,
-    // filtersSettings_ChangeFilterType,
-    // filters_ChangeFilterType, filters_setValue
+    // filtersSettings_changeFilterType,
+    // filters_changeFilterType, filters_changeValue
 } from "./index"
 
 const getConfig = () => ({

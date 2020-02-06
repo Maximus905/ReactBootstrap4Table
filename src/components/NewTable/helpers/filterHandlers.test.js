@@ -1,9 +1,14 @@
 import ft from "../constatnts/filterTypes"
 import {
-    filtersSettings_ChangeFilterType,
-    filters_ChangeFilterType,
-    filters_setValue, filters_addValue, filters_removeValue
+    filtersSettings_changeFilterType,
+    filters_changeFilterType,
+    filters_changeValue, filters_addValue, filters_removeValue, app_changeFilter, changeFilter_invalidateData
 } from './filterHandlers'
+import {
+    TIMEOUT_CHANGE_FILTER_TYPE,
+    TIMEOUT_CHANGE_LIST_FILTER_VALUE,
+    TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE
+} from "../constatnts/timeouts";
 
 const getFiltersSettings = () => ({
     column1: {
@@ -21,7 +26,9 @@ const getFilterSettings = (filterBy, type, allowedTypes) => ({filterBy, type, al
 const getTextFilterState = (filterBy, type, value, didInvalidate) => ({filterBy, type, value, didInvalidate})
 const getListFilterState = (filterBy, type, selectAllState, value, list, didInvalidate) => ({filterBy, type, selectAllState, value, list, didInvalidate})
 
-test('change filter type in filtersSettings EQ -> NE', () => {
+const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, data=[], sorting=[]) => ({filters, filtersSettings, didInvalidate, data, sorting})
+
+test('filtersSettings, change filter type  EQ -> NE', () => {
     let filtersSettings = {
         c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
@@ -31,9 +38,9 @@ test('change filter type in filtersSettings EQ -> NE', () => {
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
     const accessor = 'c1'
-    expect(filtersSettings_ChangeFilterType({filtersSettings, accessor, type: ft.NE.value})).toEqual(res)
+    expect(filtersSettings_changeFilterType({filtersSettings, accessor, type: ft.NE.value})).toEqual(res)
 })
-test('change filter type in filtersSettings EQ -> LIST', () => {
+test('filtersSettings, change filter type EQ -> LIST', () => {
     let filtersSettings = {
         c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
@@ -43,9 +50,9 @@ test('change filter type in filtersSettings EQ -> LIST', () => {
         c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    expect(filtersSettings_ChangeFilterType({filtersSettings, accessor, type: ft.LIST.value})).toEqual(res)
+    expect(filtersSettings_changeFilterType({filtersSettings, accessor, type: ft.LIST.value})).toEqual(res)
 })
-test('change filter type in Filters EQ -> NE. Not empty value in EQ', () => {
+test('filters, change filter type EQ -> NE. Not empty value in EQ', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', ['v1', 'v2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
@@ -54,9 +61,9 @@ test('change filter type in Filters EQ -> NE. Not empty value in EQ', () => {
         c1: getTextFilterState('c1', 'NE', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    expect(filters_ChangeFilterType({filters: filters, accessor: 'c1', type: ft.NE.value})).toEqual(result)
+    expect(filters_changeFilterType({filters: filters, accessor: 'c1', type: ft.NE.value})).toEqual(result)
 })
-test('change filter type in Filters EQ -> NE. Empty value in EQ', () => {
+test('filters, change filter type EQ -> NE. Empty value in EQ', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
@@ -65,9 +72,11 @@ test('change filter type in Filters EQ -> NE. Empty value in EQ', () => {
         c1: getTextFilterState('c1', 'NE', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    expect(filters_ChangeFilterType({filters: filters, accessor: 'c1', type: ft.NE.value})).toEqual(result)
+    let realResult = filters_changeFilterType({filters: filters, accessor: 'c1', type: ft.NE.value})
+    expect(realResult).toEqual(result)
+    expect(realResult['c1'].value === filters['c1'].value).toBeTruthy()
 })
-test('change filter type in Filters EQ -> LIST. Not empty value in EQ', () => {
+test('filters, change filter type EQ -> LIST. Not empty value in EQ', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', ['v1', 'v2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
@@ -76,9 +85,9 @@ test('change filter type in Filters EQ -> LIST. Not empty value in EQ', () => {
         c1: getListFilterState('c1', 'LIST', true,[], [], true),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    expect(filters_ChangeFilterType({filters: filters, accessor: 'c1', type: ft.LIST.value})).toEqual(result)
+    expect(filters_changeFilterType({filters: filters, accessor: 'c1', type: ft.LIST.value})).toEqual(result)
 })
-test('filters - set value for EQ filter', () => {
+test('filters, change value, EQ type of filter', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', ['v1', 'v2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
@@ -87,101 +96,185 @@ test('filters - set value for EQ filter', () => {
         c1: getTextFilterState('c1', 'EQ', ['newValue'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-
-    const res = filters_setValue({filters, accessor: 'c1', value: 'newValue'})
-    expect(res).toEqual(result)
+    expect(filters_changeValue({filters: filters, accessor: 'c1', value: ['newValue'], selectAllState: false})).toEqual(result)
 })
-test('filters - set value for LIST filter', () => {
+test('filters, change value, LIST type of filter', () => {
     let filters = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false),
+        c1: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
     let result = {
-        c1: getListFilterState('c1', 'LIST', true, ['newValue'], ['l1', 'l2'], false),
+        c1: getListFilterState('c2', 'LIST', false, ['newValue'], ['l1', 'l2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-
-    const res = filters_setValue({filters, accessor: 'c1', value: 'newValue'})
-    expect(res).toEqual(result)
+    expect(filters_changeValue({filters: filters, accessor: 'c1', value: ['newValue'], selectAllState: false})).toEqual(result)
 })
-test('filters - set empty value for EQ filter', () => {
+//app_changeFilter
+test('app, change filter, change type EQ -> NE, not empty value', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', ['v1', 'v2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getTextFilterState('c1', 'EQ', [], false),
-        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
 
-    const res = filters_setValue({filters, accessor: 'c1', value: ''})
-    expect(res).toEqual(result)
+    let filtersResult = {
+        c1: getTextFilterState('c1', 'NE', [], false),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
+    }
+    let filtersSettingsResult = {
+        c1: getFilterSettings('c1', 'NE', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['v1'],
+        type: 'NE',
+        selectAllState: true})
+    expect(realResult.filtersSettings).toEqual(filtersSettingsResult)
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_FILTER_TYPE)
 })
-test('filters - set empty value for LIST filter', () => {
+test('app, change filter, change type EQ -> NE, empty value', () => {
     let filters = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false),
+        c1: getTextFilterState('c1', 'EQ', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getListFilterState('c1', 'LIST', true, [], ['l1', 'l2'], false),
-        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
 
-    const res = filters_setValue({filters, accessor: 'c1', value: ''})
-    expect(res).toEqual(result)
+    let filtersResult = {
+        c1: getTextFilterState('c1', 'NE', [], false),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
+    }
+    let filtersSettingsResult = {
+        c1: getFilterSettings('c1', 'NE', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['v1'],
+        type: 'NE',
+        selectAllState: true})
+    expect(realResult.filtersSettings).toEqual(filtersSettingsResult)
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.invalidateWithDelay).toBeUndefined()
 })
-test('filters - add value to EQ. Initial value is not empty', () => {
+test('app, change filter, change type EQ -> LIST, not empty value', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', ['v1', 'v2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getTextFilterState('c1', 'EQ', ['v1', 'v2', 'v3'], false),
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+
+    let filtersResult = {
+        c1: getListFilterState('c1', 'LIST', true, [], [], true),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    expect(filters_addValue({filters, accessor: 'c1', value: 'v3'})).toEqual(result)
+    let filtersSettingsResult = {
+        c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['v1'],
+        type: 'LIST',
+        selectAllState: true})
+    expect(realResult.filtersSettings).toEqual(filtersSettingsResult)
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_FILTER_TYPE)
 })
-test('filters - add value to EQ. Initial value is empty', () => {
+test('app, change filter, change type EQ -> LIST, empty value', () => {
     let filters = {
         c1: getTextFilterState('c1', 'EQ', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getTextFilterState('c1', 'EQ', ['v3'], false),
-        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    expect(filters_addValue({filters, accessor: 'c1', value: 'v3'})).toEqual(result)
-})
-test('filters - add value to LIST. Initial value is not empty', () => {
-    let filters = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false),
+
+    let filtersResult = {
+        c1: getListFilterState('c1', 'LIST', true, [], [], true),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2', 'v3'], ['l1', 'l2'], false),
-        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
+    let filtersSettingsResult = {
+        c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    expect(filters_addValue({filters, accessor: 'c1', value: 'v3'})).toEqual(result)
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['v1'],
+        type: 'LIST',
+        selectAllState: true})
+    expect(realResult.filtersSettings).toEqual(filtersSettingsResult)
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.invalidateWithDelay).toBeUndefined()
 })
-test('filters - add value to LIST. Initial value is empty', () => {
+test('app, change filter, EQ filter, change value', () => {
     let filters = {
-        c1: getListFilterState('c1', 'LIST', true, [], ['l1', 'l2'], false),
+        c1: getTextFilterState('c1', 'EQ', [], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getListFilterState('c1', 'LIST', true, ['v3'], ['l1', 'l2'], false),
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'EQ', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+
+    let filtersResult = {
+        c1: getTextFilterState('c1', 'EQ', ['newValue'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    expect(filters_addValue({filters, accessor: 'c1', value: 'v3'})).toEqual(result)
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['newValue'],
+        type: 'EQ',
+        selectAllState: true})
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.didInvalidate).toBeTruthy()
+    expect(realResult.filtersSettings).toBeUndefined()
+    expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE)
 })
-test('filters - remove value from LIST filter', () => {
+test('app, change filter, LIST filter, change value', () => {
     let filters = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2', 'v3'], ['l1', 'l2'], false),
+        c1: getListFilterState('c2', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
     }
-    let result = {
-        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v3'], ['l1', 'l2'], false),
+    let filtersSettings = {
+        c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
+        c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
+    }
+
+    let filtersResult = {
+        c1: getListFilterState('c2', 'LIST', true, ['newValue'], ['l1', 'l2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    expect(filters_removeValue({filters, accessor: 'c1', value: 'v2'})).toEqual(result)
+    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+    let realResult = app_changeFilter({
+        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        accessor: 'c1',
+        value: ['newValue'],
+        type: 'LIST',
+        selectAllState: true})
+    expect(realResult.filters).toEqual(filtersResult)
+    expect(realResult.didInvalidate).toBeTruthy()
+    expect(realResult.filtersSettings).toBeUndefined()
+    expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_LIST_FILTER_VALUE)
 })
