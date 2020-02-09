@@ -2,7 +2,12 @@ import ft from "../constatnts/filterTypes"
 import {
     filtersSettings_changeFilterType,
     filters_changeFilterType,
-    filters_changeValue, filters_addValue, filters_removeValue, app_changeFilter, changeFilter_invalidateData
+    filters_changeValue,
+    filters_addValue,
+    filters_removeValue,
+    app_changeFilter,
+    changeFilter_invalidateData,
+    app_filters_setFilterInLoadingState, app_filters_receiveFilterList
 } from './filterHandlers'
 import {
     TIMEOUT_CHANGE_FILTER_TYPE,
@@ -24,9 +29,9 @@ const getFiltersSettings = () => ({
 })
 const getFilterSettings = (filterBy, type, allowedTypes) => ({filterBy, type, allowedTypes})
 const getTextFilterState = (filterBy, type, value, didInvalidate) => ({filterBy, type, value, didInvalidate})
-const getListFilterState = (filterBy, type, selectAllState, value, list, didInvalidate) => ({filterBy, type, selectAllState, value, list, didInvalidate})
+const getListFilterState = (filterBy, type, selectAllState, value, list, didInvalidate, isLoading = false) => ({filterBy, type, selectAllState, value, list, didInvalidate, isLoading})
 
-const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, data=[], sorting=[]) => ({filters, filtersSettings, didInvalidate, data, sorting})
+const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, invalidateWithDelay = false, data=[], sorting=[]) => ({filters, filtersSettings, didInvalidate, data, sorting})
 
 test('filtersSettings, change filter type  EQ -> NE', () => {
     let filtersSettings = {
@@ -240,15 +245,16 @@ test('app, change filter, EQ filter, change value', () => {
         c1: getTextFilterState('c1', 'EQ', ['newValue'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
+
     let realResult = app_changeFilter({
         state: getPartialStateWithFilters(filters, filtersSettings, false),
         accessor: 'c1',
         value: ['newValue'],
         type: 'EQ',
         selectAllState: true})
+
     expect(realResult.filters).toEqual(filtersResult)
-    expect(realResult.didInvalidate).toBeTruthy()
+    expect(realResult.didInvalidate).toBeUndefined()
     expect(realResult.filtersSettings).toBeUndefined()
     expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE)
 })
@@ -274,7 +280,32 @@ test('app, change filter, LIST filter, change value', () => {
         type: 'LIST',
         selectAllState: true})
     expect(realResult.filters).toEqual(filtersResult)
-    expect(realResult.didInvalidate).toBeTruthy()
+    expect(realResult.didInvalidate).toBeUndefined()
     expect(realResult.filtersSettings).toBeUndefined()
     expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_LIST_FILTER_VALUE)
+})
+test('app, set LIST filter in loading state', () => {
+    const filters = {
+        c1: getListFilterState('c2', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], true, false),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
+    }
+    const filtersResult = {
+        c1: getListFilterState('c2', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false, true),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
+    }
+    const realResult = app_filters_setFilterInLoadingState({filters, accessor: 'c1'})
+    expect(realResult).toEqual(filtersResult)
+})
+test('app, receive data for LIST filter', () => {
+    const data = ['new l1', 'new l2']
+    const filters = {
+        c1: getListFilterState('c2', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false, true),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
+    }
+    const filtersResult = {
+        c1: getListFilterState('c2', 'LIST', true, ['v1', 'v2'], data, false, false),
+        c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false)
+    }
+    const realResult = app_filters_receiveFilterList({filters, accessor: 'c1', data})
+    expect(realResult).toEqual(filtersResult)
 })

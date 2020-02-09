@@ -4,7 +4,8 @@ import SettingsBox from "../SettingsBox";
 import {DropdownContext} from "../../ContextProvider";
 
 const SettingsMenu = () => {
-    const {settingList, onClickSettingItem} = useContext(DropdownContext)
+    const {settingList, onClickSettingItem, state: {isOpened}} = useContext(DropdownContext)
+    if (!isOpened) return null
     return (
         <Fragment>
             <SettingsHeader/>

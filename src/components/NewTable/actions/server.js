@@ -26,6 +26,6 @@ export const receiveData = (data) => ({type: RECEIVE_DATA, payload: data})
 export const invalidateData = () => ({type: INVALIDATE_DATA})
 
 export const loadingFilterList = (accessor) => ({type: LOADING_FILTER_LIST, payload: accessor})
-export const requestFilterList = (accessor) => ({type: REQUEST_FILTER_LIST, payload: accessor})
+export const requestFilterList = ({fetchFunction, filters, accessor}) => ({type: REQUEST_FILTER_LIST, payload: {fetchFunction, filters, accessor}})
 export const receiveFilterList = ({accessor, data}) => ({type: RECEIVE_FILTER_LIST, payload: {accessor, data}})
 export const invalidateFilterList = (accessor) => ({type: INVALIDATE_FILTER_LIST, payload: accessor})

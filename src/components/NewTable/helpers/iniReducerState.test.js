@@ -52,8 +52,8 @@ const result = {
     },
     isCtrlPressed: false,
     isLoading: false,
-    invalidateWithDelay: false,
-    didInvalidate: true,
+    invalidateWithDelay: 1200,
+    didInvalidate: false,
 
     dimensions: {
         tWidth: 0,

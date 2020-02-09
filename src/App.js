@@ -29,13 +29,13 @@ const fake = ((counter = 1000) => {
 
 async function getData() {
     let promise = new Promise(resolve => {
-        setTimeout(() => resolve(mockData()), 2000)
+        setTimeout(() => resolve(mockData()), 100)
     })
     return await promise
 }
 async function getFakeFilterList() {
     const promise = new Promise(resolve => {
-        setTimeout(() => resolve(fake))
+        setTimeout(() => resolve(fake), 500)
     })
     return promise
 }

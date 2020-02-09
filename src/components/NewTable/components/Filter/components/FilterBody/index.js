@@ -5,16 +5,23 @@ import ItemsBox from "../ItemsBox";
 import SimpleSearch from "../../filters/SimpleSearch";
 import {DropdownContext} from "../../ContextProvider";
 
-const DropdownFilter = () => (
-    <Fragment>
-        <SelectAllBox/>
-        <SearchInput />
-        <ItemsBox/>
-    </Fragment>
+const DropdownFilter = ({isEmpty}) => (
+    isEmpty ? (
+        <Fragment>
+            <ItemsBox/>
+        </Fragment>
+    ) : (
+        <Fragment>
+            <SelectAllBox/>
+            <SearchInput />
+            <ItemsBox/>
+        </Fragment>
+    )
 )
 
 const FilterBody = () => {
-    const {state: {settingList}} = useContext(DropdownContext)
+    const {state: {settingList, data, isOpened}} = useContext(DropdownContext)
+    if (!isOpened) return null
     const filterType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
     switch (filterType) {
         case 'EQ':
@@ -27,7 +34,7 @@ const FilterBody = () => {
         case 'ENDING':
             return <SimpleSearch filterType={filterType} />
         case 'LIST':
-            return <DropdownFilter />
+            return <DropdownFilter isEmpty={!data.length}  />
         default:
             return <div>Фильтр не выбран</div>
     }

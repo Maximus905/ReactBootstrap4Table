@@ -38,6 +38,7 @@ DropdownItem.propTypes = {
 }
 DropdownItem.defaultProps = {
     partlyChecked: false,
-    showCheckIcon: true
+    showCheckIcon: true,
+    onClick: () => {}
 }
 export default DropdownItem

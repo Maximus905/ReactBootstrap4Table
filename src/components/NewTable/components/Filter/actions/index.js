@@ -1,4 +1,5 @@
 import {
+    SWITCH_OPEN_STATE,
     CLICK_ON_ITEM,
     CLICK_ON_SETTINGS_ITEM,
     CHANGE_FILTER_TYPE,
@@ -10,8 +11,13 @@ import {
     CHANGE_SIMPLE_SEARCH_INPUT,
     CLICK_ON_SELECT_ALL,
     INITIALIZE_FILTER_LIST,
-    CLEAR_FILTER_VALUE
+    CLEAR_FILTER_VALUE,
+    UPDATE_FILTER_LIST, REOPEN_FILTER
 } from "../constants/actions";
+
+// ope/close filter
+export const switchOpenState = () => ({type: SWITCH_OPEN_STATE})
+export const reopenFilter = () => ({type: REOPEN_FILTER})
 
 export const clickOnItem = (value) => ({type: CLICK_ON_ITEM, payload: value})
 export const clickOnSettingsItem = (value) => ({type: CLICK_ON_SETTINGS_ITEM, payload: value})
@@ -27,3 +33,4 @@ export const changeSimpleSearchInput = (value) => ({type: CHANGE_SIMPLE_SEARCH_I
 //filters
 export const initializeFilterList = (initialState) => ({type: INITIALIZE_FILTER_LIST, payload: initialState})
 export const clearFilterValue = () => ({type: CLEAR_FILTER_VALUE})
+export const updateFilterList = (data) => ({type: UPDATE_FILTER_LIST, payload: data})

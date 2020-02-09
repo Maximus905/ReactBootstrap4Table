@@ -4,7 +4,7 @@ import {useReducer, useRef, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import myCss from './style.module.css'
 //actions
-import {setScrollSizes, pageResizing, tableResizing, invalidateData, resetInvalidateDelay} from "./actions";
+import {setScrollSizes, pageResizing, tableResizing, invalidateData, resetInvalidateDelay, requestFilterList} from "./actions";
 //components
 import HeaderRow from "./components/HeaderRow"
 import HeaderCell from "./components/HeaderCell";
@@ -105,6 +105,14 @@ const NewTable = props => {
         }
     }
     // filters list handle
+    const updateFilterList = ({accessor}) => {
+        const filter = filters[accessor]
+
+        if (filter.type === filterType.LIST.value && filter.didInvalidate) {
+            console.log('updateFilterList ', accessor)
+            asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters, accessor}))
+        }
+    }
 
     const context = {
         state,
@@ -119,6 +127,7 @@ const NewTable = props => {
         filterLabelName,
         filterValueName,
         filterCheckedName,
+        updateFilterList
     }
     // const sorter = (accessor) => (<Sorter accessor={accessor} />)
     return (

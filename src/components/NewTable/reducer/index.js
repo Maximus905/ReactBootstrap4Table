@@ -15,7 +15,7 @@ import {
     calculateColumnsDim,
     tableWidth,
     changeSorting,
-    app_changeFilter
+    app_changeFilter, app_filters_setFilterInLoadingState, app_filters_receiveFilterList
 } from "../helpers";
 
 // import {changeSorting} from "../helpers/sortingHandler";
@@ -28,24 +28,25 @@ import {TIMEOUT_CHANGE_SORTING} from "../constatnts/timeouts";
  * @return {Function}
  */
 export function dispatchMiddleware(dispatch) {
-    async function getData(dispatch, fetchFunction, filter, sorting) {
+    async function getData({dispatch, fetchFunction, filters, sorting}) {
         dispatch(loadingData())
-        const data = await fetchFunction({filter, sorting})
+        const data = await fetchFunction({filters, sorting})
         dispatch(receiveData(data))
     }
-    async function getFilterList(dispatch, fetchFunction, accessor, filter, sorting) {
+    async function getFilterList({dispatch, fetchFunction, filters, accessor}) {
         dispatch(loadingFilterList(accessor))
-        const data = await fetchFunction({accessor,filter, sorting})
+        const data = await fetchFunction({accessor,filters})
+        console.log('updateFilterList ', data)
         dispatch(receiveFilterList({accessor, data}))
     }
     return (action) => {
         const {type, payload} = action
-        const {fetchFunction, filter, sorting} = payload
+        const {fetchFunction, filters, sorting, accessor} = payload
         switch (type) {
             case REQUEST_DATA:
-                return getData(dispatch, fetchFunction, filter, sorting)
+                return getData({dispatch, fetchFunction, filters, sorting})
             case REQUEST_FILTER_LIST:
-                return getFilterList(dispatch, fetchFunction, filter, sorting)
+                return getFilterList({dispatch, fetchFunction, filters, accessor})
             default:
                 return dispatch(action)
         }
@@ -102,9 +103,9 @@ export const rootReducer = (state, action) => {
             console.log('reducer result state', result)
             return result
         case LOADING_FILTER_LIST:
-            return state
+            return {...state, filters: app_filters_setFilterInLoadingState({filters: state.filters, accessor: payload})}
         case RECEIVE_FILTER_LIST:
-            return state
+            return {...state, filters: app_filters_receiveFilterList({filters: state.filters, accessor: payload.accessor, data: payload.data})}
         default:
             return state
     }

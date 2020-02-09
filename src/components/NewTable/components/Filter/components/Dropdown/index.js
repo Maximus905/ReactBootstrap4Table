@@ -5,11 +5,11 @@ import {DropdownContext} from "../../ContextProvider";
 import {useContext} from "react";
 
 const Dropdown = (props) => {
-    const {fontRatio} = useContext(DropdownContext)
+    const {fontRatio, state: {isOpened}, toggleOpenState} = useContext(DropdownContext)
     return (
         <DropdownBs css={css`
             font-size: ${fontRatio}rem;
-        `} {...props} >
+        `} {...props} isOpen={isOpened} toggle={toggleOpenState} >
             {props.children}
         </DropdownBs>
     )

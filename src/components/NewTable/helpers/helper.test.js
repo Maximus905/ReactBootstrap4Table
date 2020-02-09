@@ -187,6 +187,7 @@ test('initialEmptyFiltersFromProps - LIST filter', () => {
             selectAllState: true,
             type: ft.LIST.value,
             list: [],
+            isLoading: false,
             didInvalidate: true
         }
     })

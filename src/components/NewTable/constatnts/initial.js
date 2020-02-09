@@ -60,5 +60,6 @@ export const emptyListFilterTemplate = {
     selectAllState: true,
     list: [],
     type: '',
+    isLoading: false,
     // didInvalidate: true //calculated from filterType
 }

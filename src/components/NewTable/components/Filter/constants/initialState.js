@@ -2,7 +2,10 @@
  * @type {DropDownStateShape} initialState
  */
 export const initialState = {
+    isOpened: false,
+    reopen: false,
     data: [],
+    isLoading: true,
     selectAll: true,
     maxHeight: 0,
     maxWidth: 0,

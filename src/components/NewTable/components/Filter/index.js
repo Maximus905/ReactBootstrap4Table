@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {createRef, useEffect, useRef, useState} from "react"
 import './typeDefs'
 import PropTypes from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
@@ -14,11 +14,13 @@ const Filter = (props) => {
     const {
         accessor,
         data, //filter list for LIST type
+        loadingState, //if list for LIST filter is not ready yet
         maxHeight, maxWidth,
         valueFieldName,
         labelFieldName,
         checkedFieldName,
         emptyWildcard,
+        emptyListWildcard,
         onChangeFilter: onChangeFilterExt,
         onSaveSettings: onSaveSettingsExt,
         onOpen,
@@ -41,7 +43,7 @@ const Filter = (props) => {
             }
         }
     }
-    const [isOpen, setIsOpen] = useState(opened)
+    // const [isOpen, setIsOpen] = useState(opened)
     const [showSettings, setShowSettings] = useState(openSettings)
     const closeSettingsMenu = () => {
         setShowSettings(false)
@@ -56,17 +58,14 @@ const Filter = (props) => {
         openSettingsMenu,
         closeSettingsMenu,
     }
-    useEffect(() => {
-        console.log('useEffect isOpen')
-        if (isOpen) onOpen({accessor})
-    }, [isOpen])
+
     return (
         <ContextProvider {...filterContext} >
-            <Dropdown {...bsProps} isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} onClick={(e) => {
+            <Dropdown {...bsProps} onClick={(e) => {
                 e.stopPropagation()
             }}>
                 <DropdownButton/>
-                <DropdownMenu modifiers={{offset}} >
+                <DropdownMenu modifiers={{offset}} right >
                     {/*{ !showSettings && filter()}*/}
                     { !showSettings && <FilterBody />}
                     { showSettings && <SettingsMenu />}
@@ -79,6 +78,7 @@ Filter.propTypes = {
     ...DropdownBs.propTypes,
     accessor: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
+    loadingState: PropTypes.bool,
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
     //handlers
@@ -91,6 +91,7 @@ Filter.propTypes = {
     valueFieldName: PropTypes.string,
     labelFieldName: PropTypes.string,
     checkedFieldName: PropTypes.string,
+    emptyListWildcard: PropTypes.string,
     opened: PropTypes.bool, //initial state of filter
     openSettings: PropTypes.bool, //initial state of filter's settings menu
     filterSettings: PropTypes.shape({
@@ -105,6 +106,7 @@ Filter.defaultProps = {
     valueFieldName: 'val',
     labelFieldName: 'lab',
     checkedFieldName: 'checked',
+    emptyListWildcard: 'нет элементов',
     opened: false,
     openSettings: false,
     onSaveSettings: ({accessor, newType}) => {console.log('onClickSaveSettings', accessor, newType)},
