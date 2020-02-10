@@ -16,6 +16,7 @@ import {filterType} from "../TableGrid/constants/filters"
 import {useEvent} from "../Hooks"
 import {rootReducer, dispatchMiddleware} from "./reducer"
 import {
+    app_convertFilters,
     iniReducerState
 } from './helpers'
 import TableContext from "./TableContext"
@@ -35,13 +36,11 @@ const NewTable = props => {
         dimensions: {tWidth, vScroll, tBoxWidth},
         visibleColumnsOrder,
     } = state
-    console.log('Table level Filters', state.filters['column1'], state.filters['column2'], isLoading, didInvalidate)
     useEvent('resize', onResizeHandler)
     const refTableBox = useRef(null)
     const refTableBodyBox = useRef(null)
     useEffect(() => onResizeHandler(), [])
     useEffect(() => {
-        console.log('useEffect tableResizing')
         dispatch(tableResizing())
     }, [tBoxWidth, vScroll, props.columns])
     function onResizeHandler() {
@@ -55,16 +54,13 @@ const NewTable = props => {
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
         if (!isLoading && didInvalidate && !isCtrlPressed) {
-            console.log('useEffect start fetching data',didInvalidate, filters , sorting)
             // const action = requestData({fetchFunction: getTableData, filters: {}, sorting})
-            const action = requestData({fetchFunction: getTableData, filters , sorting})
+            const action = requestData({fetchFunction: getTableData, filters: app_convertFilters({filters}) , sorting})
             asyncDispatch(action)
-            console.log('data is fetched ')
         }
     }, [isLoading, didInvalidate, isCtrlPressed])
 
     useEffect(() => {
-        console.log('useEffect on filters changing', filters)
     }, [filters]);
 
     useEffect(() => {
@@ -72,14 +68,12 @@ const NewTable = props => {
             dispatch(resetInvalidateDelay())
             invalidateDataWithTimeout(invalidateWithDelay)
         }
-        console.log('useEffect invalidateWithDelay', invalidateWithDelay)
 
     }, [invalidateWithDelay])
 
     // invalidate data with timeout
     const timeIdRef = useRef(null)
     const invalidateDataWithTimeout = (delay) => {
-        console.log('invalidate')
         if (timeIdRef.current) {
             clearTimeout(timeIdRef.current)
         }
@@ -93,14 +87,12 @@ const NewTable = props => {
     // Ctrl key handlers
     function ctrlDownHandler(e) {
         if (!isCtrlPressed && e.ctrlKey) {
-            console.log('ctrlDownHandler', e.ctrlKey)
             return dispatch(ctrlDown())
         }
 
     }
     function ctrlUpHandler(e) {
         if (isCtrlPressed && !e.ctrlKey) {
-            console.log('ctrlUpHandler', e.ctrlKey)
             return dispatch(ctrlUp())
         }
     }
@@ -109,7 +101,6 @@ const NewTable = props => {
         const filter = filters[accessor]
 
         if (filter.type === filterType.LIST.value && filter.didInvalidate) {
-            console.log('settingFilterChanged updateFilterList ', accessor)
             asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters, accessor}))
         }
     }

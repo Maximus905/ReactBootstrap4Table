@@ -70,7 +70,6 @@ export const app_changeFilter = ({state, accessor, type, value, selectAllState})
     if (typeIsChanged) {
         newState.filtersSettings = filtersSettings_changeFilterType({filtersSettings: state.filtersSettings, type, accessor})
         newState.filters = filters_changeFilterType({filters: state.filters, accessor, type})
-        console.log('app_changeFilter change type',newState.filters )
         if (!isCurrentValueEmpty) newState.invalidateWithDelay = TIMEOUT_CHANGE_FILTER_TYPE
     } else {
         newState.filters = filters_changeValue({filters: state.filters, accessor, value, selectAllState})
@@ -95,3 +94,6 @@ export const app_filters_receiveFilterList = ({filters, accessor, data}) => (
         return res
     }, {})
 )
+export const app_convertFilters = ({filters}) => {
+    return filters
+}

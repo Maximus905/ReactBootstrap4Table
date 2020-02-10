@@ -19,13 +19,11 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
     const {title, sortable, filterable, width} = columnsSettings[accessor]
     const filterList = filters[accessor].list || emptyList
     const loadingState = filters[accessor].isLoading
-    console.log('DefaultHeaderCell', accessor, loadingState)
 
     const onChangeFilterHandler = ({accessor, filterBy, type, value, selectAllState}) => {
         dispatch(changeFilter({accessor, type, value, selectAllState}))
     }
     const onOpenFilter = ({accessor}) => {
-        console.log('settingFilterChanged app', accessor, filters[accessor])
         updateFilterList({accessor})
     }
 

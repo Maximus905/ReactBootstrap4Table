@@ -36,7 +36,6 @@ export function dispatchMiddleware(dispatch) {
     async function getFilterList({dispatch, fetchFunction, filters, accessor}) {
         dispatch(loadingFilterList(accessor))
         const data = await fetchFunction({accessor,filters})
-        console.log('updateFilterList ', data)
         dispatch(receiveFilterList({accessor, data}))
     }
     return (action) => {
@@ -77,30 +76,22 @@ export const rootReducer = (state, action) => {
             const newTableWidth = tableWidth({columnsSettings: newColumnsSettings})
             return {...state, dimensions: {...dimensions, tWidth: newTableWidth}, columnsSettings: newColumnsSettings}
         case SET_SORTING:
-            // console.log('set sorting')
             return {...state, sorting: changeSorting({sorting, accessor: payload}), invalidateWithDelay: TIMEOUT_CHANGE_SORTING}
         case ADD_SORTING:
-            // console.log('add sorting')
             return {...state, sorting: changeSorting({sorting, accessor: payload, appendMode: true}), invalidateWithDelay: TIMEOUT_CHANGE_SORTING}
 // data handling
         case INVALIDATE_DATA:
-            console.log('invalidate data')
             return {...state, didInvalidate: true}
         case RESET_INVALIDATE_DELAY:
-            console.log('invalidate data')
             return {...state, invalidateWithDelay: false}
         case LOADING_DATA:
-            // console.log('loading data')
             return {...state, isLoading: true, didInvalidate: false}
         case RECEIVE_DATA:
-            // console.log('receive data')
             return {...state, isLoading: false, didInvalidate: false, data: payload}
         case CHANGE_FILTER:
-            console.log('reducer', payload)
             const result = {...state,
                 ...app_changeFilter({state, accessor: payload.accessor, type: payload.type, value: payload.value, selectAllState: payload.selectAllState})
             }
-            console.log('reducer result state', result)
             return result
         case LOADING_FILTER_LIST:
             return {...state, filters: app_filters_setFilterInLoadingState({filters: state.filters, accessor: payload})}
