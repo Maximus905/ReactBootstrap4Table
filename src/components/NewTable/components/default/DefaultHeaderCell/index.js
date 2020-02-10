@@ -18,6 +18,8 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
     const {state: {filters, columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, updateFilterList} = useContext(TableContext)
     const {title, sortable, filterable, width} = columnsSettings[accessor]
     const filterList = filters[accessor].list || emptyList
+    const loadingState = filters[accessor].isLoading
+    console.log('DefaultHeaderCell', accessor, loadingState)
 
     const onChangeFilterHandler = ({accessor, filterBy, type, value, selectAllState}) => {
         dispatch(changeFilter({accessor, type, value, selectAllState}))
@@ -44,7 +46,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={false} />}
+                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={loadingState} />}
             </div>
         </th>
     )

@@ -5,8 +5,8 @@ import ItemsBox from "../ItemsBox";
 import SimpleSearch from "../../filters/SimpleSearch";
 import {DropdownContext} from "../../ContextProvider";
 
-const DropdownFilter = ({isEmpty}) => (
-    isEmpty ? (
+const DropdownFilter = ({isEmpty, loadingState}) => (
+    isEmpty || loadingState ? (
         <Fragment>
             <ItemsBox/>
         </Fragment>
@@ -20,7 +20,7 @@ const DropdownFilter = ({isEmpty}) => (
 )
 
 const FilterBody = () => {
-    const {state: {settingList, data, isOpened}} = useContext(DropdownContext)
+    const {loadingState, state: {settingList, data, isOpened}} = useContext(DropdownContext)
     if (!isOpened) return null
     const filterType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
     switch (filterType) {
@@ -34,7 +34,7 @@ const FilterBody = () => {
         case 'ENDING':
             return <SimpleSearch filterType={filterType} />
         case 'LIST':
-            return <DropdownFilter isEmpty={!data.length}  />
+            return <DropdownFilter isEmpty={!data.length} loadingState={loadingState}  />
         default:
             return <div>Фильтр не выбран</div>
     }

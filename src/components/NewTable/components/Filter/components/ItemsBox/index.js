@@ -32,7 +32,8 @@ const longestRowIndex = ({data, fieldName}) => {
 
 
 const ItemsBox = (props) => {
-    const {accessor, state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
+    const {loadingState, loadingWildcard, accessor, emptyListWildcard, state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
+    console.log('settingFilterChanged ItemsBox', loadingState)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -75,7 +76,18 @@ const ItemsBox = (props) => {
         return !itemHeight ? maxHeight : (fuseFiltered.length * itemHeight > maxHeight ? maxHeight : fuseFiltered.length * itemHeight)
     }
     //if haven't set sizes of item for List component mount the longest item and get its sizes
-    if (data.length === 0) {
+    if (loadingState) {
+        return (
+            (
+                <div css={css`
+            max-height: ${maxHeight}px;
+            overflow-y: auto;
+        `}>
+                    <div css={css`overflow-y: auto`} ><EmptyList label={loadingWildcard} /></div>
+                </div>
+            )
+        )
+    } else if (data.length === 0) {
         console.log('reopen data.length 0')
         return (
             (
@@ -83,7 +95,7 @@ const ItemsBox = (props) => {
             max-height: ${maxHeight}px;
             overflow-y: auto;
         `}>
-                    <div css={css`overflow-y: auto`} ><EmptyList/></div>
+                    <div css={css`overflow-y: auto`} ><EmptyList label={emptyListWildcard} /></div>
                 </div>
             )
         )

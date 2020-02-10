@@ -109,7 +109,7 @@ const NewTable = props => {
         const filter = filters[accessor]
 
         if (filter.type === filterType.LIST.value && filter.didInvalidate) {
-            console.log('updateFilterList ', accessor)
+            console.log('settingFilterChanged updateFilterList ', accessor)
             asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters, accessor}))
         }
     }

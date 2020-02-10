@@ -14,7 +14,7 @@ export const ContextProvider = (props) => {
     const {accessor, children, data, loadingState, filterSettings, filterSettings: {filterBy},
         maxHeight, maxWidth, fontRatio, bdColor,
         emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
-        emptyListWildcard,
+        emptyListWildcard, loadingWildcard,
         openSettingsMenu, closeSettingsMenu,
         onChangeFilter: onChangeFilterExt, onSaveSettings: onSaveSettingsExt,
         onOpen: onOpenExt} = props
@@ -125,10 +125,10 @@ export const ContextProvider = (props) => {
     }, [reopen])
 
     return (
-        <DropdownContext.Provider value={{accessor, state, dispatch,
+        <DropdownContext.Provider value={{accessor, state, loadingState, dispatch,
             fontRatio, bdColor,
             emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
-            emptyListWildcard,
+            emptyListWildcard, loadingWildcard,
             openSettingsMenu, closeSettingsMenu,
             settingList, onClickSettingItem, onClickSaveSettings, toggleOpenState
         }}>
@@ -138,6 +138,7 @@ export const ContextProvider = (props) => {
 }
 ContextProvider.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
+    filterListLoading: PropTypes.bool,
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
     onClickItem: PropTypes.func,

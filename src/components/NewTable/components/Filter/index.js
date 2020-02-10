@@ -21,6 +21,7 @@ const Filter = (props) => {
         checkedFieldName,
         emptyWildcard,
         emptyListWildcard,
+        loadingWildcard,
         onChangeFilter: onChangeFilterExt,
         onSaveSettings: onSaveSettingsExt,
         onOpen,
@@ -92,6 +93,7 @@ Filter.propTypes = {
     labelFieldName: PropTypes.string,
     checkedFieldName: PropTypes.string,
     emptyListWildcard: PropTypes.string,
+    loadingWildcard: PropTypes.string,
     opened: PropTypes.bool, //initial state of filter
     openSettings: PropTypes.bool, //initial state of filter's settings menu
     filterSettings: PropTypes.shape({
@@ -107,6 +109,7 @@ Filter.defaultProps = {
     labelFieldName: 'lab',
     checkedFieldName: 'checked',
     emptyListWildcard: 'нет элементов',
+    loadingWildcard: 'loading...',
     opened: false,
     openSettings: false,
     onSaveSettings: ({accessor, newType}) => {console.log('onClickSaveSettings', accessor, newType)},
