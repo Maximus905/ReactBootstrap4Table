@@ -15,7 +15,7 @@ import Filter from "../../Filter";
 const emptyList = []
 
 const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
-    const {state: {filters, columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, updateFilterList} = useContext(TableContext)
+    const {state: {filters, columnsSettings, filtersSettings, dimensions: {tBodyBoxHeight}}, dispatch, updateFilterList, emptyWildcard} = useContext(TableContext)
     const {title, sortable, filterable, width} = columnsSettings[accessor]
     const filterList = filters[accessor].list || emptyList
     const loadingState = filters[accessor].isLoading
@@ -36,7 +36,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
         }
     }
     return (
-        <th css={css`width: ${width}px; cursor: default`} className='align-top' onClick={sortable ? handlerOnClick : undefined} >
+        <th css={css`width: ${width}px; cursor: default`} className={classNames('align-top', 'table-dark')} onClick={sortable ? handlerOnClick : undefined} >
             <div className={classNames('d-flex', 'justify-content-between')}>
                 <div className={classNames('d-flex', 'justify-content-start')}>
                     {title}
@@ -44,7 +44,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={loadingState} />}
+                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={loadingState} emptyWildcard={emptyWildcard} />}
             </div>
         </th>
     )

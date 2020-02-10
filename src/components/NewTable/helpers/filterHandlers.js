@@ -94,6 +94,53 @@ export const app_filters_receiveFilterList = ({filters, accessor, data}) => (
         return res
     }, {})
 )
-export const app_convertFilters = ({filters}) => {
+export const app_convertFilters = ({filters, emptyWildcard}) => {
+    console.log("app_convertFilters", filters)
+    const res = Object.entries(filters).reduce((acc, [key, filter]) => {
+        const {didInvalidate, isLoading, filterBy, type, value, selectAllState} = filter
+
+        switch (type) {
+            case filterTypes.LIST.value:
+                if (!selectAllState || value.length > 0) {
+                    acc[key] = {}
+                    if (selectAllState) {
+                        acc[key].filterBy = filterBy
+                        acc[key].type = 'NOT_IN_LIST'
+                        acc[key].addEmpty = !value.includes(emptyWildcard)
+                        acc[key].value = value.filter(item => item !== emptyWildcard)
+                    } else {
+                        acc[key].filterBy = filterBy
+                        acc[key].type = 'IN_LIST'
+                        acc[key].addEmpty = value.includes(emptyWildcard)
+                        acc[key].value = value.filter(item => item !== emptyWildcard)
+                    }
+                }
+                break
+            case filterTypes.EQ.value:
+            case filterTypes.NE.value:
+            case filterTypes.LT.value:
+            case filterTypes.LE.value:
+            case filterTypes.GT.value:
+            case filterTypes.GE.value:
+            case filterTypes.STARTING.value:
+            case filterTypes.ENDING.value:
+            case filterTypes.INCLUDING.value:
+                if (value[0]) {
+                    acc[key] = {}
+                    acc[key].filterBy = filterBy
+                    acc[key].type = type
+                    acc[key].addEmpty = false
+                    acc[key].value = value[0]
+                }
+                break
+            default:
+                acc[key].filterBy = filterBy
+                acc[key].type = type
+                acc[key].addEmpty = false
+                acc[key].value = value
+        }
+        return acc
+    }, {})
+    console.log('app_convertFilters res', res)
     return filters
 }

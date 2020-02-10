@@ -1,6 +1,6 @@
 import React, {createRef, useEffect, useRef, useState} from "react"
 import './typeDefs'
-import PropTypes from 'prop-types'
+import PropTypes, {oneOfType} from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
 import Dropdown from "./components/Dropdown";
 import DropdownMenu from "./components/DropdownMenu"
@@ -78,7 +78,7 @@ const Filter = (props) => {
 Filter.propTypes = {
     ...DropdownBs.propTypes,
     accessor: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.object),
+    data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]) ),
     loadingState: PropTypes.bool,
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,

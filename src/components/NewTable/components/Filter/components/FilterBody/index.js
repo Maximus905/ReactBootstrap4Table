@@ -32,6 +32,7 @@ const FilterBody = () => {
         case 'GE':
         case 'STARTING':
         case 'ENDING':
+        case 'INCLUDING':
             return <SimpleSearch filterType={filterType} />
         case 'LIST':
             return <DropdownFilter isEmpty={!data.length} loadingState={loadingState}  />

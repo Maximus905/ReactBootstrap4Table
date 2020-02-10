@@ -27,7 +27,7 @@ import Cell from "./components/Cell";
 import SimpleHeaderCell from "./components/SimpleHeaderCell";
 
 const NewTable = props => {
-    const {getTableData, table, getFilterList, filterLabelName, filterValueName, filterCheckedName } = props
+    const {getTableData, table, getFilterList, filterLabelName, filterValueName, filterCheckedName, emptyWildcard } = props
     const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
     const asyncDispatch = dispatchMiddleware(dispatch)
@@ -55,7 +55,7 @@ const NewTable = props => {
     useEffect(() => {
         if (!isLoading && didInvalidate && !isCtrlPressed) {
             // const action = requestData({fetchFunction: getTableData, filters: {}, sorting})
-            const action = requestData({fetchFunction: getTableData, filters: app_convertFilters({filters}) , sorting})
+            const action = requestData({fetchFunction: getTableData, filters: app_convertFilters({filters, emptyWildcard}) , sorting})
             asyncDispatch(action)
         }
     }, [isLoading, didInvalidate, isCtrlPressed])
@@ -118,6 +118,7 @@ const NewTable = props => {
         filterLabelName,
         filterValueName,
         filterCheckedName,
+        emptyWildcard,
         updateFilterList
     }
     // const sorter = (accessor) => (<Sorter accessor={accessor} />)
@@ -201,10 +202,12 @@ NewTable.propTypes = {
     filterValueName: PropTypes.string, // is used in filter list object
     filterLabelName: PropTypes.string, // is used in filter list object
     filterCheckedName: PropTypes.string, // is used in filter list object
+    emptyWildcard: PropTypes.string
 }
 NewTable.defaultProps = {
     filterValueName: 'val',
     filterLabelName: 'lab',
-    filterCheckedName: 'checked'
+    filterCheckedName: 'checked',
+    emptyWildcard: '<пусто>'
 }
 export default NewTable

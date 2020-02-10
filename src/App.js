@@ -26,6 +26,18 @@ const fake = ((counter = 1000) => {
     console.log('fake data has been generated: ', Date.now() - time)
     return res
 })()
+const fakeSimpleArray = ((counter = 10) => {
+    const time = Date.now()
+    faker.locale = 'ru'
+    const res = []
+    for ( let i = 0; i < counter; i++ ) {
+        res.push(faker.name.lastName())
+    }
+    res.push(null)
+    res.push(undefined)
+    console.log('fake data has been generated: ', Date.now() - time)
+    return res
+})()
 
 async function getData() {
     let promise = new Promise(resolve => {
@@ -35,7 +47,7 @@ async function getData() {
 }
 async function getFakeFilterList() {
     const promise = new Promise(resolve => {
-        setTimeout(() => resolve(fake), 500)
+        setTimeout(() => resolve(fakeSimpleArray), 500)
     })
     return promise
 }

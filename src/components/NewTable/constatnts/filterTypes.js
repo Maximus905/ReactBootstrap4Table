@@ -10,6 +10,7 @@ const filterTypes = {
     GE: {value: 'GE', label: '>=', filterName: 'больше или равно'},
     STARTING: {value: 'STARTING', label: 'начинается с'},
     ENDING: {value: 'ENDING', label: 'заканчивается на'},
+    INCLUDING: {value: 'INCLUDING', label: 'содержит'},
     LIST: {value: 'LIST', label: 'список', loadFromServer: true, }
 }
 export default filterTypes

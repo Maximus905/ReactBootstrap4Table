@@ -21,7 +21,7 @@ const DropdownItem = ({value, label, checked, partlyChecked, onClick, showCheckI
                 background-color: #dcdcdc;
                 color: #999
             }
-        `} className="text-truncate" onClick={() => onClick(value)} title={resLabel} {...rest}  >
+        `} className="text-truncate" onClick={() => onClick(value)} title={label} {...rest}  >
             { showCheckIcon && <CheckIcon checked={checked} partlyChecked={partlyChecked} /> }
             {resLabel}
         </DropdownItemBs>

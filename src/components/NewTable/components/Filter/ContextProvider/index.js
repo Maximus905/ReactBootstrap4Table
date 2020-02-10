@@ -1,5 +1,6 @@
 import React, {createContext, useEffect, useMemo, useReducer} from "react"
-import PropTypes from 'prop-types'
+import PropTypes, {oneOfType} from 'prop-types'
+import check from 'check-types'
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
 import {
@@ -31,6 +32,7 @@ export const ContextProvider = (props) => {
 
     let checkedItemsCounter = data.length
 
+    // function for convert input data of filter list into format {value, label, checked}
     const replaceEmptyLabels = (checkStatus = true) => data.map(item => {
         return  item[labelFieldName]
             ? {value: item[valueFieldName], label: item[labelFieldName], checked: checkStatus}
@@ -39,7 +41,20 @@ export const ContextProvider = (props) => {
     const replaceKeyNames = (checkStatus = true) => data.map(item => {
         return {...item, label: item[labelFieldName], checked: checkStatus}
     })
-    const convertFilterList = () => emptyWildcard ? replaceEmptyLabels() : replaceKeyNames()
+    const createListFromArray = (checkStatus = true) => data.map(item => (
+        item === null || item === undefined || item === ''
+            ? {value: emptyWildcard, label: emptyWildcard, checked: checkStatus}
+            : {value: item, label: item, checked: checkStatus}
+    ))
+    const convertFilterList = () => {
+        if (data.length === 0) return data
+        const testItem = data[0]
+        if (check.object(testItem)) {
+            return emptyWildcard ? replaceEmptyLabels() : replaceKeyNames()
+        } else {
+            return createListFromArray()
+        }
+    }
     // state and dispatch for DropDown
     const [state, dispatch] = useReducer(rootReducer, {...initialState,
         data: convertFilterList(),
@@ -137,7 +152,7 @@ export const ContextProvider = (props) => {
     )
 }
 ContextProvider.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object),
+    data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number])),
     filterListLoading: PropTypes.bool,
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
