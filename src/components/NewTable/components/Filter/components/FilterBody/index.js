@@ -37,7 +37,7 @@ const FilterBody = () => {
         case 'LIST':
             return <DropdownFilter isEmpty={!data.length} loadingState={loadingState}  />
         default:
-            return <div>Фильтр не выбран</div>
+            return <SimpleSearch filterType={filterType} />
     }
 }
 export default FilterBody

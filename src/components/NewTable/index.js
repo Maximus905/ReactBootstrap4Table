@@ -12,7 +12,7 @@ import ScrollCell from "./components/ScrollCell"
 import Spinner from "./components/Spiner";
 import Row from "./components/Row";
 
-import {filterType} from "../TableGrid/constants/filters"
+import ft from "./constatnts/filterTypes";
 import {useEvent} from "../Hooks"
 import {rootReducer, dispatchMiddleware} from "./reducer"
 import {
@@ -100,7 +100,7 @@ const NewTable = props => {
     const updateFilterList = ({accessor}) => {
         const filter = filters[accessor]
 
-        if (filter.type === filterType.LIST.value && filter.didInvalidate) {
+        if (filter.type === ft.LIST.value && filter.didInvalidate) {
             asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters, accessor}))
         }
     }
@@ -185,18 +185,18 @@ NewTable.propTypes = {
         filterable: PropTypes.bool,
         filter: PropTypes.shape({
             filterBy: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-            type: PropTypes.oneOf(Object.keys(filterType)),
-            allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
+            type: PropTypes.oneOf(Object.keys(ft)),
+            allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of ft object]
         }),
         renderCell: PropTypes.func,
         renderHeaderCell: PropTypes.func,
     })),
     globalFilter: PropTypes.shape({
         filterBy: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-        type: PropTypes.oneOf(Object.keys(filterType)),
-        allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of filterType object]
+        type: PropTypes.oneOf(Object.keys(ft)),
+        allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of ft object]
     }),
-    getTableData: PropTypes.func, // should return array of objects like {'accessor: 'value'}
+    getTableData: PropTypes.func, // async function should return array of objects like {'accessor: 'value'}
     custom: PropTypes.objectOf(PropTypes.any),
     getFilterList: PropTypes.func, //async function to get list for filter. async ({accessor, filters}) => ({})
     filterValueName: PropTypes.string, // is used in filter list object
