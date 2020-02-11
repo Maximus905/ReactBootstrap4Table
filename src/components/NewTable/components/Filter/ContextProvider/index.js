@@ -106,31 +106,20 @@ export const ContextProvider = (props) => {
     // for lazy updating filter list when is filter opened or we change type of filter in open state
     useEffect(() => {
         if (isOpened) {
-            console.log('settingFilterChanged open', accessor, filterSettings, isOpened)
-
             onOpenExt({accessor})
         }
     }, [isOpened])
     useEffect(() => {
         if (isOpened) {
-            console.log('settingFilterChanged settings', accessor, filterSettings, isOpened)
-
             onOpenExt({accessor})
         }
         // if (isOpened) onOpenExt({accessor})
     }, [filterSettings])
     //update list of filter
     useEffect(() => {
-        console.log('filter data changed', accessor, data)
         dispatch(updateFilterList(convertFilterList()))
     }, [data])
-    // useEffect(() => {
-    //     if (isOpened) {
-    //         console.log('useEffect reopen start')
-    //         dispatch(reopenFilter())
-    //     }
-    // }, [filterListState])
-    //
+
     //watch reopen signal (reopen === true), reset them and open filter
     useEffect(() => {
         if (reopen) {

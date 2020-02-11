@@ -101,7 +101,7 @@ const NewTable = props => {
         const filter = filters[accessor]
 
         if (filter.type === ft.LIST.value && filter.didInvalidate) {
-            asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters, accessor}))
+            asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters: app_convertFilters({filters, emptyWildcard}), accessor}))
         }
     }
 

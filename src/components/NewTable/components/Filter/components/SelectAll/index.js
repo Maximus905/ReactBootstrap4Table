@@ -9,7 +9,6 @@ import {clickOnSelectAll} from "../../actions";
 
 const SelectAllBox = (props) => {
     const {accessor, bdColor, state: {selectAll, filterValue}, dispatch, openSettingsMenu} = useContext(DropdownContext)
-    console.log('SelectAllBox', accessor, filterValue)
     // const checkedCount = useMemo(() => data.reduce((acc, item) => item.checked ? ++acc : acc, 0), [data])
     // const checked = checkedCount === data.length
     // const partlyChecked = checkedCount > 0 && checkedCount < data.length

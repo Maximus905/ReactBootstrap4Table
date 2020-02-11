@@ -80,8 +80,8 @@ Filter.propTypes = {
     accessor: PropTypes.string,
     data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]) ),
     loadingState: PropTypes.bool,
-    maxHeight: PropTypes.number,
-    maxWidth: PropTypes.number,
+    maxHeight: PropTypes.number, // maxHeight of filterList in px
+    maxWidth: PropTypes.number, // maxWidth of filterList in px
     //handlers
     onChangeFilter: PropTypes.func, // every time when filter changes
     onSaveSettings: PropTypes.func, //ext handler for saving filter setting. (accessor, newType) => {}
@@ -104,6 +104,7 @@ Filter.propTypes = {
 }
 Filter.defaultProps = {
     fontRatio: 0.8,
+    maxWidth: 200,
     emptyWildcard: '<пусто>',
     valueFieldName: 'val',
     labelFieldName: 'lab',

@@ -6,8 +6,6 @@ const BASE_URL = (() => {
     const developMode = hostname === 'localhost'
     return developMode ? `${protocol}//${DEVELOPED_BASE_URL}` : `${protocol}//${hostname}${port==='' ? '' : ':'}${port}`
 })()
-export const REG_CENTERS_URL = `${BASE_URL}/api/getRegCenters.json`
-export const ROOMS_1C_URL = `${BASE_URL}/api/get1cRooms.json`
-export const LOCATIONS_URL = `${BASE_URL}/api/getLocations.json`
 
-console.log("BASE API URL", BASE_URL)
+export const GET_DATA = `${BASE_URL}/api/tableData.json`
+export const GET_FILTER_LIST = `${BASE_URL}/api/tableFilterList.json`

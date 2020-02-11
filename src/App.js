@@ -1,7 +1,10 @@
 import React from 'react';
 import {Page, PageHeader, PageMain, PageFooter} from "./components/Page"
+import {API} from "./async";
 // import LocationsMappingTable from './components/LocationsMappingTable'
 import NewTable from "./components/NewTable";
+import AsyncTest from "./AsyncTest";
+import TestGeoTable from "./components/TestGeoTable";
 // import {filterType as ft} from "./components/TableGrid/constants/filters";
 import ft from "./components/NewTable/constatnts/filterTypes";
 import faker from "faker";
@@ -45,6 +48,7 @@ async function getData() {
     })
     return promise
 }
+
 async function getFakeFilterList() {
     const promise = new Promise(resolve => {
         setTimeout(() => resolve(fakeSimpleArray), 500)
@@ -86,7 +90,15 @@ const App = props => {
             <PageHeader className="bg-light">This is a Page Header</PageHeader>
             <PageMain className="bg-white">
                 {/*<LocationsMappingTable />*/}
-                <NewTable {...config} />
+
+                {/*for testing with fake data*/}
+                {/*<NewTable {...config} />*/}
+
+                {/*simple test of async function*/}
+                {/*<AsyncTest/>*/}
+
+                {/*test with real data*/}
+                <TestGeoTable/>
             </PageMain>
             <PageFooter className="bg-light">This is a Page Footer</PageFooter>
         </Page>

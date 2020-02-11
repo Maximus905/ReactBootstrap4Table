@@ -95,7 +95,7 @@ export const app_filters_receiveFilterList = ({filters, accessor, data}) => (
     }, {})
 )
 export const app_convertFilters = ({filters, emptyWildcard}) => {
-    console.log("app_convertFilters", filters)
+    console.log("app_convertFilters in", filters)
     const res = Object.entries(filters).reduce((acc, [key, filter]) => {
         const {didInvalidate, isLoading, filterBy, type, value, selectAllState} = filter
 
@@ -141,6 +141,6 @@ export const app_convertFilters = ({filters, emptyWildcard}) => {
         }
         return acc
     }, {})
-    console.log('app_convertFilters res', res)
-    return filters
+    console.log('app_convertFilters out', res)
+    return res
 }

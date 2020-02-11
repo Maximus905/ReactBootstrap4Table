@@ -59,7 +59,7 @@ const rootReducer = (state, action) => {
             return {...state, filterValue: []}
         case UPDATE_FILTER_LIST:
             // return {...state, data: payload}
-            return {...state, data: payload, ...reopenFilterSetter({reopen: state.reopen, isOpened: state.isOpened})}
+            return {...state, data: payload, checkedItemsCounter:payload.length, ...reopenFilterSetter({reopen: state.reopen, isOpened: state.isOpened})}
         case CHANGE_INPUT:
             // handle changing input value for dropdown filter search field
             return {...state, inputValue: payload}
