@@ -106,7 +106,7 @@ export const app_convertFilters = ({filters, emptyWildcard}) => {
                     if (selectAllState) {
                         acc[key].filterBy = filterBy
                         acc[key].type = 'NOT_IN_LIST'
-                        acc[key].addEmpty = !value.includes(emptyWildcard)
+                        acc[key].removeEmpty = value.includes(emptyWildcard)
                         acc[key].value = value.filter(item => item !== emptyWildcard)
                     } else {
                         acc[key].filterBy = filterBy
@@ -130,7 +130,7 @@ export const app_convertFilters = ({filters, emptyWildcard}) => {
                     acc[key].filterBy = filterBy
                     acc[key].type = type
                     acc[key].addEmpty = false
-                    acc[key].value = value[0]
+                    acc[key].value = value
                 }
                 break
             default:
