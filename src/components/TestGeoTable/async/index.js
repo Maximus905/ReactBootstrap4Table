@@ -6,11 +6,14 @@ export const getData = async ({filters, sorting}) => {
         const res = await axios.get(GET_DATA, {
             params: {filters, sorting}
         })
-        // console.log('getData data', res.data.result)
+        // if (!res.data.result || !res.data.result.length) {
+        //     console.log('invalid data from server: ', res)
+        //     throw new Error('Error fetching data from server')
+        // }
         return res.data.result
     } catch (e) {
-        console.log('Error', e)
-        alert('Error fetching reg centers list: ' + e.toString())
+        alert(e.toString())
+        return []
     }
 }
 export const getFilterList = async ({accessor, filters}) => {
@@ -18,10 +21,13 @@ export const getFilterList = async ({accessor, filters}) => {
         const res = await axios.get(GET_FILTER_LIST, {
             params: {accessor, filters}
         })
-        // console.log('getData filterList', res.data.result)
+        if (!res.data.result || !res.data.result.length) {
+            console.log('invalid data from server: ', res)
+            throw new Error('Error fetching data from server')
+        }
         return res.data.result
     } catch (e) {
-        console.log('Error', e)
-        alert('Error fetching reg centers list: ' + e.toString())
+        alert(e.toString())
+        return []
     }
 }

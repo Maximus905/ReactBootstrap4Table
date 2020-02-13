@@ -1,3 +1,4 @@
+import check from 'check-types'
 import {
     CTRL_DOWN, CTRL_UP,
     PAGE_RESIZING,
@@ -30,13 +31,33 @@ import {TIMEOUT_CHANGE_SORTING} from "../constatnts/timeouts";
 export function dispatchMiddleware(dispatch) {
     async function getData({dispatch, fetchFunction, filters, sorting}) {
         dispatch(loadingData())
-        const data = await fetchFunction({filters, sorting})
-        dispatch(receiveData(data))
+        try {
+            const data = await fetchFunction({filters, sorting})
+            if (check.not.array(data)) {
+                console.log('Table: Error fetching data: ', data)
+                throw  new Error('Table: Error fetching data from server!')
+            }
+            dispatch(receiveData(data))
+        } catch (e) {
+            alert(e.toString())
+            dispatch(receiveData([]))
+        }
     }
     async function getFilterList({dispatch, fetchFunction, filters, accessor}) {
         dispatch(loadingFilterList(accessor))
-        const data = await fetchFunction({accessor,filters})
-        dispatch(receiveFilterList({accessor, data}))
+        // const data = await fetchFunction({accessor,filters})
+        try {
+            const data = await fetchFunction({accessor,filters})
+            console.log('Table', data)
+            if (check.not.array(data)) {
+                console.log('Table: Error fetching filter data: ', data)
+                throw  new Error('Table: Error fetching filter data from server!')
+            }
+            dispatch(receiveFilterList({accessor, data}))
+        } catch (e) {
+            alert(e.toString())
+            dispatch(receiveFilterList({accessor, data:[]}))
+        }
     }
     return (action) => {
         const {type, payload} = action
