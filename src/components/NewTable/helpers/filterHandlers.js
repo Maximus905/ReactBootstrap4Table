@@ -95,7 +95,6 @@ export const app_filters_receiveFilterList = ({filters, accessor, data}) => (
     }, {})
 )
 export const app_convertFilters = ({filters, emptyWildcard}) => {
-    console.log("app_convertFilters in", filters)
     const res = Object.entries(filters).reduce((acc, [key, filter]) => {
         const {didInvalidate, isLoading, filterBy, type, value, selectAllState} = filter
 
@@ -129,18 +128,17 @@ export const app_convertFilters = ({filters, emptyWildcard}) => {
                     acc[key] = {}
                     acc[key].filterBy = filterBy
                     acc[key].type = type
-                    acc[key].addEmpty = false
+                    // acc[key].addEmpty = false
                     acc[key].value = value
                 }
                 break
             default:
                 acc[key].filterBy = filterBy
                 acc[key].type = type
-                acc[key].addEmpty = false
+                // acc[key].addEmpty = false
                 acc[key].value = value
         }
         return acc
     }, {})
-    console.log('app_convertFilters out', res)
     return res
 }

@@ -1,6 +1,7 @@
 import React, {createContext, useEffect, useMemo, useReducer} from "react"
 import PropTypes, {oneOfType} from 'prop-types'
 import check from 'check-types'
+import {convertFilterList} from "../helpers";
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
 import {
@@ -32,32 +33,8 @@ export const ContextProvider = (props) => {
 
     let checkedItemsCounter = data.length
 
-    // function for convert input data of filter list into format {value, label, checked}
-    const replaceEmptyLabels = (checkStatus = true) => data.map(item => {
-        return  item[labelFieldName]
-            ? {value: item[valueFieldName], label: item[labelFieldName], checked: checkStatus}
-            : {value: item[valueFieldName], label: emptyWildcard, checked: checkStatus}
-    })
-    const replaceKeyNames = (checkStatus = true) => data.map(item => {
-        return {...item, label: item[labelFieldName], checked: checkStatus}
-    })
-    const createListFromArray = (checkStatus = true) => data.map(item => (
-        item === null || item === undefined || item === ''
-            ? {value: emptyWildcard, label: emptyWildcard, checked: checkStatus}
-            : {value: item, label: item, checked: checkStatus}
-    ))
-    const convertFilterList = () => {
-        if (data.length === 0) return data
-        const testItem = data[0]
-        if (check.object(testItem)) {
-            return emptyWildcard ? replaceEmptyLabels() : replaceKeyNames()
-        } else {
-            return createListFromArray()
-        }
-    }
-    // state and dispatch for DropDown
     const [state, dispatch] = useReducer(rootReducer, {...initialState,
-        data: convertFilterList(),
+        data: convertFilterList(data, labelFieldName, valueFieldName, emptyWildcard, initialState.selectAll, initialState.filterValue),
         maxHeight, maxWidth,
         checkedItemsCounter,
         settingList: initialSettingList
@@ -78,12 +55,15 @@ export const ContextProvider = (props) => {
         const currentType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
         const newState = {}
         if (currentType !== value) {
+            const updatedFilterValue = filterValue.length > 0 ? [] : filterValue
+            const updatedFilterList = (value === ft.LIST.value) ? convertFilterList(data, labelFieldName, valueFieldName, emptyWildcard, true, updatedFilterValue) : state.data
+            const updatedCheckedItemsCounter = updatedFilterList.reduce((acc, item) => item.checked ? ++acc : acc, 0)
             newState.settingList = settingList.map(item => ({...item, checked: item.value === value}))
-            newState.filterValue = filterValue.length > 0 ? [] : filterValue
+            newState.filterValue = updatedFilterValue
             newState.inputValue = ''
-            newState.data = (value === ft.LIST.value) ? convertFilterList() : state.data
+            newState.data = updatedFilterList
             newState.selectAll = (value === ft.LIST.value) ? true : selectAllState
-            newState.checkedItemsCounter = (value === ft.LIST.value) ? convertFilterList().length : state.checkedItemsCounter
+            newState.checkedItemsCounter = updatedCheckedItemsCounter
             dispatch(changeFilterType(newState))
         } else {
             closeSettingsMenu()
@@ -117,7 +97,8 @@ export const ContextProvider = (props) => {
     }, [filterSettings])
     //update list of filter
     useEffect(() => {
-        dispatch(updateFilterList(convertFilterList()))
+        console.log('convertFilterList useEffect')
+        dispatch(updateFilterList(convertFilterList(data, labelFieldName, valueFieldName, emptyWildcard, selectAllState, filterValue)))
     }, [data])
 
     //watch reopen signal (reopen === true), reset them and open filter

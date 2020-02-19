@@ -6,10 +6,10 @@ export const getData = async ({filters, sorting}) => {
         const res = await axios.get(GET_DATA, {
             params: {filters, sorting}
         })
-        // if (!res.data.result || !res.data.result.length) {
-        //     console.log('invalid data from server: ', res)
-        //     throw new Error('Error fetching data from server')
-        // }
+        if (!Array.isArray(res.data.result)) {
+            console.log('invalid data from server: ', res)
+            throw new Error('Error fetching data from server')
+        }
         return res.data.result
     } catch (e) {
         alert(e.toString())
@@ -21,9 +21,9 @@ export const getFilterList = async ({accessor, filters}) => {
         const res = await axios.get(GET_FILTER_LIST, {
             params: {accessor, filters}
         })
-        if (!res.data.result || !res.data.result.length) {
+        if (!Array.isArray(res.data.result)) {
             console.log('invalid data from server: ', res)
-            throw new Error('Error fetching data from server')
+            throw new Error('Error fetching filter list from server')
         }
         return res.data.result
     } catch (e) {

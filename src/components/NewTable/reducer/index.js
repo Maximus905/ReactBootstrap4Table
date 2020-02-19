@@ -45,9 +45,15 @@ export function dispatchMiddleware(dispatch) {
     }
     async function getFilterList({dispatch, fetchFunction, filters, accessor}) {
         dispatch(loadingFilterList(accessor))
+        const tmp = Object.keys(filters).reduce((acc, key) => {
+            if (key !==accessor) acc[key] = filters[key]
+            return acc
+        }, {})
+        console.log('getFilterList', filters, tmp);
         // const data = await fetchFunction({accessor,filters})
         try {
-            const data = await fetchFunction({accessor,filters})
+            // const data = await fetchFunction({accessor,filters})
+            const data = await fetchFunction({accessor,filters: tmp})
             console.log('Table', data)
             if (check.not.array(data)) {
                 console.log('Table: Error fetching filter data: ', data)
@@ -117,6 +123,7 @@ export const rootReducer = (state, action) => {
         case LOADING_FILTER_LIST:
             return {...state, filters: app_filters_setFilterInLoadingState({filters: state.filters, accessor: payload})}
         case RECEIVE_FILTER_LIST:
+            console.log('RECEIVE_FILTER_LIST', payload)
             return {...state, filters: app_filters_receiveFilterList({filters: state.filters, accessor: payload.accessor, data: payload.data})}
         default:
             return state

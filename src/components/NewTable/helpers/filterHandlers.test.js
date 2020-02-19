@@ -7,7 +7,7 @@ import {
     filters_removeValue,
     app_changeFilter,
     changeFilter_invalidateData,
-    app_filters_setFilterInLoadingState, app_filters_receiveFilterList
+    app_filters_setFilterInLoadingState, app_filters_receiveFilterList, app_convertFilters
 } from './filterHandlers'
 import {
     TIMEOUT_CHANGE_FILTER_TYPE,
@@ -30,6 +30,16 @@ const getFiltersSettings = () => ({
 const getFilterSettings = (filterBy, type, allowedTypes) => ({filterBy, type, allowedTypes})
 const getTextFilterState = (filterBy, type, value, didInvalidate) => ({filterBy, type, value, didInvalidate})
 const getListFilterState = (filterBy, type, selectAllState, value, list, didInvalidate, isLoading = false) => ({filterBy, type, selectAllState, value, list, didInvalidate, isLoading})
+const getConvertedFilter = (filterBy, type, value, removeEmpty = undefined, addEmpty = undefined) => {
+    const resFilter = {
+        filterBy,
+        type,
+        value
+    }
+    if (removeEmpty !== undefined) resFilter.removeEmpty = removeEmpty
+    if (addEmpty !== undefined) resFilter.addEmpty = addEmpty
+    return resFilter
+}
 
 const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, invalidateWithDelay = false, data=[], sorting=[]) => ({filters, filtersSettings, didInvalidate, data, sorting})
 
@@ -308,4 +318,59 @@ test('app, receive data for LIST filter', () => {
     }
     const realResult = app_filters_receiveFilterList({filters, accessor: 'c1', data})
     expect(realResult).toEqual(filtersResult)
+})
+//app converting filters for request
+test('app, convert filters for sending to server. LIST filters, selectAll, no empty value', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2'], ['l1', 'l2'], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'NOT_IN_LIST', ['v1', 'v2'], false)}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
+})
+test('app, convert filters for sending to server. LIST filters, selectAll, empty value', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'LIST', true, ['v1', 'v2', '<empty>'], ['l1', 'l2'], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'NOT_IN_LIST', ['v1', 'v2'], true)}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
+})
+test('app, convert filters for sending to server. LIST filters, no selectAll, no empty value', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'IN_LIST', ['v1', 'v2'], undefined, false)}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
+})
+test('app, convert filters for sending to server. LIST filters, no selectAll, empty value', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'LIST', false, ['v1', 'v2', '<empty>'], ['l1', 'l2'], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'IN_LIST', ['v1', 'v2'], undefined, true)}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
+})
+test('app, convert filters for sending to server. EQ filters', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'EQ', false, ['v1'], [], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'EQ', ['v1'])}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
+})
+test('app, convert filters for sending to server. STARTING filters', () => {
+    const filters = {
+        c1: getListFilterState('c1', 'STARTING', false, ['v1'], [], false, false)
+    }
+    const convertedFilters = {c1: getConvertedFilter('c1', 'STARTING', ['v1'])}
+    const realResult = app_convertFilters({filters, emptyWildcard: '<empty>'})
+    expect(realResult).toEqual(convertedFilters)
+
 })
