@@ -49,12 +49,9 @@ export function dispatchMiddleware(dispatch) {
             if (key !==accessor) acc[key] = filters[key]
             return acc
         }, {})
-        console.log('getFilterList', filters, tmp);
-        // const data = await fetchFunction({accessor,filters})
+        // console.log('getFilterList', filters, tmp);
         try {
-            // const data = await fetchFunction({accessor,filters})
             const data = await fetchFunction({accessor,filters: tmp})
-            console.log('Table', data)
             if (check.not.array(data)) {
                 console.log('Table: Error fetching filter data: ', data)
                 throw  new Error('Table: Error fetching filter data from server!')

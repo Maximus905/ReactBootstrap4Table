@@ -1,4 +1,5 @@
 const DEVELOPED_BASE_URL = 'netcmdb-loc.rs.ru:8082'
+// const DEVELOPED_BASE_URL = 'netcmdb.rs.ru'
 const BASE_URL = (() => {
     const protocol = window.location.protocol
     const hostname = window.location.hostname

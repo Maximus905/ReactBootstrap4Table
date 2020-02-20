@@ -154,7 +154,7 @@ const NewTable = props => {
                         {isLoading ? <Spinner/> : null}
                     </div>
                 </div>
-                {/*<div className={classNames("bg-warning")} style={tableFtBoxSizeCss}>Table Footer</div>*/}
+                {/*<div className={classNames("bg-warning")} >Table Footer</div>*/}
             </div>
             <ScrollbarSize onLoad={(measurements) => dispatch(setScrollSizes({vScroll: measurements.scrollbarWidth, hScroll: measurements.scrollbarHeight}))}/>
         </TableContext.Provider>
