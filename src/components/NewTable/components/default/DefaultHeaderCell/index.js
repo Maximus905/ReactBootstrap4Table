@@ -36,7 +36,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
         }
     }
     return (
-        <th css={css`width: ${width}px; cursor: default`} className={classNames('align-top', 'table-dark')} onClick={sortable ? handlerOnClick : undefined} >
+        <th css={css`width: ${width}px; cursor: default`} className={classNames('align-top')} onClick={sortable ? handlerOnClick : undefined} >
             <div className={classNames('d-flex', 'justify-content-between')}>
                 <div className={classNames('d-flex', 'justify-content-start')}>
                     {title}

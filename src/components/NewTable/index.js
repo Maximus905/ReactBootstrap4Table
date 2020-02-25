@@ -11,6 +11,7 @@ import HeaderCell from "./components/HeaderCell";
 import ScrollCell from "./components/ScrollCell"
 import Spinner from "./components/Spiner";
 import Row from "./components/Row";
+import TableFooter from "./components/TableFooter";
 
 import ft from "./constatnts/filterTypes";
 import {useEvent} from "../Hooks"
@@ -25,6 +26,9 @@ import classNames from "classnames";
 import ScrollbarSize from "react-scrollbar-size";
 import Cell from "./components/Cell";
 import SimpleHeaderCell from "./components/SimpleHeaderCell";
+import Pagination from "./components/Pagination";
+import {Input} from "reactstrap";
+import GlobalSearch from "./components/GlobalSearch";
 
 const NewTable = props => {
     const {getTableData, table, getFilterList, filterLabelName, filterValueName, filterCheckedName, emptyWildcard } = props
@@ -154,7 +158,11 @@ const NewTable = props => {
                         {isLoading ? <Spinner/> : null}
                     </div>
                 </div>
-                {/*<div className={classNames("bg-warning")} >Table Footer</div>*/}
+                {/*<TableFooter tableDark={tableDark}>*/}
+                <TableFooter darkTheme={tableDark} >
+                    <GlobalSearch darkTheme={tableDark} />
+                    <Pagination darkTheme={tableDark}  />
+                </TableFooter>
             </div>
             <ScrollbarSize onLoad={(measurements) => dispatch(setScrollSizes({vScroll: measurements.scrollbarWidth, hScroll: measurements.scrollbarHeight}))}/>
         </TableContext.Provider>
