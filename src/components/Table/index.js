@@ -30,7 +30,7 @@ import Pagination from "./components/Pagination";
 import GlobalSearch from "./components/GlobalSearch";
 import RecordsCounter from "./components/RecordsCounter";
 
-const NewTable = props => {
+const Table = props => {
     const {getTableData, table, getFilterList, filterLabelName, filterValueName, emptyWildcard, dataFieldName, dataCounterFieldName } = props
     const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
@@ -168,7 +168,7 @@ const NewTable = props => {
         </TableContext.Provider>
     )
 }
-NewTable.propTypes = {
+Table.propTypes = {
     table: PropTypes.shape({
         width: PropTypes.number, //width of table (% from tBox)
         //bs styles for table
@@ -218,7 +218,7 @@ NewTable.propTypes = {
     showGlobalSearch: PropTypes.bool,
     showTableFooter: PropTypes.bool,
 }
-NewTable.defaultProps = {
+Table.defaultProps = {
     filterValueName: 'val',
     filterLabelName: 'lab',
     filterCheckedName: 'checked',
@@ -233,4 +233,4 @@ NewTable.defaultProps = {
     showGlobalSearch: false,
     showTableFooter: true,
 }
-export default NewTable
+export default Table

@@ -1,8 +1,8 @@
 import React from "react";
-import NewTable from "../NewTable"
+import Table from "../Table"
 import config from "./tableConfig";
 
 const TestGeoTable = () => (
-    <NewTable {...config} />
+    <Table {...config} />
 )
 export default TestGeoTable

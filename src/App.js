@@ -2,11 +2,11 @@ import React from 'react';
 import {Page, PageHeader, PageMain, PageFooter} from "./components/Page"
 import {API} from "./async";
 // import LocationsMappingTable from './components/LocationsMappingTable'
-import NewTable from "./components/NewTable";
+import Table from "./components/Table";
 import AsyncTest from "./AsyncTest";
 import TestGeoTable from "./components/TestGeoTable";
 // import {filterType as ft} from "./components/TableGrid/constants/filters";
-import ft from "./components/NewTable/constatnts/filterTypes";
+import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 const mockData = () => [...new Array(50)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 
@@ -92,7 +92,7 @@ const App = props => {
                 {/*<LocationsMappingTable />*/}
 
                 {/*for testing with fake data*/}
-                {/*<NewTable {...config} />*/}
+                {/*<Table {...config} />*/}
 
                 {/*simple test of async function*/}
                 {/*<AsyncTest/>*/}

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import TableGrid from '../TableGrid'
+import TableGrid from '../Table'
 import {tableConfig} from './config'
 import {getRcList} from './async/server'
 // import './styles/styles.scss'
