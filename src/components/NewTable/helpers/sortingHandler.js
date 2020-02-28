@@ -19,7 +19,6 @@ export const changeSorting = ({sorting, accessor, appendMode = false}) => {
     const clone = [...sorting]
     const currentIdx = currentSortIndex(clone, accessor)
     const nextValue = getNextSortValue(clone, accessor)
-    // console.log('test', currentIdx, nextValue)
     if (!appendMode) {
         return nextValue === '' ? [] : [{[accessor]: nextValue}]
     } else {

@@ -1,6 +1,5 @@
 import React, {createContext, useEffect, useMemo, useReducer} from "react"
 import PropTypes, {oneOfType} from 'prop-types'
-import check from 'check-types'
 import {convertFilterList} from "../helpers";
 import rootReducer from "../reducer"
 import {initialState} from "../constants/initialState"
@@ -39,7 +38,7 @@ export const ContextProvider = (props) => {
         checkedItemsCounter,
         settingList: initialSettingList
     })
-    const {selectAll: selectAllState, data: filterListState, filterValue, settingList, isOpened, reopen} = state
+    const {selectAll: selectAllState, filterValue, settingList, isOpened, reopen} = state
 
     const onClickSaveSettings = ((accessor) => () => {
         const newType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
@@ -77,7 +76,6 @@ export const ContextProvider = (props) => {
 
     //invoke external onChangeFilter for every changing of filter selectAllState or filterValue
     useEffect(() => {
-        console.log('afterChangeType', state)
         const currentType = settingList.reduce((acc, item) => item.checked ? item.value : acc, '')
         // console.log('change filter value', accessor, filterBy, currentType, selectAllState, filterValue)
         onChangeFilterExt({accessor, filterBy, type: currentType, value: filterValue, selectAllState})
@@ -97,14 +95,12 @@ export const ContextProvider = (props) => {
     }, [filterSettings])
     //update list of filter
     useEffect(() => {
-        console.log('convertFilterList useEffect')
         dispatch(updateFilterList(convertFilterList(data, labelFieldName, valueFieldName, emptyWildcard, selectAllState, filterValue)))
     }, [data])
 
     //watch reopen signal (reopen === true), reset them and open filter
     useEffect(() => {
         if (reopen) {
-            console.log('useEffect reopen end')
             dispatch(reopenFilter())
         }
     }, [reopen])

@@ -6,8 +6,12 @@ export const initialState = {
     filters: {},
     isCtrlPressed: false,
     isLoading: false,
-    invalidateWithDelay: 1200,
+    invalidateWithDelay: 200,
     didInvalidate: false,
+    showPagination: true,
+    showRecordsCounter: true,
+    showGlobalSearch: false,
+    showTableFooter: true,
 
     dimensions: {
         tWidth: 0,
@@ -29,7 +33,7 @@ export const tableSettingsTemplate = {
     globalFilter: false,
     tableSmall: true,
     tableStriped: true,
-    tableDark: false,
+    tableDark: true,
     tableBordered: true,
     tableBorderless: false,
     tableHover: true
@@ -62,4 +66,11 @@ export const emptyListFilterTemplate = {
     type: '',
     isLoading: false,
     // didInvalidate: true //calculated from filterType
+}
+export const paginationSettingsTemplate = {
+    recordsCounter: null,
+    currentPage: 1,
+    rowsOnPage: 100,
+    rowsOnPageList: [100, 300, 500, 1000],
+    totalPages: null,
 }

@@ -34,6 +34,6 @@ SearchInput.propTypes = {
     onChangeInput: PropTypes.func
 }
 SearchInput.defaultProps = {
-    onChangeInput: (inputValue) => console.log('onChangeInput', inputValue)
+    onChangeInput: (inputValue) => {}
 }
 export default SearchInput

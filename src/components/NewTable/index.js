@@ -14,10 +14,10 @@ import Row from "./components/Row";
 import TableFooter from "./components/TableFooter";
 
 import ft from "./constatnts/filterTypes";
-import {useEvent} from "../Hooks"
+import {useEvent} from "./hooks"
 import {rootReducer, dispatchMiddleware} from "./reducer"
 import {
-    app_convertFilters,
+    app_convertFilters, app_convertPagination,
     iniReducerState
 } from './helpers'
 import TableContext from "./TableContext"
@@ -27,15 +27,17 @@ import ScrollbarSize from "react-scrollbar-size";
 import Cell from "./components/Cell";
 import SimpleHeaderCell from "./components/SimpleHeaderCell";
 import Pagination from "./components/Pagination";
-import {Input} from "reactstrap";
 import GlobalSearch from "./components/GlobalSearch";
+import RecordsCounter from "./components/RecordsCounter";
 
 const NewTable = props => {
-    const {getTableData, table, getFilterList, filterLabelName, filterValueName, filterCheckedName, emptyWildcard } = props
+    const {getTableData, table, getFilterList, filterLabelName, filterValueName, emptyWildcard, dataFieldName, dataCounterFieldName } = props
     const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
     const asyncDispatch = dispatchMiddleware(dispatch)
-    const {isLoading, didInvalidate, invalidateWithDelay, sorting, filters, isCtrlPressed,
+    const {isLoading, didInvalidate,
+        showPagination, showRecordsCounter, showGlobalSearch,
+        invalidateWithDelay, sorting, filters, pagination, isCtrlPressed,
         tableSettings: {tableSmall, tableStriped, tableDark, tableBordered, tableBorderless, tableHover},
         dimensions: {tWidth, vScroll, tBoxWidth},
         visibleColumnsOrder,
@@ -58,8 +60,14 @@ const NewTable = props => {
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
         if (!isLoading && didInvalidate && !isCtrlPressed) {
-            // const action = requestData({fetchFunction: getTableData, filters: {}, sorting})
-            const action = requestData({fetchFunction: getTableData, filters: app_convertFilters({filters, emptyWildcard}) , sorting})
+            const action = requestData({
+                fetchFunction: getTableData,
+                filters: app_convertFilters({filters, emptyWildcard}),
+                sorting,
+                pagination: app_convertPagination({pagination}),
+                dataFieldName,
+                dataCounterFieldName
+            })
             asyncDispatch(action)
         }
     }, [isLoading, didInvalidate, isCtrlPressed])
@@ -68,11 +76,9 @@ const NewTable = props => {
     }, [filters]);
 
     useEffect(() => {
-        if (invalidateWithDelay) {
-            dispatch(resetInvalidateDelay())
+        if (Number.isInteger(invalidateWithDelay)) {
             invalidateDataWithTimeout(invalidateWithDelay)
         }
-
     }, [invalidateWithDelay])
 
     // invalidate data with timeout
@@ -81,12 +87,7 @@ const NewTable = props => {
         if (timeIdRef.current) {
             clearTimeout(timeIdRef.current)
         }
-        if (delay) {
-            timeIdRef.current = setTimeout(() => dispatch(invalidateData()), delay)
-        } else {
-            timeIdRef.current = null
-            dispatch(invalidateData())
-        }
+        timeIdRef.current = setTimeout(() => dispatch(invalidateData()), delay)
     }
     // Ctrl key handlers
     function ctrlDownHandler(e) {
@@ -103,7 +104,6 @@ const NewTable = props => {
     // filters list handle
     const updateFilterList = ({accessor}) => {
         const filter = filters[accessor]
-
         if (filter.type === ft.LIST.value && filter.didInvalidate) {
             asyncDispatch(requestFilterList({fetchFunction: getFilterList, filters: app_convertFilters({filters, emptyWildcard}), accessor}))
         }
@@ -121,14 +121,14 @@ const NewTable = props => {
         renderCell,
         filterLabelName,
         filterValueName,
-        filterCheckedName,
+        // filterCheckedName,
         emptyWildcard,
         updateFilterList
     }
     // const sorter = (accessor) => (<Sorter accessor={accessor} />)
     return (
         <TableContext.Provider value={context}>
-            <div className={classNames(myCss.tBox, "d-flex", "flex-column", "bg-success")} ref={refTableBox} onKeyDown={ctrlDownHandler} onKeyUp={ctrlUpHandler} tabIndex="-1">
+            <div className={classNames(myCss.tBox, "d-flex", "flex-column", "bg-light")} ref={refTableBox} onKeyDown={ctrlDownHandler} onKeyUp={ctrlUpHandler} tabIndex="-1">
                 <div className={classNames(myCss.tHdBdBox, isLoading ? myCss.noScroll : '', "d-flex", "flex-column", "flex-grow-1", "position-relative")}>
                     <div className={classNames(myCss.tHdBox, "bg-light")} css={css`width: ${tWidth + vScroll}px`}>
                         <table className={classNames("table", {"table-sm": tableSmall, "table-dark": tableDark, "table-bordered": tableBordered, "table-borderless": tableBorderless}, myCss.fixTableSizes)} css={css`width: ${tWidth}px`}>
@@ -158,10 +158,10 @@ const NewTable = props => {
                         {isLoading ? <Spinner/> : null}
                     </div>
                 </div>
-                {/*<TableFooter tableDark={tableDark}>*/}
                 <TableFooter darkTheme={tableDark} >
-                    <GlobalSearch darkTheme={tableDark} />
-                    <Pagination darkTheme={tableDark}  />
+                    {showGlobalSearch ? <GlobalSearch darkTheme={tableDark} /> : <div/>}
+                    {showRecordsCounter && <RecordsCounter/>}
+                    {showPagination ? <Pagination darkTheme={tableDark} /> : <div/>}
                 </TableFooter>
             </div>
             <ScrollbarSize onLoad={(measurements) => dispatch(setScrollSizes({vScroll: measurements.scrollbarWidth, hScroll: measurements.scrollbarHeight}))}/>
@@ -210,12 +210,27 @@ NewTable.propTypes = {
     filterValueName: PropTypes.string, // is used in filter list object
     filterLabelName: PropTypes.string, // is used in filter list object
     filterCheckedName: PropTypes.string, // is used in filter list object
-    emptyWildcard: PropTypes.string
+    emptyWildcard: PropTypes.string,
+    dataFieldName: PropTypes.string,
+    dataCounterFieldName: PropTypes.string,
+    //
+    showRecordsCounter: PropTypes.bool,
+    showGlobalSearch: PropTypes.bool,
+    showTableFooter: PropTypes.bool,
 }
 NewTable.defaultProps = {
     filterValueName: 'val',
     filterLabelName: 'lab',
     filterCheckedName: 'checked',
-    emptyWildcard: '<пусто>'
+    emptyWildcard: '<пусто>',
+    // format for fetching data from server: {[dataFieldName]: data, [dataCounterFieldName]: totalCountOfData}
+    //totalCountOfData is used for pagination
+    //if data is fetched as array (bare data) - pagination will be turned off
+    dataFieldName: 'data',
+    dataCounterFieldName: 'counter',
+    //
+    showRecordsCounter: true,
+    showGlobalSearch: false,
+    showTableFooter: true,
 }
 export default NewTable

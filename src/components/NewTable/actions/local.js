@@ -20,7 +20,7 @@ import {
     SET_SCROLL_SIZES,
     //resizing
     PAGE_RESIZING,
-    TABLE_RESIZING
+    TABLE_RESIZING, FIRST_PAGE, LAST_PAGE, NEXT_PAGE, PREV_PAGE, CHANGE_ROWS_ON_PAGE
 } from '../constatnts/actions'
 //invalidate data
 export const invalidateData = () => ({type: INVALIDATE_DATA})
@@ -55,3 +55,9 @@ export const setAllColumnsSettings = columnsSettings => ({type: SET_ALL_COLUMNS_
  * @param {Object} columnSettings object that consists settings for only one column
  */
 export const setOneColumnSettings = ({accessor, columnSettings}) => ({type: SET_ONE_COLUMN_SETTINGS, payload: {accessor, columnSettings}})
+//pagination
+export const firstPage = () => ({type: FIRST_PAGE})
+export const lastPage = () => ({type: LAST_PAGE})
+export const nextPage = () => ({type: NEXT_PAGE})
+export const prevPage = () => ({type: PREV_PAGE})
+export const changeRowsOnPage = (rowsOnPage) => ({type: CHANGE_ROWS_ON_PAGE, payload: rowsOnPage})

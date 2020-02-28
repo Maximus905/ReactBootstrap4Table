@@ -21,7 +21,7 @@ SaveIcon.propTypes = {
     onClick: PropTypes.func
 }
 SaveIcon.defaultProps = {
-    onClick: () => {console.log('click on save icon')}
+    onClick: () => {}
 }
 
 export default SaveIcon

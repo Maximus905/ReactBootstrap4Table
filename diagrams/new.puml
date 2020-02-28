@@ -44,6 +44,7 @@ namespace Table {
         data: []
         sorting: Object[]
         filters: {[accessor]: <filterValue>}
+        pagination: <current pagination state>
         isCtrlPressed: bool
         isLoading: bool
         didInvalidate: bool
@@ -159,6 +160,14 @@ namespace Table {
     class "current filters settings" as liveFiltersSettings {
         [accessor]: filterSettings
     }
+    class "current pagination state" as livePaginationState {
+        recordsCounter: number|null
+        currentPage: number
+        rowsOnPage: number
+        rowsOnPageList: number[]
+        totalPages: number|null
+        didInvalidate: bool
+    }
     class custom {
         //Any users props
     }
@@ -172,6 +181,7 @@ namespace Table {
     reducerState *-- sorting
     reducerState *-- custom
     reducerState *-- liveColumnsSettings
+    reducerState *-- livePaginationState
     liveColumnsSettings *-- liveOneColumnSettings
     reducerState *-- liveTableSettings
     oneColumnSettings *-- oneFilterSettings :filter

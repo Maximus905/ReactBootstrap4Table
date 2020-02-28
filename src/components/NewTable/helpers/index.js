@@ -4,11 +4,13 @@ import {
     oneFilterSettingsTemplate,
     emptyTextFilterTemplate,
     initialState,
-    emptyListFilterTemplate
+    emptyListFilterTemplate,
+    paginationSettingsTemplate
 } from "../constatnts/initial"
 import filterTypes from "../constatnts/filterTypes";
 export * from './sortingHandler'
 export * from './filterHandlers'
+export * from './pagination'
 /**
  * @param props
  */
@@ -79,15 +81,24 @@ export const initialEmptyFiltersFromProps = ({columns}) => (
         return acc
     }, {})
 )
-export const iniReducerState = props => ({
-    ...initialState,
-    filters: initialEmptyFiltersFromProps(props),
-    tableSettings: tableSettingsFromProps(props),
-    columnsSettings: columnsSettingsFromProps(props),
-    visibleColumnsOrder: visibleColumnsOrderFromProps(props),
-    filtersSettings: filtersSettingsFromProps(props),
-    custom: props.custom ? props.custom : {}
+export const initialPaginationSettings = () => ({
+    ...paginationSettingsTemplate
 })
+export const iniReducerState = props => {
+    return {
+        ...initialState,
+        showRecordsCounter: props.showRecordsCounter,
+        showGlobalSearch: props.showGlobalSearch,
+        showTableFooter: props.showTableFooter,
+        filters: initialEmptyFiltersFromProps(props),
+        tableSettings: tableSettingsFromProps(props),
+        columnsSettings: columnsSettingsFromProps(props),
+        visibleColumnsOrder: visibleColumnsOrderFromProps(props),
+        filtersSettings: filtersSettingsFromProps(props),
+        pagination: initialPaginationSettings(),
+        custom: props.custom ? props.custom : {}
+    }
+}
 /**
  * @param {{tBoxWidth: number, vScroll: number, columnsSettings: Object}}
  * @return {Object} an object with calculated width values like {accessor: value}

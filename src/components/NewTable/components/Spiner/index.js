@@ -1,6 +1,6 @@
 /**@jsx jsx*/
 import {jsx, css} from "@emotion/core";
-import React, {Fragment, useContext} from 'react'
+import {useContext} from 'react'
 import {Spinner as BsSpinner} from 'reactstrap'
 import TableContext from "../../TableContext";
 

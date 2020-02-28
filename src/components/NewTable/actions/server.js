@@ -15,14 +15,17 @@ export const loadingData = () => ({type: LOADING_DATA})
  * @param {any} fetchFunction
  * @param {Object} filters - from reducer state
  * @param {Object} sorting - from reducer state
+ * @param pagination
+ * @param dataFieldName
+ * @param dataCounterFieldName
  */
-export const requestData = ({fetchFunction, filters, sorting}) => ({type: REQUEST_DATA, payload: {fetchFunction, filters, sorting}})
+export const requestData = ({fetchFunction, filters, sorting, pagination, dataFieldName, dataCounterFieldName}) => ({type: REQUEST_DATA, payload: {fetchFunction, filters, sorting, pagination, dataFieldName, dataCounterFieldName}})
 /**
  *
- * @param {Array} data
- * @return {{type: string, payload: Array}}
+ * @param {Object}
+ * @return {{type: string, payload: Object}}
  */
-export const receiveData = (data) => ({type: RECEIVE_DATA, payload: data})
+export const receiveData = ({data, recordsCounter, showPagination}) => ({type: RECEIVE_DATA, payload: {data, recordsCounter, showPagination}})
 export const invalidateData = () => ({type: INVALIDATE_DATA})
 
 export const loadingFilterList = (accessor) => ({type: LOADING_FILTER_LIST, payload: accessor})

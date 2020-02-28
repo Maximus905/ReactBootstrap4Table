@@ -3,10 +3,7 @@ import {
     filtersSettings_changeFilterType,
     filters_changeFilterType,
     filters_changeValue,
-    filters_addValue,
-    filters_removeValue,
     app_changeFilter,
-    changeFilter_invalidateData,
     app_filters_setFilterInLoadingState, app_filters_receiveFilterList, app_convertFilters
 } from './filterHandlers'
 import {
@@ -40,8 +37,18 @@ const getConvertedFilter = (filterBy, type, value, removeEmpty = undefined, addE
     if (addEmpty !== undefined) resFilter.addEmpty = addEmpty
     return resFilter
 }
+const getPaginationState = (recordsCounter = 300, currentPage = 2, rowsOnPage = 100, rowsOnPageList = [100, 300, 500, 1000], totalPages = 3) => ({
+    recordsCounter, currentPage, rowsOnPage, rowsOnPageList, totalPages,
+})
 
-const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, invalidateWithDelay = false, data=[], sorting=[]) => ({filters, filtersSettings, didInvalidate, data, sorting})
+const getPartialStateWithFilters = (filters, filtersSettings, didInvalidate, pagination, invalidateWithDelay = false, data=[], sorting=[]) => ({
+    filters,
+    filtersSettings,
+    didInvalidate,
+    data,
+    sorting,
+    pagination
+})
 
 test('filtersSettings, change filter type  EQ -> NE', () => {
     let filtersSettings = {
@@ -143,13 +150,13 @@ test('app, change filter, change type EQ -> NE, not empty value', () => {
         c1: getFilterSettings('c1', 'NE', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['v1'],
         type: 'NE',
-        selectAllState: true})
+        selectAllState: true,
+    })
     expect(realResult.filtersSettings).toEqual(filtersSettingsResult)
     expect(realResult.filters).toEqual(filtersResult)
     expect(realResult.invalidateWithDelay).toBe(TIMEOUT_CHANGE_FILTER_TYPE)
@@ -172,9 +179,8 @@ test('app, change filter, change type EQ -> NE, empty value', () => {
         c1: getFilterSettings('c1', 'NE', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['v1'],
         type: 'NE',
@@ -201,9 +207,8 @@ test('app, change filter, change type EQ -> LIST, not empty value', () => {
         c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['v1'],
         type: 'LIST',
@@ -230,9 +235,8 @@ test('app, change filter, change type EQ -> LIST, empty value', () => {
         c1: getFilterSettings('c1', 'LIST', ['EQ', 'LIST']),
         c2: getFilterSettings('c2', 'LIST', ['EQ', 'LIST'])
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['v1'],
         type: 'LIST',
@@ -257,7 +261,7 @@ test('app, change filter, EQ filter, change value', () => {
     }
 
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['newValue'],
         type: 'EQ',
@@ -282,9 +286,8 @@ test('app, change filter, LIST filter, change value', () => {
         c1: getListFilterState('c2', 'LIST', true, ['newValue'], ['l1', 'l2'], false),
         c2: getListFilterState('c2', 'LIST', false, ['v1', 'v2'], ['l1', 'l2'], true)
     }
-    // console.log(getPartialStateWithFilters(filters, filtersSettings, false))
     let realResult = app_changeFilter({
-        state: getPartialStateWithFilters(filters, filtersSettings, false),
+        state: getPartialStateWithFilters(filters, filtersSettings, false, getPaginationState()),
         accessor: 'c1',
         value: ['newValue'],
         type: 'LIST',

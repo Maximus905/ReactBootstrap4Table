@@ -1,4 +1,4 @@
-import React, {createRef, useEffect, useRef, useState} from "react"
+import React, {useState} from "react"
 import './typeDefs'
 import PropTypes, {oneOfType} from 'prop-types'
 import {ContextProvider} from "./ContextProvider"
@@ -15,6 +15,7 @@ const Filter = (props) => {
         accessor,
         data, //filter list for LIST type
         loadingState, //if list for LIST filter is not ready yet
+        active, // if filter value for this filter isn't empty
         maxHeight, maxWidth,
         valueFieldName,
         labelFieldName,
@@ -65,7 +66,7 @@ const Filter = (props) => {
             <Dropdown {...bsProps} onClick={(e) => {
                 e.stopPropagation()
             }}>
-                <DropdownButton/>
+                <DropdownButton active={active} />
                 <DropdownMenu modifiers={{offset}} right >
                     {/*{ !showSettings && filter()}*/}
                     { !showSettings && <FilterBody />}
@@ -80,6 +81,7 @@ Filter.propTypes = {
     accessor: PropTypes.string,
     data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]) ),
     loadingState: PropTypes.bool,
+    active: PropTypes.bool,
     maxHeight: PropTypes.number, // maxHeight of filterList in px
     maxWidth: PropTypes.number, // maxWidth of filterList in px
     //handlers
@@ -103,6 +105,7 @@ Filter.propTypes = {
     }),
 }
 Filter.defaultProps = {
+    active: false,
     fontRatio: 0.8,
     maxWidth: 200,
     emptyWildcard: '<пусто>',
@@ -113,8 +116,8 @@ Filter.defaultProps = {
     loadingWildcard: 'loading...',
     opened: false,
     openSettings: false,
-    onSaveSettings: ({accessor, newType}) => {console.log('onClickSaveSettings', accessor, newType)},
-    onOpen: ({accessor}) => console.log('onOpen', accessor)
+    onSaveSettings: ({accessor, newType}) => {},
+    onOpen: ({accessor}) => {}
 }
 
 export default Filter

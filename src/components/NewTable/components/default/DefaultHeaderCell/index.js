@@ -26,6 +26,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
     const onOpenFilter = ({accessor}) => {
         updateFilterList({accessor})
     }
+    const isFilterActive = ({accessor}) => filters[accessor].value.length > 0
 
     const handlerOnClick = (e) => {
         if (e.ctrlKey) {
@@ -44,7 +45,7 @@ const DefaultHeaderCell = ({accessor, renderSortIcon}) => {
                         {sortable ? renderSortIcon(accessor) : undefined}
                     </div>
                 </div>
-                {filterable && <Filter accessor={accessor} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={loadingState} emptyWildcard={emptyWildcard} />}
+                {filterable && <Filter accessor={accessor} active={isFilterActive({accessor})} maxWidth={300} maxHeight={tBodyBoxHeight * 0.8} data={filterList} direction="down" filterSettings={filtersSettings[accessor]} onChangeFilter={onChangeFilterHandler} onOpen={onOpenFilter} loadingState={loadingState} emptyWildcard={emptyWildcard} />}
             </div>
         </th>
     )

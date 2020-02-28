@@ -32,7 +32,7 @@ const longestRowIndex = ({data, fieldName}) => {
 
 
 const ItemsBox = (props) => {
-    const {loadingState, loadingWildcard, accessor, emptyListWildcard, state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
+    const {loadingState, loadingWildcard, emptyListWildcard, state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -61,10 +61,8 @@ const ItemsBox = (props) => {
     }
 
     const fuseFilter = (template) => {
-        // const start = Date.now()
         if (!template) return data
         const res =  fuse.search(template)
-        // console.log(Date.now() - start)
         return  res
     }
 
@@ -87,7 +85,6 @@ const ItemsBox = (props) => {
             )
         )
     } else if (data.length === 0) {
-        console.log('reopen data.length 0')
         return (
             (
                 <div css={css`

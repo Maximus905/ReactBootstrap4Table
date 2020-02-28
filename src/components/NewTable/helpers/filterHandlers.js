@@ -1,11 +1,11 @@
 import filterTypes from "../constatnts/filterTypes";
 import {emptyListFilterTemplate, emptyTextFilterTemplate} from "../constatnts/initial";
-import {INVALIDATE_FILTER_LIST} from "../constatnts/actions";
 import {
     TIMEOUT_CHANGE_FILTER_TYPE,
     TIMEOUT_CHANGE_LIST_FILTER_VALUE,
     TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE
 } from "../constatnts/timeouts";
+import {app_updatePagination} from "./pagination";
 
 export const filtersSettings_changeFilterType = ({filtersSettings, accessor, type}) => ({...filtersSettings, [accessor]: {...filtersSettings[accessor], type}})
 const oneFilter_changeFilterType = ({filter, type, value}) => (
@@ -70,10 +70,13 @@ export const app_changeFilter = ({state, accessor, type, value, selectAllState})
     if (typeIsChanged) {
         newState.filtersSettings = filtersSettings_changeFilterType({filtersSettings: state.filtersSettings, type, accessor})
         newState.filters = filters_changeFilterType({filters: state.filters, accessor, type})
-        if (!isCurrentValueEmpty) newState.invalidateWithDelay = TIMEOUT_CHANGE_FILTER_TYPE
+        if (!isCurrentValueEmpty) {
+            newState.invalidateWithDelay = TIMEOUT_CHANGE_FILTER_TYPE
+            newState.pagination = app_updatePagination({pagination: state.pagination, recordsCounter: null})
+        }
     } else {
         newState.filters = filters_changeValue({filters: state.filters, accessor, value, selectAllState})
-
+        newState.pagination = app_updatePagination({pagination: state.pagination, recordsCounter: null})
         newState.invalidateWithDelay = type === filterTypes.LIST.value ? TIMEOUT_CHANGE_LIST_FILTER_VALUE : TIMEOUT_CHANGE_SIMPLE_SEARCH_VALUE
     }
     return newState
@@ -96,7 +99,7 @@ export const app_filters_receiveFilterList = ({filters, accessor, data}) => (
 )
 export const app_convertFilters = ({filters, emptyWildcard}) => {
     const res = Object.entries(filters).reduce((acc, [key, filter]) => {
-        const {didInvalidate, isLoading, filterBy, type, value, selectAllState} = filter
+        const {filterBy, type, value, selectAllState} = filter
 
         switch (type) {
             case filterTypes.LIST.value:

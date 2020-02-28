@@ -1,6 +1,6 @@
 /**@jsx jsx*/
 import {css, jsx} from "@emotion/core";
-import {Fragment, useEffect, useState} from 'react'
+import {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import allFilterTypes from "../../../../constatnts/filterTypes";
 import {useContext} from "react";
@@ -10,7 +10,7 @@ import {changeSimpleSearchInput} from "../../actions";
 
 const SimpleSearch = ({filterType}) => {
     const label = allFilterTypes[filterType].filterName ? allFilterTypes[filterType].filterName : allFilterTypes[filterType].label
-    const {state: {filterValue}, dispatch, bdColor, fontRatio, onChangeSimpleSearch} = useContext(DropdownContext)
+    const {state: {filterValue}, dispatch, bdColor, fontRatio} = useContext(DropdownContext)
     // const [value, setValue] = useState('')
     // const onChangeHandler = (e) => setValue(e.target.value)
     const inputValue = filterValue.length ? filterValue[0] : ''

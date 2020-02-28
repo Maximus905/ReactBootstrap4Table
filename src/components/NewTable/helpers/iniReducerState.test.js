@@ -36,7 +36,10 @@ const getConfig = () => ({
     custom: {
         custom_1: 'value 1',
         custom_2: 'value 2'
-    }
+    },
+    showRecordsCounter: false,
+    showGlobalSearch: true,
+    showTableFooter: false,
 })
 
 const result = {
@@ -52,8 +55,13 @@ const result = {
     },
     isCtrlPressed: false,
     isLoading: false,
-    invalidateWithDelay: 1200,
+    invalidateWithDelay: 200,
     didInvalidate: false,
+
+    showPagination: true,
+    showRecordsCounter: false,
+    showGlobalSearch: true,
+    showTableFooter: false,
 
     dimensions: {
         tWidth: 0,
@@ -104,6 +112,13 @@ const result = {
             type: 'EQ',
             allowedTypes: [ft.EQ.value, ft.LIST.value]
         }
+    },
+    pagination: {
+        recordsCounter: null,
+        currentPage: 1,
+        rowsOnPage: 100,
+        rowsOnPageList: [100, 300, 500, 1000],
+        totalPages: null,
     },
     custom: {
         custom_1: 'value 1',
