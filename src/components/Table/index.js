@@ -57,6 +57,7 @@ const Table = props => {
             tBodyBoxHeight: refTableBodyBox.current.clientHeight,
         }))
     }
+    console.log('state', tWidth, vScroll, tBoxWidth)
     // reload data table according to isLoading and didInvalidate
     useEffect(() => {
         if (!isLoading && didInvalidate && !isCtrlPressed) {
