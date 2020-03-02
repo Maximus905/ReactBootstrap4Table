@@ -89,6 +89,7 @@ DropdownList.propTypes = {
     opened: PropTypes.bool, //initial state of filter
 }
 DropdownList.defaultProps = {
+    data: [],
     fontRatio: 0.8,
     maxWidth: 200,
 
@@ -101,7 +102,8 @@ DropdownList.defaultProps = {
     labelFieldName: 'lab',
     loadingWildcard: 'loading...',
     opened: false,
-    onOpen: ({accessor}) => {}
+    onOpen: ({accessor}) => {},
+    onChangeFilter: ({accessor, value, selectAllState}) => {console.log({accessor, value, selectAllState})}
 }
 
 export default DropdownList

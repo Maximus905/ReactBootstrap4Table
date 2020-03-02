@@ -8,6 +8,7 @@ import TestGeoTable from "./components/TestGeoTable";
 // import {filterType as ft} from "./components/TableGrid/constants/filters";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
+import DropdownList from "./components/DropdownList";
 const mockData = () => [...new Array(5)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 
 const fake = ((counter = 5) => {
@@ -66,7 +67,7 @@ async function getDropdownList() {
     return promise
 }
 
-const customCell = ({accessor, rowData}) => (<td>{rowData[accessor]}</td>)
+const customCell = ({accessor, rowData}) => (<td className="d-flex justify-content-between"><div>{rowData[accessor]}</div><DropdownList accessor={accessor} loadingState /></td>)
 
 const config = {
     getTableData: getData,
