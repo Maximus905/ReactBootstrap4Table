@@ -18,7 +18,7 @@ import {useEvent} from "./hooks"
 import {rootReducer, dispatchMiddleware} from "./reducer"
 import {
     app_convertFilters, app_convertPagination,
-    iniReducerState
+    iniReducerState, renderCellFunctionsFromProps, renderHeaderCellFunctionsFromProps
 } from './helpers'
 import TableContext from "./TableContext"
 import {requestData, ctrlDown, ctrlUp} from "./actions";
@@ -31,8 +31,11 @@ import GlobalSearch from "./components/GlobalSearch";
 import RecordsCounter from "./components/RecordsCounter";
 
 const Table = props => {
-    const {getTableData, table, getFilterList, filterLabelName, filterValueName, emptyWildcard, dataFieldName, dataCounterFieldName } = props
-    const {renderHeaderRow, renderRow, renderHeaderCell, renderCell} = table || {}
+    const {getTableData, table, columns, getFilterList, filterLabelName, filterValueName, emptyWildcard, dataFieldName, dataCounterFieldName } = props
+    const {renderHeaderRow, renderRow} = table || {}
+    const renderCellFunctions = renderCellFunctionsFromProps(props)
+    const renderHeaderCellFunctions = renderHeaderCellFunctionsFromProps(props)
+    console.log(renderCellFunctions, renderHeaderCellFunctions)
     const [state, dispatch] = useReducer(rootReducer, props, iniReducerState)
     const asyncDispatch = dispatchMiddleware(dispatch)
     const {isLoading, didInvalidate,
@@ -117,9 +120,9 @@ const Table = props => {
         getTableData,
         getFilterList,
         renderHeaderRow,
-        renderHeaderCell,
+        renderHeaderCellFunctions,
         renderRow,
-        renderCell,
+        renderCellFunctions,
         filterLabelName,
         filterValueName,
         // filterCheckedName,
@@ -197,8 +200,8 @@ Table.propTypes = {
             type: PropTypes.oneOf(Object.keys(ft)),
             allowedTypes: PropTypes.arrayOf(PropTypes.string), // array of available operators [keys of ft object]
         }),
-        renderCell: PropTypes.func,
-        renderHeaderCell: PropTypes.func,
+        renderCell: PropTypes.func, // ({accessor, rowData}) => (<td>Your code here</td>)
+        renderHeaderCell: PropTypes.func, // ({accessor, columnsSettings}) => (<th>Your code here</th>)
     })),
     globalFilter: PropTypes.shape({
         filterBy: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),

@@ -28,6 +28,20 @@ export const columnsSettingsFromProps = ({columns}) => (columns ?
         return acc
     }, {})
     : {})
+export const renderCellFunctionsFromProps = ({columns}) => (columns ?
+    columns.reduce((acc, settings) => {
+        const {renderCell, accessor} = settings
+        acc[accessor] = renderCell
+        return acc
+    }, {})
+    : {})
+export const renderHeaderCellFunctionsFromProps = ({columns}) => (columns ?
+    columns.reduce((acc, settings) => {
+        const {renderHeaderCell, accessor} = settings
+        acc[accessor] = renderHeaderCell
+        return acc
+    }, {})
+    : {})
 /**
  *
  * @param props
