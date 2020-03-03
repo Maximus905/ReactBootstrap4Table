@@ -12,7 +12,6 @@ import TableContext from "../../TableContext";
  */
 const HeaderCell = ({accessor}) => {
     const {renderHeaderCellFunctions, state: {columnsSettings}} = useContext(TableContext)
-    console.log('render', columnsSettings)
 
     return renderHeaderCellFunctions[accessor] ? renderHeaderCellFunctions[accessor]({accessor, columnsSettings}) : <DefaultHeaderCell {...{accessor, renderSortIcon: (accessor) => (<SortIcon accessor={accessor} />)}} />
 }
