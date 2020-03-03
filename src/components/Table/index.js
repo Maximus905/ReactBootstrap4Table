@@ -42,6 +42,7 @@ const Table = props => {
         showPagination, showRecordsCounter, showGlobalSearch,
         invalidateWithDelay, sorting, filters, pagination, isCtrlPressed,
         tableSettings: {tableSmall, tableStriped, tableDark, tableBordered, tableBorderless, tableHover},
+        columnsSettings,
         dimensions: {tWidth, vScroll, tBoxWidth},
         visibleColumnsOrder,
     } = state
@@ -154,7 +155,7 @@ const Table = props => {
                             <tbody>
                             {state.data.map((rowData, index) => (
                                 <Row key={index} rowData={rowData} index={index}>
-                                    {visibleColumnsOrder.map((accessor, index) => <Cell accessor={accessor} rowData={rowData} key={index} />)}
+                                    {visibleColumnsOrder.map((accessor, index) => <Cell accessor={accessor} rowData={rowData} width={columnsSettings[accessor].width} key={index} />)}
                                 </Row>
                             ))}
                             </tbody>
