@@ -5,12 +5,9 @@ import {DropdownContext} from "../../ContextProvider";
 import {useContext} from "react";
 
 const DropdownMenu = (props) => {
-    const {fontRatio, maxWidth} = useContext(DropdownContext)
-
+    const {fontRatio, state: {maxWidth}} = useContext(DropdownContext)
     return (
         <DropdownMenuBs css={css`
-            //top: -5px !important;
-            //left: 5px !important;
             font-size: ${fontRatio}rem;
             padding: 0;
             max-width: ${maxWidth}px;

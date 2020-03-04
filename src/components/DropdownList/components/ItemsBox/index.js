@@ -32,7 +32,7 @@ const longestRowIndex = ({data, fieldName}) => {
 
 
 const ItemsBox = (props) => {
-    const {loadingState, loadingWildcard, emptyListWildcard, state: {maxHeight, maxWidth, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
+    const {loadingState, loadingWildcard, emptyListWildcard, maxWidth, minWidth, state: {maxHeight, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -49,7 +49,9 @@ const ItemsBox = (props) => {
     useEffect(() => {
         if (!itemWidth && !itemHeight && itemRef.current && itemRef.current.offsetWidth && itemRef.current.offsetHeight) {
             setTimeout(() => {
-                const width = maxWidth && itemRef.current.offsetWidth > maxWidth ? maxWidth : itemRef.current.offsetWidth + 1
+                const width = maxWidth && itemRef.current.offsetWidth > maxWidth
+                    ? maxWidth
+                    : (minWidth && itemRef.current.offsetWidth < minWidth ? minWidth : itemRef.current.offsetWidth + 1)
                 dispatch(setItemSizes({width, height: itemRef.current.offsetHeight}))
             }, 0)
 
@@ -102,7 +104,7 @@ const ItemsBox = (props) => {
             max-height: ${maxHeight}px;
             overflow-y: auto;
         `}>
-                <div css={css`overflow-y: scroll; max-width: ${maxWidth}px`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
+                <div css={css`overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
             </div>
         )
     }  else {

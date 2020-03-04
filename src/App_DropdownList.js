@@ -1,4 +1,6 @@
-import React from 'react';
+/**@jsx jsx*/
+import {jsx, css} from "@emotion/core";
+import React, {useRef, useState} from 'react';
 import {Page, PageHeader, PageMain, PageFooter} from "./components/Page"
 import {API} from "./async";
 // import LocationsMappingTable from './components/LocationsMappingTable'
@@ -9,9 +11,9 @@ import TestGeoTable from "./components/TestGeoTable";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 import DropdownList from "./components/DropdownList";
-const mockData = () => [...new Array(5)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const mockData = () => [...new Array(10)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 
-const fake = ((counter = 5) => {
+const fake = ((counter = 2) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []
@@ -34,7 +36,7 @@ const fake = ((counter = 5) => {
     console.log('fake data has been generated: ', Date.now() - time)
     return res
 })()
-const fakeSimpleArray = ((counter = 10) => {
+const fakeSimpleArray = ((counter = 3) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []
@@ -43,6 +45,8 @@ const fakeSimpleArray = ((counter = 10) => {
     }
     res.push(null)
     res.push(undefined)
+    res.push(true)
+    res.push(false)
     console.log('fake data has been generated: ', Date.now() - time)
     return res
 })()
@@ -67,37 +71,51 @@ async function getDropdownList() {
     return promise
 }
 
-const customCell = ({accessor, rowData}) => (<td className="d-flex justify-content-between"><div>{rowData[accessor]}</div><DropdownList accessor={accessor} loadingState /></td>)
-
-const config = {
-    getTableData: getData,
-    getFilterList: getFakeFilterList,
-    columns: [
-        {
-            accessor: 'column1',
-            title: 'column 1',
-            minWidth: 300,
-            maxWidth: 450,
-            sortable: true,
-            filterable: true,
-            filter: {
-                filterBy: 'addr_alt',
-                type: 'LIST',
-                allowedTypes: [ft.EQ.value, ft.LIST.value]
-            },
-            renderCell: customCell
-        },
-        {
-            accessor: 'column2',
-            title: 'column 2',
-            minWidth: 400,
-            maxWidth: 500,
-            sortable: true,
-            filterable: true
-        }
-    ]
-}
 const App_DropdownList = props => {
+    const customCell = ({accessor, rowData, width}) => (<td className="d-flex justify-content-between" css={css`position: relative`}>
+        <div>{rowData[accessor]}</div>
+        <DropdownList accessor={accessor} data={data} maxWidth={350} minWidth={200} />
+    </td>)
+
+    const config = {
+        getTableData: getData,
+        getFilterList: getFakeFilterList,
+        columns: [
+            {
+                accessor: 'column1',
+                title: 'column 1',
+                minWidth: 300,
+                maxWidth: 450,
+                sortable: true,
+                filterable: true,
+                filter: {
+                    filterBy: 'addr_alt',
+                    type: 'LIST',
+                    allowedTypes: [ft.EQ.value, ft.LIST.value]
+                },
+                renderCell: customCell
+            },
+            {
+                accessor: 'column2',
+                title: 'column 2',
+                minWidth: 400,
+                maxWidth: 500,
+                sortable: true,
+                filterable: true
+            }
+        ]
+    }
+
+    const [data, setData] = useState([])
+
+    const test = async () => {
+        const res = await getFakeFilterList()
+        console.log('resss', res)
+        setData(res)
+    }
+    test()
+
+
 
     return (
         <Page>

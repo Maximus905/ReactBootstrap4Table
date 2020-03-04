@@ -5,30 +5,10 @@ import {ContextProvider} from "./ContextProvider"
 import Dropdown from "./components/Dropdown";
 import DropdownMenu from "./components/DropdownMenu"
 import DropdownButton from "./components/DropdownButton"
-import {Dropdown as DropdownBs} from "reactstrap";
-import FilterBody from "./components/FilterBody";
+import MenuBody from "./components/MenuBody";
 
 
 const DropdownList = (props) => {
-    const {
-        accessor,
-        data, //filter list for LIST type
-        loadingState, //if list for LIST filter is not ready yet
-        active, // if filter value for this filter isn't empty
-        maxHeight, maxWidth,
-        valueFieldName,
-        labelFieldName,
-        checkedFieldName,
-        emptyWildcard,
-        emptyListWildcard,
-        loadingWildcard,
-        onChangeFilter: onChangeFilterExt,
-        onOpen,
-        fontRatio,
-        opened,
-        openSettings,
-        filterSettings,
-        ...bsProps} = props
     const bdColor = 'rgb(206,212,218)'
     const offset = {
         enabled: true,
@@ -43,43 +23,44 @@ const DropdownList = (props) => {
             }
         }
     }
-    // const [isOpen, setIsOpen] = useState(opened)
-
-
     const context = {
         ...props,
         bdColor,
     }
-
     return (
         <ContextProvider {...context} >
-            <Dropdown {...bsProps} onClick={(e) => {
+            <Dropdown onClick={(e) => {
                 e.stopPropagation()
-            }}>
-                <DropdownButton active={active} />
-                <DropdownMenu modifiers={{offset}} right >
-                    <FilterBody />
+            }} >
+                <DropdownButton active={props.active} icon={props.buttonIcon}/>
+                <DropdownMenu right modifiers={offset}>
+                    <MenuBody />
                 </DropdownMenu>
             </Dropdown>
         </ContextProvider>
     )
 }
 DropdownList.propTypes = {
-    ...DropdownBs.propTypes,
+    // ...DropdownBs.propTypes,
+    multiSelect: PropTypes.bool,
     accessor: PropTypes.string,
-    data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]) ),
+    rightAlignment: PropTypes.bool, // right alignment if true, else left alignment
+    showSelectAll: PropTypes.bool, //show or not selectAll checkbox
+    data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number, PropTypes.bool]) ),
     loadingState: PropTypes.bool,
-    maxHeight: PropTypes.number, // maxHeight of filterList in px
-    maxWidth: PropTypes.number, // maxWidth of filterList in px
+    selectAll: PropTypes.bool, //initial state of selectAll checkbox
+    maxHeight: PropTypes.number, // maxHeight of dropdown list in px
+    maxWidth: PropTypes.number, // maxWidth of dropdown list in px
+    minWidth: PropTypes.number, //minWidth of dropdown list
     //handlers
-    onChangeFilter: PropTypes.func, // every time when filter changes
+    onChangeSelected: PropTypes.func, // every time when filter changes
     onOpen: PropTypes.func,
     //
     fontRatio: PropTypes.number,
 
     emptyWildcard: PropTypes.string,
-    falseWildcard: PropTypes.bool,
-    trueWildcard: PropTypes.bool,
+    falseWildcard: PropTypes.string,
+    trueWildcard: PropTypes.string,
     emptyListWildcard: PropTypes.string,
     loadingWildcard: PropTypes.string,
 
@@ -87,11 +68,17 @@ DropdownList.propTypes = {
     labelFieldName: PropTypes.string,
 
     opened: PropTypes.bool, //initial state of filter
+
+    buttonIcon: PropTypes.any
 }
 DropdownList.defaultProps = {
     data: [],
+    showSelectAll: false,
+    selectAll: false,
     fontRatio: 0.8,
     maxWidth: 200,
+
+    rightAlignment: true,
 
     emptyWildcard: '<пусто>',
     falseWildcard: 'false',
@@ -103,7 +90,7 @@ DropdownList.defaultProps = {
     loadingWildcard: 'loading...',
     opened: false,
     onOpen: ({accessor}) => {},
-    onChangeFilter: ({accessor, value, selectAllState}) => {console.log({accessor, value, selectAllState})}
+    onChangeSelected: ({accessor, value, selectAll}) => {console.log('onChangeSelected', {accessor, value, selectAll})}
 }
 
 export default DropdownList

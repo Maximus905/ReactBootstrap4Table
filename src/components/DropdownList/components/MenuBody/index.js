@@ -4,23 +4,23 @@ import SearchInput from "../SearchInput";
 import ItemsBox from "../ItemsBox";
 import {DropdownContext} from "../../ContextProvider";
 
-const DropdownFilter = ({isEmpty, loadingState}) => (
+const BodyContent = ({isEmpty, loadingState, showSelectAll}) => (
     isEmpty || loadingState ? (
         <Fragment>
             <ItemsBox/>
         </Fragment>
     ) : (
         <Fragment>
-            <SelectAllBox/>
+            {showSelectAll && <SelectAllBox/>}
             <SearchInput />
             <ItemsBox/>
         </Fragment>
     )
 )
 
-const FilterBody = () => {
-    const {loadingState, state: {data, isOpened}} = useContext(DropdownContext)
+const MenuBody = () => {
+    const {loadingState, showSelectAll, state: {data, isOpened}} = useContext(DropdownContext)
     if (!isOpened) return null
-    return <DropdownFilter isEmpty={!data.length} loadingState={loadingState}  />
+    return <BodyContent isEmpty={!data.length} loadingState={loadingState} showSelectAll={showSelectAll}  />
 }
-export default FilterBody
+export default MenuBody
