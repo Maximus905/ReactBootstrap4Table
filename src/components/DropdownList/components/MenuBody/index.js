@@ -1,17 +1,15 @@
 import React, {Fragment, useContext} from "react";
-import SelectAllBox from "../SelectAll";
 import SearchInput from "../SearchInput";
 import ItemsBox from "../ItemsBox";
 import {DropdownContext} from "../../ContextProvider";
 
-const BodyContent = ({isEmpty, loadingState, showSelectAll}) => (
+const BodyContent = ({isEmpty, loadingState}) => (
     isEmpty || loadingState ? (
         <Fragment>
             <ItemsBox/>
         </Fragment>
     ) : (
         <Fragment>
-            {showSelectAll && <SelectAllBox/>}
             <SearchInput />
             <ItemsBox/>
         </Fragment>
@@ -19,8 +17,8 @@ const BodyContent = ({isEmpty, loadingState, showSelectAll}) => (
 )
 
 const MenuBody = () => {
-    const {loadingState, showSelectAll, state: {data, isOpened}} = useContext(DropdownContext)
+    const {loadingState, state: {data, isOpened}} = useContext(DropdownContext)
     if (!isOpened) return null
-    return <BodyContent isEmpty={!data.length} loadingState={loadingState} showSelectAll={showSelectAll}  />
+    return <BodyContent isEmpty={!data.length} loadingState={loadingState} />
 }
 export default MenuBody

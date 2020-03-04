@@ -29,7 +29,7 @@ const DropdownItem = ({value, label, checked, partlyChecked, onClick, showCheckI
 }
 DropdownItem.propTypes = {
     ...DropdownItemBs.propTypes,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     checked: PropTypes.bool,
     partlyChecked: PropTypes.bool,

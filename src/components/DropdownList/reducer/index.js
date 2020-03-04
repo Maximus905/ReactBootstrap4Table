@@ -1,17 +1,45 @@
+import check from 'check-types'
 import {
     SWITCH_OPEN_STATE,
-    REOPEN_FILTER,
+    REOPEN,
     CLICK_ON_ITEM,
-    CLICK_ON_SETTINGS_ITEM,
-    CLICK_ON_SELECT_ALL,
     CHANGE_INPUT,
     SET_ITEM_SIZES,
-    SET_SETTINGS_ITEM_SIZES,
     CHANGE_MENU_MAX_HEIGHT,
-    CHANGE_SIMPLE_SEARCH_INPUT, INITIALIZE_FILTER_LIST, CLEAR_FILTER_VALUE, CHANGE_FILTER_TYPE,
-    UPDATE_FILTER_LIST
+    INITIALIZE_DATA_LIST, CLEAR_CHECKED_ITEMS_LIST,
+    UPDATE_DATA_LIST, LOADING_DATA, RECEIVE_DATA, RECEIVE_INVALID_DATA
 } from "../constants/actions"
-import {reopenFilterSetter} from "../helpers";
+import {reopenDropdownListSetter} from "../helpers";
+import {loadingData, receiveData, receiveInvalidData} from "../actions";
+import {REQUEST_DATA} from "../../Table/constatnts/actions";
+
+export function dispatchMiddleware(dispatch) {
+    async function getData({dispatch, fetchFunction, accessor, filters, sorting}) {
+        dispatch(loadingData())
+        try {
+            const data = await fetchFunction({accessor, filters, sorting})
+            if (check.array(data)) {
+                dispatch(receiveData(data))
+            } else {
+                console.log('Dropdown list: Invalid format of fetched data: ', data )
+                throw  new Error('Dropdown list: Invalid format of fetched data from server!')
+            }
+        } catch (e) {
+            alert(e.toString())
+            dispatch(receiveInvalidData())
+        }
+    }
+    return (action) => {
+        const {type, payload} = action
+        const {fetchFunction, accessor, filters, sorting} = payload || {}
+        switch (type) {
+            case REQUEST_DATA:
+                return getData({dispatch, fetchFunction, accessor,  filters, sorting})
+            default:
+                return dispatch(action)
+        }
+    }
+}
 
 const rootReducer = (state, action) => {
     const {type, payload} = action
@@ -19,15 +47,15 @@ const rootReducer = (state, action) => {
     switch (type) {
         case SWITCH_OPEN_STATE:
             return {...state, isOpened: !state.isOpened}
-        case REOPEN_FILTER:
-            return {...state, ...reopenFilterSetter({reopen: state.reopen, isOpened: state.isOpened})}
+        case REOPEN:
+            return {...state, ...reopenDropdownListSetter({reopen: state.reopen, isOpened: state.isOpened})}
         case CLICK_ON_ITEM:
             //add/remove clicked item into checkedItems array
-            const itemIndex = state.filterValue.indexOf(payload)
+            const itemIndex = state.checkedItems.indexOf(payload)
             if (itemIndex < 0) {
-                newState.filterValue = [...state.filterValue, payload]
+                newState.checkedItems = [...state.checkedItems, payload]
             } else {
-                newState.filterValue = state.filterValue.filter(item => item !== payload)
+                newState.checkedItems = state.checkedItems.filter(item => item !== payload)
             }
             //set checked status in data[]
             newState.checkedItemsCounter = 0
@@ -41,41 +69,29 @@ const rootReducer = (state, action) => {
                 return  item
             })
             return {...state, data, ...newState}
-        case CLICK_ON_SETTINGS_ITEM:
-            return {...state, settingList: state.settingList.map(item => ({...item, checked: item.value === payload}))}
-        case CHANGE_FILTER_TYPE:
-            return {...state, ...payload}
-        case CLICK_ON_SELECT_ALL:
-            return {...state,
-                selectAll: !state.selectAll,
-                data: state.data.map(item => ({...item, checked: !state.selectAll})),
-                filterValue: [],
-                checkedItemsCounter: !state.selectAll ? state.data.length : 0,
-                // lastClickSelectAll: Date.now()
-            }
-        case INITIALIZE_FILTER_LIST:
-            return {...state, filterValue: [], data: payload.data, selectAll: payload.selectAll, checkedItemsCounter: payload.checkedItemsCounter}
-        case CLEAR_FILTER_VALUE:
-            return {...state, filterValue: []}
-        case UPDATE_FILTER_LIST:
+        case INITIALIZE_DATA_LIST:
+            return {...state, checkedItems: [], data: payload.data, checkedItemsCounter: payload.checkedItemsCounter}
+        case CLEAR_CHECKED_ITEMS_LIST:
+            return {...state, checkedItems: []}
+        case UPDATE_DATA_LIST:
             // return {...state, data: payload}
             return {...state,
                 data: payload,
                 checkedItemsCounter: payload.reduce((acc, item) => item.checked ? ++acc : acc, 0),
-                ...reopenFilterSetter({reopen: state.reopen, isOpened: state.isOpened})}
+                ...reopenDropdownListSetter({reopen: state.reopen, isOpened: state.isOpened})}
         case CHANGE_INPUT:
             // handle changing input value for dropdown filter search field
             return {...state, inputValue: payload}
-        case CHANGE_SIMPLE_SEARCH_INPUT:
-            //handle changing input value for simple search filter
-            return {...state, filterValue: payload ? [payload] : []}
         case SET_ITEM_SIZES:
             return {...state, itemWidth: payload.width, itemHeight: payload.height}
-        case SET_SETTINGS_ITEM_SIZES:
-            return {...state, settingItemWidth: payload.width, settingItemHeight: payload.height}
-
         case CHANGE_MENU_MAX_HEIGHT:
             return  {...state, maxHeight: payload}
+        case LOADING_DATA:
+            return {...state, isLoading: true, invalidData: false}
+        case RECEIVE_DATA:
+            return {...state, data: payload, isLoading: false, invalidData: false}
+        case RECEIVE_INVALID_DATA:
+            return {...state, data: [], isLoading: false, invalidData: true}
         default:
             return state
     }

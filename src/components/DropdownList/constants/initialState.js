@@ -1,12 +1,9 @@
-/**
- * @type {DropDownStateShape} initialState
- */
 export const initialState = {
     isOpened: false,
     reopen: false,
     data: [],
+    invalidData: true,
     isLoading: true,
-    selectAll: false,
     maxHeight: 0,
     maxWidth: 0,
     minWidth: 0,
@@ -14,6 +11,6 @@ export const initialState = {
     itemWidth: null,
     itemHeight: null,
     checkedItems: [],
-    filterValue: [],
+    // filterValue: [],
     checkedItemsCounter: 0,
 }

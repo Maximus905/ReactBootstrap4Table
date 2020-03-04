@@ -44,21 +44,22 @@ DropdownList.propTypes = {
     // ...DropdownBs.propTypes,
     multiSelect: PropTypes.bool,
     accessor: PropTypes.string,
+    selected: PropTypes.array,
     rightAlignment: PropTypes.bool, // right alignment if true, else left alignment
-    showSelectAll: PropTypes.bool, //show or not selectAll checkbox
     data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number, PropTypes.bool]) ),
     loadingState: PropTypes.bool,
-    selectAll: PropTypes.bool, //initial state of selectAll checkbox
     maxHeight: PropTypes.number, // maxHeight of dropdown list in px
     maxWidth: PropTypes.number, // maxWidth of dropdown list in px
     minWidth: PropTypes.number, //minWidth of dropdown list
     //handlers
     onChangeSelected: PropTypes.func, // every time when filter changes
     onOpen: PropTypes.func,
+    onClose: PropTypes.func,
     //
     fontRatio: PropTypes.number,
 
     emptyWildcard: PropTypes.string,
+    emptyValueWildcard: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
     falseWildcard: PropTypes.string,
     trueWildcard: PropTypes.string,
     emptyListWildcard: PropTypes.string,
@@ -73,24 +74,23 @@ DropdownList.propTypes = {
 }
 DropdownList.defaultProps = {
     data: [],
-    showSelectAll: false,
-    selectAll: false,
+    selected: [],
     fontRatio: 0.8,
     maxWidth: 200,
 
     rightAlignment: true,
 
     emptyWildcard: '<пусто>',
+    emptyValueWildcard: '',
     falseWildcard: 'false',
     trueWildcard: 'true',
     emptyListWildcard: 'нет элементов',
 
-    valueFieldName: 'val',
-    labelFieldName: 'lab',
     loadingWildcard: 'loading...',
     opened: false,
-    onOpen: ({accessor}) => {},
-    onChangeSelected: ({accessor, value, selectAll}) => {console.log('onChangeSelected', {accessor, value, selectAll})}
+    onOpen: ({accessor}) => console.log('onOpen'),
+    onClose: ({accessor}) => console.log('onClose'),
+    onChangeSelected: ({accessor, value}) => {console.log('onChangeSelected', {accessor, value})}
 }
 
 export default DropdownList

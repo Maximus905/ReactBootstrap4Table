@@ -64,8 +64,7 @@ const ItemsBox = (props) => {
 
     const fuseFilter = (template) => {
         if (!template) return data
-        const res =  fuse.search(template)
-        return  res
+        return fuse.search(template)
     }
 
     // const filteredData = dataFilter(inputValue)

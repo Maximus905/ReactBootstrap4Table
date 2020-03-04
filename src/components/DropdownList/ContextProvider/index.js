@@ -1,37 +1,33 @@
-import React, {createContext, useEffect, useMemo, useReducer} from "react"
+import React, {createContext, useEffect, useReducer} from "react"
 import PropTypes, {oneOfType} from 'prop-types'
 import {convertDataList} from "../helpers";
-import rootReducer from "../reducer"
+import rootReducer, {dispatchMiddleware} from "../reducer"
 import {initialState} from "../constants/initialState"
 import {
     changeMenuMaxHeight, switchOpenState, updateDataList,
-    reopenFilter
+    reopen
 } from "../actions";
 export const DropdownContext = createContext()
 
 export const ContextProvider = (props) => {
-    const {accessor, children, parentRef, data, loadingState, selectAll: selectAllIni, showSelectAll,
+    const {accessor, children, data, selected, loadingState,
         maxHeight, maxWidth,minWidth, fontRatio, bdColor,
-        emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
-        emptyListWildcard, trueWildcard, falseWildcard, loadingWildcard,
+        emptyListWildcard, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, loadingWildcard,
         onChangeSelected: onChangeSelectedExt,
-        onOpen: onOpenExt} = props
+        onOpen: onOpenExt,
+        onClose: onCloseExt
+    } = props
 
     let checkedItemsCounter = data.length
     const [state, dispatch] = useReducer(rootReducer, {...initialState,
-        data: convertDataList({data, labelFieldName, valueFieldName, emptyWildcard, trueWildcard, falseWildcard, selectAll: selectAllIni, filterValue: initialState.filterValue}),
-        selectAll: selectAllIni,
+        data: convertDataList({data, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems: selected}),
         maxHeight, maxWidth, minWidth,
         checkedItemsCounter,
     })
+    const asyncDispatch = dispatchMiddleware(dispatch)
 
-    const {selectAll, filterValue, settingList, isOpened, reopen} = state
 
-    const onClickSaveSettings = ((accessor) => () => {})(accessor)
-    // auto close settings menu
-    useEffect(() => {
-        onClickSaveSettings()
-    }, [settingList])
+    const {checkedItems, isOpened, reopen} = state
 
     const toggleOpenState = () => dispatch(switchOpenState())
 
@@ -41,33 +37,34 @@ export const ContextProvider = (props) => {
 
     //invoke external onChangeFilter for every changing of filter selectAllState or filterValue
     useEffect(() => {
-        // console.log('change filter value', accessor, filterBy, currentType, selectAllState, filterValue)
-        onChangeSelectedExt({accessor, value: filterValue, selectAll})
-    }, [settingList, selectAll, filterValue])
+        onChangeSelectedExt({accessor, value: checkedItems})
+    }, [checkedItems])
 
     // for lazy updating filter list when is filter opened or we change type of filter in open state
     useEffect(() => {
         if (isOpened) {
             onOpenExt({accessor})
+        } else {
+            onCloseExt({accessor})
         }
     }, [isOpened])
     //update list of filter
     useEffect(() => {
-        dispatch(updateDataList(convertDataList({data, labelFieldName, valueFieldName, emptyWildcard, trueWildcard, falseWildcard, selectAll, filterValue})))
+        dispatch(updateDataList(convertDataList({data, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems})))
     }, [data])
 
     //watch reopen signal (reopen === true), reset them and open filter
     useEffect(() => {
         if (reopen) {
-            dispatch(reopenFilter())
+            dispatch(reopen())
         }
     }, [reopen])
 
     return (
-        <DropdownContext.Provider value={{accessor, parentRef, state, showSelectAll, loadingState, dispatch,
+        <DropdownContext.Provider value={{accessor, state, loadingState, dispatch,
             fontRatio, bdColor,
             maxWidth, minWidth,
-            emptyWildcard, valueFieldName, labelFieldName, checkedFieldName,
+            emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard,
             emptyListWildcard, loadingWildcard,
             toggleOpenState
         }}>
@@ -77,15 +74,17 @@ export const ContextProvider = (props) => {
 }
 ContextProvider.propTypes = {
     data: PropTypes.arrayOf(oneOfType([PropTypes.object, PropTypes.string, PropTypes.number, PropTypes.bool])),
-    filterListLoading: PropTypes.bool,
+    loadingState: PropTypes.bool,
     maxHeight: PropTypes.number,
     maxWidth: PropTypes.number,
     minWidth: PropTypes.number,
     onClickItem: PropTypes.func,
     fontRatio: PropTypes.number,
+
     emptyWildcard: PropTypes.string,
+    emptyValueWildcard: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
+    trueWildcard: PropTypes.string,
+    falseWildcard: PropTypes.string,
+
     bdColor: PropTypes.string,
-    valueFieldName: PropTypes.string,
-    labelFieldName: PropTypes.string,
-    checkedFieldName: PropTypes.string,
 }
