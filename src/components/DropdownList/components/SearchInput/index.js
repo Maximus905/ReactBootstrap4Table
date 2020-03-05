@@ -2,7 +2,7 @@
 import {css, jsx} from "@emotion/core"
 import {useContext} from 'react'
 import PropTypes from 'prop-types'
-import {DropdownContext} from "../../ContextProvider"
+import DropdownContext from "../../DropdownContext";
 import {changeInput} from "../../actions"
 import {Badge} from 'reactstrap'
 

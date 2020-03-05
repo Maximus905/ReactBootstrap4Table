@@ -1,7 +1,7 @@
 /**@jsx jsx*/
 import {DropdownMenu as DropdownMenuBs} from "reactstrap"
 import {css, jsx} from "@emotion/core"
-import {DropdownContext} from "../../ContextProvider";
+import DropdownContext from "../../DropdownContext";
 import {useContext} from "react";
 
 const DropdownMenu = (props) => {
@@ -11,7 +11,7 @@ const DropdownMenu = (props) => {
             font-size: ${fontRatio}rem;
             padding: 0;
             max-width: ${maxWidth}px;
-        `} {...props} >
+        `} {...props} positionFixed>
             {props.children}
         </DropdownMenuBs>
     )

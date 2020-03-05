@@ -49,9 +49,9 @@ export const ContextProvider = (props) => {
         }
     }, [isOpened])
     //update list of filter
-    useEffect(() => {
-        dispatch(updateDataList(convertDataList({data, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems})))
-    }, [data])
+    // useEffect(() => {
+    //     dispatch(updateDataList(convertDataList({data, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems})))
+    // }, [data])
 
     //watch reopen signal (reopen === true), reset them and open filter
     useEffect(() => {

@@ -1,4 +1,4 @@
-import {convertDataList} from "./index";
+import {convertDataList, convertCheckedItemsArray} from "./index";
 
 const labelFieldName = 'lab'
 const valueFieldName = 'val'
@@ -97,4 +97,15 @@ test("convertDataList, from array, not empty checked value 5", () => {
         {value: true, label: trueWildcard, checked: true},
         {value: false, label: falseWildcard, checked: false}]
     expect(convertDataList({data, labelFieldName, valueFieldName, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems})).toEqual(list)
+})
+// test converting checkedItems array
+test("convertCheckedItemsArray, empty array", () => {
+    const checkedItems = []
+    const list = []
+    expect(convertCheckedItemsArray({emptyValueWildcard, checkedItems})).toEqual(list)
+})
+test("convertCheckedItemsArray", () => {
+    const checkedItems = ['v1', 'v2', undefined, '', true, false]
+    const list = ['v1', 'v2', '', true, false]
+    expect(convertCheckedItemsArray({emptyValueWildcard, checkedItems})).toEqual(list)
 })

@@ -1,6 +1,7 @@
 export const initialState = {
     isOpened: false,
     reopen: false,
+    rawData: [],
     data: [],
     invalidData: true,
     isLoading: true,

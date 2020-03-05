@@ -4,7 +4,7 @@ import {createRef, useEffect, useContext, useMemo} from 'react'
 import {css, jsx} from "@emotion/core";
 import {FixedSizeList as List} from "react-window"
 import st from './style.module.css'
-import {DropdownContext} from "../../ContextProvider";
+import DropdownContext from "../../DropdownContext";
 import DropdownItem from "../DropdownItem"
 import {setItemSizes, clickOnItem} from "../../actions";
 import Fuse from "fuse.js";
@@ -32,7 +32,11 @@ const longestRowIndex = ({data, fieldName}) => {
 
 
 const ItemsBox = (props) => {
-    const {loadingState, loadingWildcard, emptyListWildcard, maxWidth, minWidth, state: {maxHeight, data, itemWidth, itemHeight, inputValue}, dispatch} = useContext(DropdownContext)
+    const {
+        multiSelect,
+        loadingWildcard, emptyListWildcard,
+        dispatch,
+        state: {isLoading, maxHeight, maxWidth, minWidth, data, itemWidth, itemHeight, inputValue}} = useContext(DropdownContext)
     const itemRef = createRef()
     const fuseOption = {
         shouldSort: true,
@@ -58,9 +62,9 @@ const ItemsBox = (props) => {
         }
     }, [itemRef])
 
-    const onClickHandler = (value) => {
-        dispatch(clickOnItem(value))
-    }
+    const onClickHandler = ((multiSelect) => (value) => {
+        dispatch(clickOnItem({value, multiSelect}))
+    })(multiSelect)
 
     const fuseFilter = (template) => {
         if (!template) return data
@@ -74,36 +78,32 @@ const ItemsBox = (props) => {
         return !itemHeight ? maxHeight : (fuseFiltered.length * itemHeight > maxHeight ? maxHeight : fuseFiltered.length * itemHeight)
     }
     //if haven't set sizes of item for List component mount the longest item and get its sizes
-    if (loadingState) {
+    if (isLoading) {
         return (
             (
-                <div css={css`
-            max-height: ${maxHeight}px;
-            overflow-y: auto;
-        `}>
-                    <div css={css`overflow-y: auto`} ><EmptyList label={loadingWildcard} /></div>
+                <div css={css`max-height: ${maxHeight}px;overflow-y: auto;`}>
+                    <div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >
+                        {/*<EmptyList label={loadingWildcard} /></div>*/}
+                    <DropdownItem label={loadingWildcard} showCheckIcon={false} onClick={() => {}} /></div>
                 </div>
             )
         )
     } else if (data.length === 0) {
         return (
             (
-                <div css={css`
-            max-height: ${maxHeight}px;
-            overflow-y: auto;
-        `}>
-                    <div css={css`overflow-y: auto`} ><EmptyList label={emptyListWildcard} /></div>
+                <div css={css`max-height: ${maxHeight}px; overflow-y: auto;`}>
+                    <div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >
+                        <DropdownItem label={emptyListWildcard} showCheckIcon={false} onClick={() => {}} /></div>
                 </div>
             )
         )
     } else if (!itemWidth && ! itemHeight) {
         const longestItem = data[longestRowIndex({data, fieldName: 'label'})]
         return (
-            <div css={css`
-            max-height: ${maxHeight}px;
-            overflow-y: auto;
-        `}>
-                <div css={css`overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}><DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} /></div>
+            <div css={css`max-height: ${maxHeight}px;overflow-y: auto;`}>
+                <div css={css`overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}>
+                    <DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} />
+                </div>
             </div>
         )
     }  else {

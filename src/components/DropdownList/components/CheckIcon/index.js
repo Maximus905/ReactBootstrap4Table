@@ -3,7 +3,7 @@ import {css, jsx} from "@emotion/core";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faMinus} from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
-import {DropdownContext} from "../../ContextProvider";
+import DropdownContext from "../../DropdownContext";
 import {useContext} from "react";
 
 const bdColor = 'rgb(206,212,218)'

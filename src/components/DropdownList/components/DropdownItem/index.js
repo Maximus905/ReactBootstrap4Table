@@ -4,14 +4,22 @@ import {DropdownItem as DropdownItemBs} from "reactstrap";
 import {css, jsx} from "@emotion/core";
 import PropTypes from "prop-types";
 import CheckIcon from "../CheckIcon";
-import cssStyle from './style.module.css'
-import {DropdownContext} from "../../ContextProvider";
-
-
+import DropdownContext from "../../DropdownContext";
 
 const DropdownItem = ({value, label, checked, partlyChecked, onClick, showCheckIcon, ...rest}) => {
-    const {emptyWildcard} = useContext(DropdownContext)
-    const resLabel = label === emptyWildcard ? <span className={cssStyle.emptyItem}>{label}</span> : label
+    const {emptyWildcard, falseWildcard, trueWildcard} = useContext(DropdownContext)
+    function getIcon(label) {
+        switch (label) {
+            case emptyWildcard:
+                return <span css={css`opacity: 0.7`}>{label}</span>
+            case trueWildcard:
+                return <span className="text-green font-weight-bolder">{label}</span>
+            case falseWildcard:
+                return <span className="text-danger font-weight-bolder">{label}</span>
+            default:
+                return label
+        }
+    }
     return (
         <DropdownItemBs tag={'div'} toggle={false} css={css`
             outline: none;
@@ -23,7 +31,7 @@ const DropdownItem = ({value, label, checked, partlyChecked, onClick, showCheckI
             }
         `} className="text-truncate" onClick={() => onClick(value)} title={label} {...rest}  >
             { showCheckIcon && <CheckIcon checked={checked} partlyChecked={partlyChecked} /> }
-            {resLabel}
+            {getIcon(label)}
         </DropdownItemBs>
     )
 }

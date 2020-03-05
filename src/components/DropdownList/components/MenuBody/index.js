@@ -1,8 +1,7 @@
 import React, {Fragment, useContext} from "react";
 import SearchInput from "../SearchInput";
 import ItemsBox from "../ItemsBox";
-import {DropdownContext} from "../../ContextProvider";
-
+import DropdownContext from "../../DropdownContext";
 const BodyContent = ({isEmpty, loadingState}) => (
     isEmpty || loadingState ? (
         <Fragment>

@@ -20,6 +20,12 @@ function createListFromArray({data, emptyWildcard, emptyValueWildcard, trueWildc
     }, new Map())
     return [...resMap.values()]
 }
+export function convertCheckedItemsArray({emptyValueWildcard, checkedItems = []}) {
+    const resMap = checkedItems.reduce((acc, item) => {
+        return acc.add(item === '' || item === null || item === undefined ? emptyValueWildcard : item)
+    }, new Set())
+    return [...resMap]
+}
 
 export function convertDataList ({data, emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard, checkedItems}) {
     if (data.length === 0) return []

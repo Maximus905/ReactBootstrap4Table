@@ -1,0 +1,85 @@
+@startuml
+namespace common {
+    enum filterTypes {
+        EQ
+        NE
+        LT
+        LE
+        GT
+        GE
+        STARTING
+        ENDING
+        LIST
+    }
+}
+namespace DropdownList {
+    class props <<(P, aqua)>> {
+        getData({accessor, filters, sorting})
+        multiSelect: bool
+        accessor: string
+        filters: {[accessor]: <filter Value>}
+        sorting
+        selected
+        rightAlignment
+    }
+    class context << (C, red) >> {
+        state: <reducer state>
+        bdColor: const
+        --func--
+        dispatch()
+        --from props--
+        multiSelect
+        accessor
+        filters
+        sorting
+        selected
+        rightAlignment
+        --wildcards--
+        emptyWildcard
+        emptyValueWildcard
+        falseWildcard
+        trueWildcard
+        emptyListWildcard
+        loadingWildcard
+        --func--
+        getData()
+    }
+    class "reducer state" as reducerState <<(S,green)>> {
+        --data--
+        rawData: <raw item>[]
+        data: <data item>[]
+        checkedItems: []
+        checkedItemsCounter
+        invalidData: bool
+        isLoading: bool
+        --menu sizes--
+        maxHeight: number
+        maxWidth: number
+        minWidth: number
+        --items sizes--
+        itemWidth: number
+        itemHeight: number
+        --search input--
+        inputValue: string
+    }
+    class "raw item" as rawItem {
+        <string|number|bool|null|undefined>
+    }
+    class "data item" as dataItem {
+        {value, label, checked}
+    }
+
+    class "filter Value" as filterValue {
+        filterBy: <string|string>[]
+        value: [string|number|bool]
+        type: enum filterTypes
+        selectAllState: bool
+    }
+
+    props *-- filterValue
+    reducerState *-- rawItem
+    reducerState *-- dataItem
+}
+
+
+@enduml

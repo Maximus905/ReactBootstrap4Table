@@ -11,7 +11,11 @@ import TestGeoTable from "./components/TestGeoTable";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 import DropdownList from "./components/DropdownList";
-const mockData = () => [...new Array(10)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const mockData = () => [...new Array(100)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const dropdownListData = () => {
+    console.log('generate')
+    return mockData().map(item => item.column1)
+}
 
 const fake = ((counter = 2) => {
     const time = Date.now()
@@ -36,7 +40,7 @@ const fake = ((counter = 2) => {
     console.log('fake data has been generated: ', Date.now() - time)
     return res
 })()
-const fakeSimpleArray = ((counter = 3) => {
+const fakeSimpleArray = ((counter = 500) => {
     const time = Date.now()
     faker.locale = 'ru'
     const res = []
@@ -47,7 +51,7 @@ const fakeSimpleArray = ((counter = 3) => {
     res.push(undefined)
     res.push(true)
     res.push(false)
-    console.log('fake data has been generated: ', Date.now() - time)
+    console.log('fake data has been generated: ', Date.now() - time, res.length)
     return res
 })()
 
@@ -66,16 +70,26 @@ async function getFakeFilterList() {
 }
 async function getDropdownList() {
     const promise = new Promise(resolve => {
-        setTimeout(() => resolve(fakeSimpleArray), 0)
+        // setTimeout(() => resolve(fakeSimpleArray), 0)
+        setTimeout(() => resolve(dropdownListData()), 500000)
     })
+    console.log('fetch data', promise)
     return promise
+}
+const EditableCell = ({accessor, rowData, width}) => {
+    const [onHover, setOnHover] = useState(false)
+    const [editMode, setEditMode] = useState(false)
+    return <td className="d-flex justify-content-between" css={css`position: relative`}
+               onMouseEnter={() => setOnHover(true) }
+               onMouseLeave={() => setOnHover(false) }
+    >
+        <div>{rowData[accessor]}</div>
+        {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={() => setEditMode(false)} selected={[rowData[accessor]]} maxHeight={200}/>}
+    </td>
 }
 
 const App_DropdownList = props => {
-    const customCell = ({accessor, rowData, width}) => (<td className="d-flex justify-content-between" css={css`position: relative`}>
-        <div>{rowData[accessor]}</div>
-        <DropdownList accessor={accessor} data={data} maxWidth={350} minWidth={200} />
-    </td>)
+    const customCell = ({accessor, rowData, width}) => <EditableCell {...{accessor, rowData, width}} />
 
     const config = {
         getTableData: getData,
@@ -110,7 +124,6 @@ const App_DropdownList = props => {
 
     const test = async () => {
         const res = await getFakeFilterList()
-        console.log('resss', res)
         setData(res)
     }
     test()
