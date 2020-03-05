@@ -81,29 +81,31 @@ const ItemsBox = (props) => {
     if (isLoading) {
         return (
             (
-                <div css={css`max-height: ${maxHeight}px;overflow-y: auto;`}>
-                    <div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >
+                <div css={css`max-height: ${maxHeight}px;overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`}>
+                    {/*<div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >*/}
                         {/*<EmptyList label={loadingWildcard} /></div>*/}
-                    <DropdownItem label={loadingWildcard} showCheckIcon={false} onClick={() => {}} /></div>
+                    <DropdownItem label={loadingWildcard} showCheckIcon={false} onClick={() => {}} />
+                    {/*</div>*/}
                 </div>
             )
         )
     } else if (data.length === 0) {
         return (
             (
-                <div css={css`max-height: ${maxHeight}px; overflow-y: auto;`}>
-                    <div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >
-                        <DropdownItem label={emptyListWildcard} showCheckIcon={false} onClick={() => {}} /></div>
+                <div css={css`max-height: ${maxHeight}px;overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`}>
+                    {/*<div css={css`overflow-y: auto; max-width: ${maxWidth}px; min-width: ${minWidth}px`} >*/}
+                        <DropdownItem label={emptyListWildcard} showCheckIcon={false} onClick={() => {}} />
+                {/*</div>*/}
                 </div>
             )
         )
     } else if (!itemWidth && ! itemHeight) {
         const longestItem = data[longestRowIndex({data, fieldName: 'label'})]
         return (
-            <div css={css`max-height: ${maxHeight}px;overflow-y: auto;`}>
-                <div css={css`overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}>
+            <div css={css`max-height: ${maxHeight}px;overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}>
+                {/*<div css={css`overflow-y: scroll; max-width: ${maxWidth}px; min-width: ${minWidth}px`} ref={itemRef}>*/}
                     <DropdownItem {...{value: longestItem.value, label: longestItem.label, checked: longestItem.checked }} />
-                </div>
+                {/*</div>*/}
             </div>
         )
     }  else {

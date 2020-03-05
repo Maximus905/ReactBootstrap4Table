@@ -71,7 +71,7 @@ async function getFakeFilterList() {
 async function getDropdownList() {
     const promise = new Promise(resolve => {
         // setTimeout(() => resolve(fakeSimpleArray), 0)
-        setTimeout(() => resolve(dropdownListData()), 500000)
+        setTimeout(() => resolve(dropdownListData()), 0)
     })
     console.log('fetch data', promise)
     return promise
