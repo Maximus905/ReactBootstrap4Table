@@ -11,9 +11,8 @@ import TestGeoTable from "./components/TestGeoTable";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 import DropdownList from "./components/DropdownList";
-const mockData = () => [...new Array(100)].map((value, index) => ({column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const mockData = () => [...new Array(10)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 const dropdownListData = () => {
-    console.log('generate')
     return mockData().map(item => item.column1)
 }
 
@@ -55,12 +54,12 @@ const fakeSimpleArray = ((counter = 500) => {
     return res
 })()
 
-async function getData() {
-    let promise = new Promise(resolve => {
-        setTimeout(() => resolve(mockData()), 0)
-    })
-    return promise
-}
+// async function getData() {
+//     let promise = new Promise(resolve => {
+//         setTimeout(() => resolve(tableData), 0)
+//     })
+//     return promise
+// }
 
 async function getFakeFilterList() {
     const promise = new Promise(resolve => {
@@ -76,21 +75,55 @@ async function getDropdownList() {
     console.log('fetch data', promise)
     return promise
 }
-const EditableCell = ({accessor, rowData, width}) => {
-    const [onHover, setOnHover] = useState(false)
-    const [editMode, setEditMode] = useState(false)
-    return <td className="d-flex justify-content-between" css={css`position: relative`}
-               onMouseEnter={() => setOnHover(true) }
-               onMouseLeave={() => setOnHover(false) }
-    >
-        <div>{rowData[accessor]}</div>
-        {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={() => setEditMode(false)} selected={[rowData[accessor]]} maxHeight={200}/>}
-    </td>
-}
+// const EditableCell = ({accessor, rowData, width}) => {
+//     const [onHover, setOnHover] = useState(false)
+//     const [editMode, setEditMode] = useState(false)
+//
+//     const onCloseHandler = () => {
+//         setEditMode(false)
+//         setOnHover(false)
+//     }
+//     return <td className="d-flex justify-content-between" css={css`position: relative`}
+//                onMouseEnter={() => setOnHover(true) }
+//                onMouseLeave={() => setOnHover(false) }
+//     >
+//         <div>{rowData[accessor]}</div>
+//         {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={onCloseHandler} selected={[rowData[accessor]]} maxHeight={200} />}
+//     </td>
+// }
 
 const App_DropdownList = props => {
     const customCell = ({accessor, rowData, width}) => <EditableCell {...{accessor, rowData, width}} />
+    const [data, setData] = useState(mockData())
+//***********************
+    async function getData() {
+        let promise = new Promise(resolve => {
+            setTimeout(() => resolve(data), 0)
+        })
+        return promise
+    }
+    const onChangeCellHandler = (id) => ({accessor, value}) => {
+        console.log('saving', id, accessor, value)
+        setData(prevData => prevData.map(item => item.id === id ? {...item, [accessor]: value}: item))
+    }
 
+    const EditableCell = ({accessor, rowData, width}) => {
+        const [onHover, setOnHover] = useState(false)
+        const [editMode, setEditMode] = useState(false)
+
+        const onCloseHandler = () => {
+            setEditMode(false)
+            setOnHover(false)
+        }
+        return <td className="d-flex justify-content-between" css={css`position: relative`}
+                   onMouseEnter={() => setOnHover(true) }
+                   onMouseLeave={() => setOnHover(false) }
+        >
+            <div>{rowData[accessor]}</div>
+            {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={onCloseHandler} selected={[rowData[accessor]]} maxHeight={200} onChangeSelected={onChangeCellHandler(rowData.id)} />}
+        </td>
+    }
+//******************************
     const config = {
         getTableData: getData,
         getFilterList: getFakeFilterList,
@@ -119,15 +152,6 @@ const App_DropdownList = props => {
             }
         ]
     }
-
-    const [data, setData] = useState([])
-
-    const test = async () => {
-        const res = await getFakeFilterList()
-        setData(res)
-    }
-    test()
-
 
 
     return (

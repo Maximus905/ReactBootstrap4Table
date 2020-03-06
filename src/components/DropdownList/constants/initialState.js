@@ -1,10 +1,10 @@
 export const initialState = {
-    isOpened: false,
+    isOpened: undefined,
     reopen: false,
-    rawData: [],
     data: [],
     invalidData: true,
     isLoading: true,
+    unsavedChanges: false,
     maxHeight: 0,
     maxWidth: 0,
     minWidth: 0,
@@ -12,6 +12,5 @@ export const initialState = {
     itemWidth: null,
     itemHeight: null,
     checkedItems: [],
-    // filterValue: [],
     checkedItemsCounter: 0,
 }

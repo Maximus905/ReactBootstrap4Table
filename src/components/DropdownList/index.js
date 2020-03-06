@@ -8,13 +8,14 @@ import DropdownButton from "./components/DropdownButton"
 import MenuBody from "./components/MenuBody";
 import rootReducer, {dispatchMiddleware} from "./reducer";
 import {initialState} from "./constants/initialState";
-import {changeMenuMaxHeight, switchOpenState, requestData} from "./actions";
+import {changeMenuMaxHeight, switchOpenState, requestData, resetUnsaved} from "./actions";
 import DropdownContext from "./DropdownContext";
 import {convertCheckedItemsArray} from "./helpers";
 
 
 const DropdownList = (props) => {
     const {accessor, getData, filters, sorting, selected,
+        applyInstantly, closeAfterSelect,
         maxHeight, maxWidth,minWidth,
         emptyWildcard, emptyValueWildcard, trueWildcard, falseWildcard,
         onChangeSelected: onChangeSelectedExt,
@@ -39,30 +40,39 @@ const DropdownList = (props) => {
     const [state, dispatch] = useReducer(rootReducer, {...initialState,
         maxHeight, maxWidth, minWidth,
     })
-    const {checkedItems, isOpened, reopen, invalidData} = state
-
+    const {checkedItems, isOpened, reopen, invalidData, unsavedChanges} = state
     const asyncDispatch = dispatchMiddleware(dispatch)
 
     const toggleOpenState = () => dispatch(switchOpenState())
     // for lazy loading data for list when list is opening
     useEffect(() => {
-        if (isOpened) {
-            onOpenExt({accessor})
-            if (invalidData) {
-                asyncDispatch(requestData({fetchFunction: getData, accessor, filters, sorting, wildcards, selected})).then(r => console.log('data is fetched'))
-            }
-        } else {
-            onCloseExt({accessor, checkedItems})
+        if (isOpened && invalidData) {
+            asyncDispatch(requestData({fetchFunction: getData, accessor, filters, sorting, wildcards, selected})).then(r => console.log('data is fetched'))
         }
     }, [isOpened, invalidData])
+    useEffect(() => {
+        if (isOpened) {
+            onOpenExt({accessor})
+        } else if (isOpened === false) {
+            onCloseExt({accessor, checkedItems})
+            if (unsavedChanges && !applyInstantly) {
+                onChangeSelectedExt({accessor, value: checkedItems})
+                dispatch(resetUnsaved(closeAfterSelect))
+            }
+        }
+    }, [isOpened])
     useEffect(() => {
         dispatch(changeMenuMaxHeight(maxHeight))
     }, [maxHeight])
 
-    //invoke external onChangeFilter for every changing of filter selectAllState or filterValue
+    //invoke external onChangeFilter for changing depends on applyInstantly param
     useEffect(() => {
-        if (isOpened) onChangeSelectedExt({accessor, value: checkedItems})
-    }, [checkedItems])
+        if (unsavedChanges && applyInstantly) {
+            onChangeSelectedExt({accessor, value: checkedItems})
+            dispatch(resetUnsaved(closeAfterSelect))
+        }
+        // if (closeAfterSelect) dispatch(switchOpenState())
+    }, [unsavedChanges])
 
     //watch reopen signal (reopen === true), reset them and open filter
     useEffect(() => {
@@ -96,6 +106,8 @@ DropdownList.propTypes = {
     // ...DropdownBs.propTypes,
     getData: PropTypes.func,
     multiSelect: PropTypes.bool,
+    applyInstantly: PropTypes.bool,
+    closeAfterSelect: PropTypes.bool,
     accessor: PropTypes.string,
     filters: PropTypes.object,
     sorting: PropTypes.object,
@@ -126,8 +138,10 @@ DropdownList.propTypes = {
 }
 DropdownList.defaultProps = {
     // data: [],
-    multiSelect: true,
-    selected: [true],
+    multiSelect: false,
+    closeAfterSelect: false,
+    applyInstantly: true,
+    selected: [],
     fontRatio: 0.8,
     maxWidth: 200,
     maxHeight: 400,

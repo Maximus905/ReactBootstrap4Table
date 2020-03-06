@@ -6,9 +6,8 @@ import {
     CHANGE_INPUT,
     SET_ITEM_SIZES,
     CHANGE_MENU_MAX_HEIGHT,
-    INITIALIZE_DATA_LIST, CLEAR_CHECKED_ITEMS_LIST,
     UPDATE_DATA_LIST,
-    REQUEST_DATA, LOADING_DATA, RECEIVE_DATA, RECEIVE_INVALID_DATA
+    REQUEST_DATA, LOADING_DATA, RECEIVE_DATA, RECEIVE_INVALID_DATA, RESET_UNSAVED
 } from "../constants/actions"
 import {reopenDropdownListSetter} from "../helpers";
 import {loadingData, receiveData, receiveInvalidData} from "../actions";
@@ -56,6 +55,7 @@ const rootReducer = (state, action) => {
     const {multiSelect, value} = payload || {}
     const clickOnItemHandler = ({checkedItems, value, multiSelect}) => {
         const checked = new Set(checkedItems)
+        if (!multiSelect && checked.has(value)) return checkedItems
         if (multiSelect) {
             checked.has(value) ? checked.delete(value) : checked.add(value)
         } else {
@@ -70,24 +70,25 @@ const rootReducer = (state, action) => {
             return {...state, isOpened: !state.isOpened}
         case REOPEN:
             return {...state, ...reopenDropdownListSetter({reopen: state.reopen, isOpened: state.isOpened})}
+        case RESET_UNSAVED:
+            return {...state, unsavedChanges: false, isOpened: payload ? false : state.isOpened}
         case CLICK_ON_ITEM:
             //add/remove clicked item into checkedItems array
             newState.checkedItems = clickOnItemHandler({checkedItems: state.checkedItems, value, multiSelect})
+            newState.unsavedChanges = newState.checkedItems !== state.checkedItems
             //set checked status in data[]
-            newState.checkedItemsCounter = 0
-            const data = state.data.map(item => {
-                if (newState.checkedItems.includes(item.value)) {
-                    ++newState.checkedItemsCounter
-                    return {...item, checked: true}
-                } else {
-                    return {...item, checked: false}
-                }
-            })
-            return {...state, data, ...newState}
-        case INITIALIZE_DATA_LIST:
-            return {...state, checkedItems: [], data: payload.data, checkedItemsCounter: payload.checkedItemsCounter}
-        case CLEAR_CHECKED_ITEMS_LIST:
-            return {...state, checkedItems: []}
+            if (newState.unsavedChanges) {
+                newState.checkedItemsCounter = 0
+                newState.data = state.data.map(item => {
+                    if (newState.checkedItems.includes(item.value)) {
+                        ++newState.checkedItemsCounter
+                        return {...item, checked: true}
+                    } else {
+                        return {...item, checked: false}
+                    }
+                })
+            }
+            return newState.unsavedChanges ? {...state, ...newState} : state
         case UPDATE_DATA_LIST:
             return {...state,
                 data: payload,
