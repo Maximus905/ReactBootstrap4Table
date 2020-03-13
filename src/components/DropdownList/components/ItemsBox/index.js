@@ -13,7 +13,7 @@ import EmptyList from "../EmptyList";
 const DropdownItemFunc = (props) => (listProps) => {
     const {style, index} = listProps
     const {data, onClick} = props
-    const handler = () => onClick(data[index].value)
+    const handler = () => onClick(data[index].label)
     const item = data[index]
     return (
         <div style={style}>

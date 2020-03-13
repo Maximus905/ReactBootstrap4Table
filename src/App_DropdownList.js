@@ -11,7 +11,7 @@ import TestGeoTable from "./components/TestGeoTable";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 import DropdownList from "./components/DropdownList";
-const mockData = () => [...new Array(10)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const mockData = () => [...new Array(2)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 const dropdownListData = () => {
     return mockData().map(item => item.column1)
 }
@@ -93,7 +93,7 @@ async function getDropdownList() {
 // }
 
 const App_DropdownList = props => {
-    const customCell = ({accessor, rowData, width}) => <EditableCell {...{accessor, rowData, width}} />
+    const customCell = ({accessor, rowData, width, invalidateDataWithTimeout}) => <EditableCell {...{accessor, rowData, width, invalidateDataWithTimeout}} />
     const [data, setData] = useState(mockData())
 //***********************
     async function getData() {
@@ -102,12 +102,12 @@ const App_DropdownList = props => {
         })
         return promise
     }
-    const onChangeCellHandler = (id) => ({accessor, value}) => {
-        console.log('saving', id, accessor, value)
-        setData(prevData => prevData.map(item => item.id === id ? {...item, [accessor]: value}: item))
+    const onChangeCellHandler = (id, invalidateDataWithTimeout) => ({accessor, value}) => {
+        setData(data.map(item => item.id === id ? {...item, [accessor]: value.join(',')}: item))
+        invalidateDataWithTimeout(100)
     }
 
-    const EditableCell = ({accessor, rowData, width}) => {
+    const EditableCell = ({accessor, rowData, width, invalidateDataWithTimeout}) => {
         const [onHover, setOnHover] = useState(false)
         const [editMode, setEditMode] = useState(false)
 
@@ -120,7 +120,7 @@ const App_DropdownList = props => {
                    onMouseLeave={() => setOnHover(false) }
         >
             <div>{rowData[accessor]}</div>
-            {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={onCloseHandler} selected={[rowData[accessor]]} maxHeight={200} onChangeSelected={onChangeCellHandler(rowData.id)} />}
+            {(onHover || editMode) && <DropdownList getData={getDropdownList} accessor={accessor} maxWidth={350} minWidth={200} onOpen={() => setEditMode(true)} onClose={onCloseHandler} selected={[rowData[accessor]]} maxHeight={200} onChangeSelected={onChangeCellHandler(rowData.id, invalidateDataWithTimeout)} />}
         </td>
     }
 //******************************
