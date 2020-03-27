@@ -84,7 +84,8 @@ const config = {
     ]
 }
 const App = props => {
-
+    const tableData = () => [...new Array(2)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+    console.log('testtest', tableData())
     return (
         <Page>
             <PageHeader className="bg-light">This is a Page Header</PageHeader>

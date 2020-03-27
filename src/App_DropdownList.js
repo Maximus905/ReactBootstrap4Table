@@ -109,7 +109,7 @@ const App_DropdownList = props => {
 
     const EditableCell = ({accessor, rowData, width, invalidateDataWithTimeout}) => {
         const [onHover, setOnHover] = useState(false)
-        const [editMode, setEditMode] = useState(false)
+        const [editMode, setEditMode] = useState(true)
 
         const onCloseHandler = () => {
             setEditMode(false)
