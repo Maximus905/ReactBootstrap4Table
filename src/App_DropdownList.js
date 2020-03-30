@@ -11,7 +11,7 @@ import TestGeoTable from "./components/TestGeoTable";
 import ft from "./components/Table/constatnts/filterTypes";
 import faker from "faker";
 import DropdownList from "./components/DropdownList";
-const mockData = () => [...new Array(2)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
+const mockData = () => [...new Array(200)].map((value, index) => ({id: index, column1: `col 1 - data ${index}`, column2: `col 2 - data ${index}`}))
 const dropdownListData = () => {
     return mockData().map(item => item.column1)
 }

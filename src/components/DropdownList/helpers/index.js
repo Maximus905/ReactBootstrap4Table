@@ -18,6 +18,7 @@ function createListFromArray({data, emptyWildcard, emptyValueWildcard, trueWildc
             return acc.set(item, {value: item, label: item, checked: checkedItems.includes(item)})
         }
     }, new Map())
+    console.log('helpers', [...resMap.values()])
     return [...resMap.values()]
 }
 export function convertCheckedItemsArray({emptyValueWildcard, checkedItems = []}) {
