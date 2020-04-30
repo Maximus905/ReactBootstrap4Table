@@ -15,7 +15,7 @@
     "check-types": "^10.0.0",
     "classnames": "^2.2.6",
     "fuse.js": "^3.4.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
     "node-sass": "^4.12.0",
